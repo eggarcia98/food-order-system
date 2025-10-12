@@ -2,7 +2,7 @@
 "use client";
 
 import { Selector } from "@/components/SelectorComponent";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface DishItem {
     id: string;
@@ -35,6 +35,22 @@ export default function OrderRegistration() {
         type: "success" | "error";
         text: string;
     } | null>(null);
+
+    useEffect(() => {
+        // Fetch nationalities from the API
+        const fetchNationalities = async () => {
+            try {
+                const response = await fetch("/api/nationality");
+                if (!response.ok) throw new Error("Failed to fetch");
+                const data = await response.json();
+                setNationalityList(data);
+            } catch (error) {
+                console.error("Error fetching nationalities:", error);
+            }
+        };
+
+        fetchNationalities();
+    }, []);
 
     const addDish = () => {
         setDishes([

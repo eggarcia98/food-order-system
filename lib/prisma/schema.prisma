@@ -36,5 +36,5 @@ model Nationality {
   id   Int    @id @default(autoincrement())
   name String @unique
 
-  @@map("nationalities")
+  @@map("nationality")
 }

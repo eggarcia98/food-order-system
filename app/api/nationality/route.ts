@@ -3,17 +3,17 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
     try {
-        const nationalities = await prisma.nationality.findMany({
+        const nationality = await prisma.nationality.findMany({
             orderBy: {
                 name: "asc",
             },
         });
 
-        return NextResponse.json(nationalities);
+        return NextResponse.json(nationality);
     } catch (error) {
-        console.error("Error fetching nationalities:", error);
+        console.error("Error fetching nationality:", error);
         return NextResponse.json(
-            { error: "Failed to fetch nationalities" },
+            { error: "Failed to fetch nationality" },
             { status: 500 }
         );
     }
