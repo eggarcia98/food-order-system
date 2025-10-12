@@ -16,7 +16,15 @@ export default function OrderRegistration() {
 
     const [lastName, setLastname] = useState("");
     const [firstname, setFirstname] = useState("");
-    const [nationality, setNationality] = useState("");
+    
+    const [nationality, setNationality] = useState("")
+    const [nationalityList, setNationalityList] = useState([
+        { id: 1, name: "Australian" },
+        { id: 2, name: "Ecuadorian" },
+        { id: 3, name: "Peruvian" },
+        { id: 4, name: "Colombian" },
+        { id: 6, name: "United States" },
+    ]);
 
     const [dishes, setDishes] = useState<DishItem[]>([
         { id: "", dish: "", quantity: 1, extras: "" },
@@ -144,7 +152,9 @@ export default function OrderRegistration() {
                                     </label>
                                     <Selector
                                         value={nationality}
+                                        placeholder="Select Nationality"
                                         onChange={setNationality}
+                                        selectorList={nationalityList}
                                         className="appearance-none w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition center"
                                     />
                                 </div>
