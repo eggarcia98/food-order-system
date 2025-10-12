@@ -16,6 +16,7 @@ export default function OrderRegistration() {
 
     const [lastName, setLastname] = useState("");
     const [firstname, setFirstname] = useState("");
+    const [nationality, setNationality] = useState("");
 
     const [dishes, setDishes] = useState<DishItem[]>([
         { id: "", dish: "", quantity: 1, extras: "" },
@@ -142,8 +143,9 @@ export default function OrderRegistration() {
                                         Nationality
                                     </label>
                                     <Selector
-                                        value={"Australia"}
-                                        onChange={(value) => console.log(value)}
+                                        value={nationality}
+                                        onChange={setNationality}
+                                        className="appearance-none w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition center"
                                     />
                                 </div>
                             </div>
