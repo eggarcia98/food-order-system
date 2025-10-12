@@ -18,7 +18,7 @@ export default function OrderRegistration() {
     const [firstname, setFirstname] = useState("");
 
     const [dishes, setDishes] = useState<DishItem[]>([
-        { id: crypto.randomUUID(), dish: "", quantity: 1, extras: "" },
+        { id: "", dish: "", quantity: 1, extras: "" },
     ]);
     const [comments, setComments] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -30,7 +30,7 @@ export default function OrderRegistration() {
     const addDish = () => {
         setDishes([
             ...dishes,
-            { id: crypto.randomUUID(), dish: "", quantity: 1, extras: "" },
+            { id: "db-id", dish: "", quantity: 1, extras: "" },
         ]);
     };
 
