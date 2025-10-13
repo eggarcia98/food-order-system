@@ -23,7 +23,6 @@ export default function OrderRegistration() {
     ]);
 
     const [dishes, setDishes] = useState<any[]>([]);
-    const [dish, setDish] = useState("")
 
     const [dishesToOrder, setDishesToOrder] = useState<DishItem[]>([
         { id: "", dish: "", quantity: 1, extras: "" },
@@ -65,10 +64,10 @@ export default function OrderRegistration() {
     }, []);
 
 
-    const addDish = () => {
+    const addDish = (dishSelected: any) => {
         setDishesToOrder([
             ...dishesToOrder,
-            { id: "db-id", dish: "", quantity: 1, extras: "" },
+            dishSelected,
         ]);
     };
 

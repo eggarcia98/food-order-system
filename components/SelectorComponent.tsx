@@ -64,9 +64,9 @@ export const Selector: FC<SelectorProps> = ({
                       </optgroup>
                   ))
                 : // Render simple list
-                  selectorList.map(({ id, name }) => (
+                  selectorList.map(({ id, name, price}) => (
                       <option key={id} value={id}>
-                          {name}
+                          {name} {price ? `- $${price.toFixed(2)}` : ""}
                       </option>
                   ))}
         </select>
