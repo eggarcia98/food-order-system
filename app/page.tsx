@@ -41,7 +41,6 @@ export default function OrderRegistration() {
              const response = await fetch("/api/nationalities");
              if (!response.ok) throw new Error("Failed to fetch");
              const data = await response.json();
-             console.log(data)
              setNationalityList(data);
          } catch (error) {
              console.error("Error fetching nationalities:", error);
@@ -53,7 +52,7 @@ export default function OrderRegistration() {
             const response = await fetch("/api/dishes");
             if (!response.ok) throw new Error("Failed to fetch");
             const data = await response.json();
-            console.log("Fetched dishes:", data);
+            setDishes(data);
         } catch (error) {
             console.error("Error fetching dishes:", error);
         }
@@ -268,7 +267,7 @@ export default function OrderRegistration() {
                                             <Selector
                                                 placeholder="Select Dish"
                                                 onChangeParent={(value) =>console.log(value)}
-                                                selectorList={nationalityList}
+                                                selectorList={dishes}
                                                 className="appearance-none w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition center"
                                             />
                                         </div>
