@@ -1,35 +1,50 @@
 // components/DishSelector.tsx
-import React from "react";
+import React, { useState, FC } from "react";
 
-export interface DishOption {
-    value: string;
-    label: string;
+interface SelectItem {
+    id: number;
+    name: string;
+    [key: string]: any; // For any additional properties
 }
 
 interface SelectorProps {
-    value: string;
-    onChange: (value: string) => void;
+    onChangeParent?: (value: string) => void;
     required?: boolean;
     placeholder?: string;
     className?: string;
     useCategories?: boolean;
+    returnSelectedValue?: boolean;
     selectorList?: any[];
 }
 
-export const Selector: React.FC<SelectorProps> = ({
-    value,
-    onChange,
+export const Selector: FC<SelectorProps> = ({
+    onChangeParent,
     required = false,
     placeholder = "Put your placeholder here...",
     className = "",
     useCategories = false,
+    returnSelectedValue = false,
     selectorList = [{ id: 1, name: "Sample option" }],
 }) => {
+    const [selectedValue, setSelectedValue] = useState({ id: 0, name: "" });
+
+    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selected = selectorList.find(
+            (item: SelectItem) => item.id === Number(e.target.value)
+        );
+        console.log(selected);
+
+        if (selected) 
+            setSelectedValue(selected);
+        if (returnSelectedValue && onChangeParent)
+            onChangeParent(selected.name);
+    };
+
     return (
         <select
             required={required}
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
+            value={selectedValue.id}
+            onChange={handleChange}
             className={className}
         >
             <option value="">{placeholder}</option>
@@ -50,7 +65,7 @@ export const Selector: React.FC<SelectorProps> = ({
                   ))
                 : // Render simple list
                   selectorList.map(({ id, name }) => (
-                      <option key={id} value={name}>
+                      <option key={id} value={id}>
                           {name}
                       </option>
                   ))}

@@ -41,6 +41,7 @@ export default function OrderRegistration() {
              const response = await fetch("/api/nationalities");
              if (!response.ok) throw new Error("Failed to fetch");
              const data = await response.json();
+             console.log(data)
              setNationalityList(data);
          } catch (error) {
              console.error("Error fetching nationalities:", error);
@@ -63,6 +64,7 @@ export default function OrderRegistration() {
         fetchNationalities();
         fetchDishes();
     }, []);
+
 
     const addDish = () => {
         setDishesToOrder([
@@ -179,9 +181,9 @@ export default function OrderRegistration() {
                                         Nationality
                                     </label>
                                     <Selector
-                                        value={nationality}
                                         placeholder="Select Nationality"
-                                        onChange={setNationality}
+                                        returnSelectedValue={true}
+                                        onChangeParent={setNationality}
                                         selectorList={nationalityList}
                                         className="appearance-none w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition center"
                                     />
@@ -264,9 +266,8 @@ export default function OrderRegistration() {
                                                 Dish Name *
                                             </label>
                                             <Selector
-                                                value={dish}
                                                 placeholder="Select Dish"
-                                                onChange={setDish}
+                                                onChangeParent={(value) =>console.log(value)}
                                                 selectorList={nationalityList}
                                                 className="appearance-none w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition center"
                                             />
