@@ -19,16 +19,16 @@ export default function OrderRegistration() {
     
     const [nationality, setNationality] = useState("")
     const [nationalityList, setNationalityList] = useState([
-        { id: 1, name: "Australian" },
-        { id: 2, name: "Ecuadorian" },
-        { id: 3, name: "Peruvian" },
-        { id: 4, name: "Colombian" },
-        { id: 6, name: "United States" },
+        { id: 1, name: "Ecuadorian" },
     ]);
 
-    const [dishes, setDishes] = useState<DishItem[]>([
+    const [dishes, setDishes] = useState<any[]>([]);
+    const [dish, setDish] = useState("")
+
+    const [dishesToOrder, setDishesToOrder] = useState<DishItem[]>([
         { id: "", dish: "", quantity: 1, extras: "" },
     ]);
+
     const [comments, setComments] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState<{
@@ -36,32 +36,44 @@ export default function OrderRegistration() {
         text: string;
     } | null>(null);
 
+     const fetchNationalities = async () => {
+         try {
+             const response = await fetch("/api/nationalities");
+             if (!response.ok) throw new Error("Failed to fetch");
+             const data = await response.json();
+             setNationalityList(data);
+         } catch (error) {
+             console.error("Error fetching nationalities:", error);
+         }
+     };
+    
+    const fetchDishes = async () => {
+        try {
+            const response = await fetch("/api/dishes");
+            if (!response.ok) throw new Error("Failed to fetch");
+            const data = await response.json();
+            console.log("Fetched dishes:", data);
+        } catch (error) {
+            console.error("Error fetching dishes:", error);
+        }
+    }
+
     useEffect(() => {
         // Fetch nationalities from the API
-        const fetchNationalities = async () => {
-            try {
-                const response = await fetch("/api/nationality");
-                if (!response.ok) throw new Error("Failed to fetch");
-                const data = await response.json();
-                setNationalityList(data);
-            } catch (error) {
-                console.error("Error fetching nationalities:", error);
-            }
-        };
-
         fetchNationalities();
+        fetchDishes();
     }, []);
 
     const addDish = () => {
-        setDishes([
-            ...dishes,
+        setDishesToOrder([
+            ...dishesToOrder,
             { id: "db-id", dish: "", quantity: 1, extras: "" },
         ]);
     };
 
     const removeDish = (id: string) => {
-        if (dishes.length > 1) {
-            setDishes(dishes.filter((d) => d.id !== id));
+        if (dishesToOrder.length > 1) {
+            setDishesToOrder(dishesToOrder.filter((d) => d.id !== id));
         }
     };
 
@@ -70,8 +82,8 @@ export default function OrderRegistration() {
         field: keyof DishItem,
         value: string | number
     ) => {
-        setDishes(
-            dishes.map((d) => (d.id === id ? { ...d, [field]: value } : d))
+        setDishesToOrder(
+            dishesToOrder.map((d) => (d.id === id ? { ...d, [field]: value } : d))
         );
     };
 
@@ -87,7 +99,7 @@ export default function OrderRegistration() {
                 body: JSON.stringify({
                     phoneNumber,
                     name,
-                    dishes: dishes.filter((d) => d.dish.trim() !== ""),
+                    dishes: dishesToOrder.filter((d) => d.dish.trim() !== ""),
                     comments,
                 }),
             });
@@ -102,7 +114,7 @@ export default function OrderRegistration() {
             setPhoneNumber("");
             setLastname("");
             setFirstname("");
-            setDishes([
+            setDishesToOrder([
                 { id: crypto.randomUUID(), dish: "", quantity: 1, extras: "" },
             ]);
             setComments("");
@@ -224,20 +236,20 @@ export default function OrderRegistration() {
                                 </button>
                             </div>
 
-                            {dishes.map((dish, index) => (
+                            {dishesToOrder.map((dishToOrder, index) => (
                                 <div
-                                    key={dish.id}
+                                    key={dishToOrder.id}
                                     className="p-4 border border-gray-200 rounded-lg bg-gray-50 space-y-3"
                                 >
                                     <div className="flex justify-between items-center">
                                         <span className="text-sm font-medium text-gray-700">
                                             Dish {index + 1}
                                         </span>
-                                        {dishes.length > 1 && (
+                                        {dishesToOrder.length > 1 && (
                                             <button
                                                 type="button"
                                                 onClick={() =>
-                                                    removeDish(dish.id)
+                                                    removeDish(dishToOrder.id)
                                                 }
                                                 className="text-red-600 hover:text-red-800 text-sm font-medium"
                                             >
@@ -251,19 +263,12 @@ export default function OrderRegistration() {
                                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                                 Dish Name *
                                             </label>
-                                            <input
-                                                type="text"
-                                                required
-                                                value={dish.dish}
-                                                onChange={(e) =>
-                                                    updateDish(
-                                                        dish.id,
-                                                        "dish",
-                                                        e.target.value
-                                                    )
-                                                }
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                                                placeholder="e.g., Pepperoni Pizza"
+                                            <Selector
+                                                value={dish}
+                                                placeholder="Select Dish"
+                                                onChange={setDish}
+                                                selectorList={nationalityList}
+                                                className="appearance-none w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition center"
                                             />
                                         </div>
 
@@ -275,10 +280,10 @@ export default function OrderRegistration() {
                                                 type="number"
                                                 required
                                                 min="1"
-                                                value={dish.quantity}
+                                                value={dishToOrder.quantity}
                                                 onChange={(e) =>
                                                     updateDish(
-                                                        dish.id,
+                                                        dishToOrder.id,
                                                         "quantity",
                                                         parseInt(
                                                             e.target.value
@@ -296,10 +301,10 @@ export default function OrderRegistration() {
                                         </label>
                                         <input
                                             type="text"
-                                            value={dish.extras}
+                                            value={dishToOrder.extras}
                                             onChange={(e) =>
                                                 updateDish(
-                                                    dish.id,
+                                                    dishToOrder.id,
                                                     "extras",
                                                     e.target.value
                                                 )

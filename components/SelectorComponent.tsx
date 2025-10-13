@@ -6,11 +6,6 @@ export interface DishOption {
     label: string;
 }
 
-export interface DishCategory {
-    category: string;
-    items: DishOption[];
-}
-
 interface SelectorProps {
     value: string;
     onChange: (value: string) => void;
