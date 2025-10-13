@@ -56,9 +56,9 @@ export const Selector: FC<SelectorProps> = ({
                           key={category.category}
                           label={category.category}
                       >
-                          {category.items.map((item: any) => (
-                              <option key={item.value} value={item.label}>
-                                  {item.label}
+                          {category.items.map((item: SelectItem) => (
+                              <option key={item.id} value={item.name}>
+                                  {item.name}
                               </option>
                           ))}
                       </optgroup>
