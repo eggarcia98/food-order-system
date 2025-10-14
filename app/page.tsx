@@ -68,7 +68,7 @@ export default function OrderRegistration() {
         console.log(dishSelected);
 
         if (dishesToOrder.length === 1) {
-            setDishesToOrder([dishSelected]);
+            setDishesToOrder([dishSelected, ...dishesToOrder]);
             console.log(dishesToOrder);
 
             return;
@@ -163,7 +163,7 @@ export default function OrderRegistration() {
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {/* Customer Info */}
-                        <div className="space-y-4">
+                        <div className="space-y-4">     
                             <h2 className="text-xl font-semibold text-gray-800">
                                 Customer Information
                             </h2>
@@ -248,7 +248,7 @@ export default function OrderRegistration() {
 
                             {dishesToOrder.map((dishToOrder, index) => (
                                 <DishToOrderItem
-                                    // key={index + 1}
+                                    key={index}
                                     index={index}
                                     dishToOrder={dishToOrder}
                                     dishes={dishes}

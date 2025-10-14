@@ -8,10 +8,7 @@ export const DishToOrderItem = ({
 }: any) => {
     return (
         <>
-            <div
-                key={dishToOrder?.id}
-                className="p-4 border border-gray-200 rounded-lg bg-gray-50 space-y-3"
-            >
+            <div className="p-4 border border-gray-200 rounded-lg bg-gray-50 space-y-3">
                 <div className="flex justify-between items-center">
                     <span className="text-sm font-medium text-gray-700">
                         Dish {index + 1}
@@ -27,7 +24,7 @@ export const DishToOrderItem = ({
                     )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-[3fr_minmax(100px,_1fr)] gap-3">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                             Dish Name *
@@ -57,7 +54,7 @@ export const DishToOrderItem = ({
                                 //     parseInt(e.target.value) || 1
                                 // )
                             }
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                            className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                         />
                     </div>
                 </div>
