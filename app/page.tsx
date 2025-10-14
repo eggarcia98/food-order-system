@@ -1,6 +1,7 @@
 // app/page.tsx
 "use client";
 
+import { DishToOrderItem } from "@/components/DishToOrderItem";
 import { Selector } from "@/components/SelectorComponent";
 import { useEffect, useState } from "react";
 
@@ -16,8 +17,8 @@ export default function OrderRegistration() {
 
     const [lastName, setLastname] = useState("");
     const [firstname, setFirstname] = useState("");
-    
-    const [nationality, setNationality] = useState("")
+
+    const [nationality, setNationality] = useState("");
     const [nationalityList, setNationalityList] = useState([
         { id: 1, name: "Ecuadorian" },
     ]);
@@ -35,17 +36,17 @@ export default function OrderRegistration() {
         text: string;
     } | null>(null);
 
-     const fetchNationalities = async () => {
-         try {
-             const response = await fetch("/api/nationalities");
-             if (!response.ok) throw new Error("Failed to fetch");
-             const data = await response.json();
-             setNationalityList(data);
-         } catch (error) {
-             console.error("Error fetching nationalities:", error);
-         }
-     };
-    
+    const fetchNationalities = async () => {
+        try {
+            const response = await fetch("/api/nationalities");
+            if (!response.ok) throw new Error("Failed to fetch");
+            const data = await response.json();
+            setNationalityList(data);
+        } catch (error) {
+            console.error("Error fetching nationalities:", error);
+        }
+    };
+
     const fetchDishes = async () => {
         try {
             const response = await fetch("/api/dishes");
@@ -55,7 +56,7 @@ export default function OrderRegistration() {
         } catch (error) {
             console.error("Error fetching dishes:", error);
         }
-    }
+    };
 
     useEffect(() => {
         // Fetch nationalities from the API
@@ -63,12 +64,19 @@ export default function OrderRegistration() {
         fetchDishes();
     }, []);
 
-
     const addDish = (dishSelected: any) => {
-        setDishesToOrder([
-            ...dishesToOrder,
-            dishSelected,
-        ]);
+        console.log(dishSelected);
+
+        if (dishesToOrder.length === 1) {
+            setDishesToOrder([dishSelected]);
+            console.log(dishesToOrder);
+
+            return;
+        }
+
+        console.log(dishesToOrder);
+
+        setDishesToOrder([...dishesToOrder, dishSelected]);
     };
 
     const removeDish = (id: string) => {
@@ -83,7 +91,9 @@ export default function OrderRegistration() {
         value: string | number
     ) => {
         setDishesToOrder(
-            dishesToOrder.map((d) => (d.id === id ? { ...d, [field]: value } : d))
+            dishesToOrder.map((d) =>
+                d.id === id ? { ...d, [field]: value } : d
+            )
         );
     };
 
@@ -237,82 +247,13 @@ export default function OrderRegistration() {
                             </div>
 
                             {dishesToOrder.map((dishToOrder, index) => (
-                                <div
-                                    key={dishToOrder.id}
-                                    className="p-4 border border-gray-200 rounded-lg bg-gray-50 space-y-3"
-                                >
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-sm font-medium text-gray-700">
-                                            Dish {index + 1}
-                                        </span>
-                                        {dishesToOrder.length > 1 && (
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    removeDish(dishToOrder.id)
-                                                }
-                                                className="text-red-600 hover:text-red-800 text-sm font-medium"
-                                            >
-                                                Remove
-                                            </button>
-                                        )}
-                                    </div>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                                Dish Name *
-                                            </label>
-                                            <Selector
-                                                placeholder="Select Dish"
-                                                onChangeParent={(value) =>console.log(value)}
-                                                selectorList={dishes}
-                                                className="appearance-none w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition center"
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                                Quantity *
-                                            </label>
-                                            <input
-                                                type="number"
-                                                required
-                                                min="1"
-                                                value={dishToOrder.quantity}
-                                                onChange={(e) =>
-                                                    updateDish(
-                                                        dishToOrder.id,
-                                                        "quantity",
-                                                        parseInt(
-                                                            e.target.value
-                                                        ) || 1
-                                                    )
-                                                }
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Extras
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={dishToOrder.extras}
-                                            onChange={(e) =>
-                                                updateDish(
-                                                    dishToOrder.id,
-                                                    "extras",
-                                                    e.target.value
-                                                )
-                                            }
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                                            placeholder="e.g., Extra cheese, No onions"
-                                        />
-                                    </div>
-                                </div>
+                                <DishToOrderItem
+                                    // key={index + 1}
+                                    index={index}
+                                    dishToOrder={dishToOrder}
+                                    dishes={dishes}
+                                    removeDish={removeDish}
+                                />
                             ))}
                         </div>
 

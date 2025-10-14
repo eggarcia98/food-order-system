@@ -37,7 +37,7 @@ export const Selector: FC<SelectorProps> = ({
         if (selected) 
             setSelectedValue(selected);
         if (returnSelectedValue && onChangeParent)
-            onChangeParent(selected.name);
+            onChangeParent(selected);
     };
 
     return (
