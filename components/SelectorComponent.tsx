@@ -32,12 +32,13 @@ export const Selector: FC<SelectorProps> = ({
         const selected = selectorList.find(
             (item: SelectItem) => item.id === Number(e.target.value)
         );
-        console.log(selected);
 
         if (selected) 
             setSelectedValue(selected);
-        if (returnSelectedValue && onChangeParent)
+        if (returnSelectedValue && onChangeParent) {
+            console.log("Returning full object");
             onChangeParent(selected);
+        }
     };
 
     return (

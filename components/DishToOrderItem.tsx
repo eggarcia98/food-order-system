@@ -5,13 +5,18 @@ export const DishToOrderItem = ({
     dishes,
     dishToOrder,
     index,
+    updateOrderList,
     removeDish,
 }: any) => {
     const [dishConfirmed, setDishConfirmed] = useState(false);
+    const [dishSelected, setDishSelected] = useState<any>(null);
+    const [quantity, setQuantity] = useState(1);
 
     const handleConfirmDish = () => {
         setDishConfirmed(true);
         disableDishItem();
+        console.log({...dishSelected, quantity})   ;
+        // updateOrderList({dishToOrder, ...dishSelected});
     };
     const handleUnconfirmDish = () => setDishConfirmed(false);
 
@@ -30,7 +35,7 @@ export const DishToOrderItem = ({
                     <span className="text-sm font-medium text-gray-700">
                         Dish {index + 1}
                     </span>
-                    {index > 0 && (
+                    {/* {index > 0 && (
                         <button
                             type="button"
                             onClick={() => removeDish(dishToOrder.id)}
@@ -38,7 +43,7 @@ export const DishToOrderItem = ({
                         >
                             Remove
                         </button>
-                    )}
+                    )} */}
                 </div>
 
                 <div className="grid grid-cols-[3fr_minmax(100px,_1fr)] gap-3">
@@ -48,7 +53,8 @@ export const DishToOrderItem = ({
                         </label>
                         <Selector
                             placeholder="Select Dish"
-                            onChangeParent={(value) => console.log(value)}
+                            returnSelectedValue={true}
+                            onChangeParent={setDishSelected}
                             selectorList={dishes}
                             className="appearance-none w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition center"
                         />
@@ -62,15 +68,7 @@ export const DishToOrderItem = ({
                             type="number"
                             required
                             min="1"
-                            value={dishToOrder.quantity}
-                            onChange={
-                                (e) => {}
-                                // updateDish(
-                                //     dishToOrder.id,
-                                //     "quantity",
-                                //     parseInt(e.target.value) || 1
-                                // )
-                            }
+                            onChange={(e) => setQuantity(Number(e.target.value))}
                             className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                         />
                     </div>
@@ -86,10 +84,9 @@ export const DishToOrderItem = ({
                 >
                     ✔︎
                 </button>
-
                 <button
                     type="button"
-                    hidden={!dishConfirmed}
+                    hidden={!dishConfirmed || index === 0}
                     onClick={() => {}}
                     // onClick={() => addExtra(dishToOrder.id)}
                     className=" px-4 py-2 min-w-12 bg-red-700 text-white rounded-lg hover:bg-red-800 transition text-sm font-medium z-10 pointer-events-auto "
