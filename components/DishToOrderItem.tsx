@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Selector } from "./SelectorComponent";
 
 export const DishToOrderItem = ({
@@ -6,9 +7,25 @@ export const DishToOrderItem = ({
     index,
     removeDish,
 }: any) => {
+    const [dishConfirmed, setDishConfirmed] = useState(false);
+
+    const handleConfirmDish = () => {
+        setDishConfirmed(true);
+        disableDishItem();
+    };
+    const handleUnconfirmDish = () => setDishConfirmed(false);
+
+    const disableDishItem = () => {
+        return dishConfirmed ? "pointer-events-none opacity-60" : "";
+    };
+
     return (
-        <>
-            <div className="p-4 border border-gray-200 rounded-lg bg-gray-50 space-y-3">
+        <div
+            className={
+                "p-4 border border-gray-200 rounded-lg bg-gray-50 space-y-3"
+            }
+        >
+            <div className={`space-y-3 ${disableDishItem()}`}>
                 <div className="flex justify-between items-center">
                     <span className="text-sm font-medium text-gray-700">
                         Dish {index + 1}
@@ -58,23 +75,38 @@ export const DishToOrderItem = ({
                         />
                     </div>
                 </div>
-
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Extras
-                    </label>
-                    <input
-                        type="text"
-                        value={dishToOrder.extras}
-                        onChange={
-                            (e) => {}
-                            // updateDish(dishToOrder.id, "extras", e.target.value)
-                        }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                        placeholder="e.g., Extra cheese, No onions"
-                    />
-                </div>
             </div>
-        </>
+            <div className="space-x-2 flex justify-end">
+                <button
+                    type="button"
+                    hidden={dishConfirmed}
+                    onClick={handleConfirmDish}
+                    // onClick={() => addExtra(dishToOrder.id)}
+                    className="px-4 py-2 min-w-12 bg-green-700 text-white rounded-lg hover:bg-green-800 transition text-sm font-medium"
+                >
+                    ✔︎
+                </button>
+
+                <button
+                    type="button"
+                    hidden={!dishConfirmed}
+                    onClick={() => {}}
+                    // onClick={() => addExtra(dishToOrder.id)}
+                    className=" px-4 py-2 min-w-12 bg-red-700 text-white rounded-lg hover:bg-red-800 transition text-sm font-medium z-10 pointer-events-auto "
+                >
+                    ✘
+                </button>
+
+                <button
+                    type="button"
+                    hidden={!dishConfirmed}
+                    onClick={handleUnconfirmDish}
+                    // onClick={() => addExtra(dishToOrder.id)}
+                    className="px-4 py-2 min-w-12 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition text-sm font-medium"
+                >
+                    ⏎
+                </button>
+            </div>
+        </div>
     );
 };
