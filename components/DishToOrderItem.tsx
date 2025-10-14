@@ -15,8 +15,8 @@ export const DishToOrderItem = ({
     const handleConfirmDish = () => {
         setDishConfirmed(true);
         disableDishItem();
-        console.log({...dishSelected, quantity})   ;
-        // updateOrderList({dishToOrder, ...dishSelected});
+        console.log({ ...dishSelected, quantity });
+        updateOrderList({ ...dishSelected, quantity });
     };
     const handleUnconfirmDish = () => setDishConfirmed(false);
 

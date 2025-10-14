@@ -67,16 +67,8 @@ export default function OrderRegistration() {
     const addDish = (dishSelected: any) => {
         console.log(dishSelected);
 
-        if (dishesToOrder.length === 1) {
-            setDishesToOrder([dishSelected, ...dishesToOrder]);
-            console.log(dishesToOrder);
-
-            return;
-        }
-
-        console.log(dishesToOrder);
-
         setDishesToOrder([...dishesToOrder, dishSelected]);
+        console.log(dishesToOrder);
     };
 
     const removeDish = (id: string) => {
@@ -163,7 +155,7 @@ export default function OrderRegistration() {
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {/* Customer Info */}
-                        <div className="space-y-4">     
+                        <div className="space-y-4">
                             <h2 className="text-xl font-semibold text-gray-800">
                                 Customer Information
                             </h2>
@@ -237,13 +229,6 @@ export default function OrderRegistration() {
                                 <h2 className="text-xl font-semibold text-gray-800">
                                     Dishes
                                 </h2>
-                                <button
-                                    type="button"
-                                    onClick={addDish}
-                                    className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition text-sm font-medium"
-                                >
-                                    + Add Dish
-                                </button>
                             </div>
 
                             {dishesToOrder.map((dishToOrder, index) => (
@@ -253,6 +238,7 @@ export default function OrderRegistration() {
                                     dishToOrder={dishToOrder}
                                     dishes={dishes}
                                     removeDish={removeDish}
+                                    updateOrderList={addDish}
                                 />
                             ))}
                         </div>
