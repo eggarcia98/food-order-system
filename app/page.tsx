@@ -26,9 +26,7 @@ export default function OrderRegistration() {
     const [dishes, setDishes] = useState<any[]>([]);
     const emptyDish = { id: "", dish: "", quantity: 0, extras: "" };
 
-    const [dishesToOrder, setDishesToOrder] = useState<DishItem[]>([
-        emptyDish,
-    ]);
+    const [dishesToOrder, setDishesToOrder] = useState<DishItem[]>([emptyDish]);
 
     const [comments, setComments] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -80,15 +78,9 @@ export default function OrderRegistration() {
     };
 
     const updateDish = (dishToOrder: any, index: number) => {
-        console.log("Current dishes: ", dishesToOrder);
-        console.log("Dish to update: ", dishToOrder);
-        dishesToOrder[index] = dishToOrder;
-
-        console.log("Dis updated at list: ", dishesToOrder[index]);
-        console.log("Dishes Updated: ", dishesToOrder);
-
-        setDishesToOrder([...dishesToOrder]);
-        console.log("Updated React", dishesToOrder);
+        setDishesToOrder((prev) =>
+            prev.map((dish, i) => (i === index ? dishToOrder : dish))
+        );
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
