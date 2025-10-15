@@ -12,9 +12,9 @@ export async function GET() {
 
         return NextResponse.json(nationality);
     } catch (error) {
-        console.error("Error fetching nationality:", error);
+        console.log("Error fetching nationality:", {error});
         return NextResponse.json(
-            { error: "Failed to fetch nationality", details: error.message },
+            { error: "Failed to fetch nationality", details: error },
             { status: 500 }
         );
     }
