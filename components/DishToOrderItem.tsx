@@ -96,7 +96,6 @@ export const DishToOrderItem = ({
                     type="button"
                     hidden={dishConfirmed}
                     onClick={handleConfirmDish}
-                    // onClick={() => addExtra(dishToOrder.id)}
                     className="px-4 py-2 min-w-12 bg-green-700 text-white rounded-lg hover:bg-green-800 transition text-sm font-medium"
                 >
                     ✔︎
@@ -105,7 +104,6 @@ export const DishToOrderItem = ({
                     type="button"
                     hidden={!dishConfirmed || index === 0}
                     onClick={() => {}}
-                    // onClick={() => addExtra(dishToOrder.id)}
                     className=" px-4 py-2 min-w-12 bg-red-700 text-white rounded-lg hover:bg-red-800 transition text-sm font-medium z-10 pointer-events-auto "
                 >
                     ✘
@@ -115,7 +113,6 @@ export const DishToOrderItem = ({
                     type="button"
                     hidden={!dishConfirmed}
                     onClick={handleUnconfirmDish}
-                    // onClick={() => addExtra(dishToOrder.id)}
                     className="px-4 py-2 min-w-12 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition text-sm font-medium"
                 >
                     ⏎
