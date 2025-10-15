@@ -31,8 +31,6 @@ export const Selector: FC<SelectorProps> = ({
     const [selectedValue, setSelectedValue] = useState(currentValue);
 
     useEffect(() => {
-
-        console.log("Current value changed:", currentValue);
         setSelectedValue(currentValue);
     }, []);
 
@@ -43,7 +41,6 @@ export const Selector: FC<SelectorProps> = ({
 
         if (selected) setSelectedValue(selected);
         if (returnSelectedValue && onChangeParent) {
-            console.log("Returning full object");
             onChangeParent(selected);
         }
     };
