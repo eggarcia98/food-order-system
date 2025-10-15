@@ -58,10 +58,13 @@ export default function OrderRegistration() {
     };
 
     useEffect(() => {
-        // Fetch nationalities from the API
         fetchNationalities();
         fetchDishes();
     }, []);
+
+    useEffect(() => {
+        console.log("Dishes to order updated:", dishesToOrder);
+    }, [dishesToOrder]);
 
     const addDish = (dishSelected: any) => {
         setDishesToOrder((prev) => [
@@ -71,10 +74,8 @@ export default function OrderRegistration() {
         ]);
     };
 
-    const removeDish = (id: string) => {
-        if (dishesToOrder.length > 1) {
-            setDishesToOrder(dishesToOrder.filter((d) => d.id !== id));
-        }
+    const removeDish = (index: number) => {
+        setDishesToOrder((prev) => prev.filter((_, i) => i !== index));
     };
 
     const updateDish = (dishToOrder: any, index: number) => {
@@ -227,11 +228,11 @@ export default function OrderRegistration() {
 
                             {dishesToOrder.map((dishToOrder, index) => (
                                 <DishToOrderItem
-                                    key={index}
+                                    key={index + "-" + dishToOrder.id}
                                     index={index}
                                     dishToOrder={dishToOrder}
                                     dishes={dishes}
-                                    removeDish={removeDish}
+                                    removeToOrderList={removeDish}
                                     addToOrderList={addDish}
                                     updateOrderList={updateDish}
                                 />

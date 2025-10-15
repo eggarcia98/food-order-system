@@ -1,5 +1,5 @@
 // components/DishSelector.tsx
-import React, { useState, FC } from "react";
+import React, { useState, FC, use, useEffect } from "react";
 
 interface SelectItem {
     id: number;
@@ -15,6 +15,7 @@ interface SelectorProps {
     useCategories?: boolean;
     returnSelectedValue?: boolean;
     selectorList?: any[];
+    currentValue?: SelectItem;
 }
 
 export const Selector: FC<SelectorProps> = ({
@@ -25,16 +26,22 @@ export const Selector: FC<SelectorProps> = ({
     useCategories = false,
     returnSelectedValue = false,
     selectorList = [{ id: 1, name: "Sample option" }],
+    currentValue = { id: 0, name: "" },
 }) => {
-    const [selectedValue, setSelectedValue] = useState({ id: 0, name: "" });
+    const [selectedValue, setSelectedValue] = useState(currentValue);
+
+    useEffect(() => {
+
+        console.log("Current value changed:", currentValue);
+        setSelectedValue(currentValue);
+    }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selected = selectorList.find(
             (item: SelectItem) => item.id === Number(e.target.value)
         );
 
-        if (selected) 
-            setSelectedValue(selected);
+        if (selected) setSelectedValue(selected);
         if (returnSelectedValue && onChangeParent) {
             console.log("Returning full object");
             onChangeParent(selected);
@@ -65,7 +72,7 @@ export const Selector: FC<SelectorProps> = ({
                       </optgroup>
                   ))
                 : // Render simple list
-                  selectorList.map(({ id, name, price}) => (
+                  selectorList.map(({ id, name, price }) => (
                       <option key={id} value={id}>
                           {name} {price ? `- $${price.toFixed(2)}` : ""}
                       </option>

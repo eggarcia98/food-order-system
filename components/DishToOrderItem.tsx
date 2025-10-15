@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Selector } from "./SelectorComponent";
 
 export const DishToOrderItem = ({
@@ -6,7 +6,8 @@ export const DishToOrderItem = ({
     index,
     addToOrderList,
     updateOrderList,
-    removeDish,
+    removeToOrderList,
+    dishToOrder,
 }: any) => {
     const [dishConfirmed, setDishConfirmed] = useState(false);
     const [dishSelected, setDishSelected] = useState<any>(null);
@@ -14,28 +15,36 @@ export const DishToOrderItem = ({
 
     const [quantity, setQuantity] = useState(1);
 
+    useEffect(() => {
+        if (dishToOrder?.id) {
+            setDishSelected(dishToOrder);
+            setQuantity(dishToOrder.quantity);
+            setDishConfirmed(true);
+            setEditingDish(false);
+        }
+    }, [dishToOrder]);
+     
     const handleConfirmDish = () => {
         setDishConfirmed(true);
         disableDishItem();
 
         if (editingDish) {
-            console.log("Editing dish");
             updateOrderList({ ...dishSelected, quantity }, index);
             setEditingDish(false);
             return;
         }
 
-        console.log("Confirming dish");
         addToOrderList({ ...dishSelected, quantity });
     };
     const handleUnconfirmDish = () => {
-        console.log("Unconfirming dish");
         setDishConfirmed(false);
         setEditingDish(true);
         disableDishItem();
-
-
     };
+
+    const handleRemoveDish = () => {
+        removeToOrderList(index);
+    }
 
     const disableDishItem = () => {
         return dishConfirmed ? "pointer-events-none opacity-60" : "";
@@ -71,6 +80,7 @@ export const DishToOrderItem = ({
                         <Selector
                             placeholder="Select Dish"
                             returnSelectedValue={true}
+                            currentValue={dishToOrder}
                             onChangeParent={setDishSelected}
                             selectorList={dishes}
                             className="appearance-none w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition center"
@@ -85,7 +95,10 @@ export const DishToOrderItem = ({
                             type="number"
                             required
                             min="1"
-                            onChange={(e) => setQuantity(Number(e.target.value))}
+                            value={quantity}
+                            onChange={(e) =>
+                                setQuantity(Number(e.target.value))
+                            }
                             className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                         />
                     </div>
@@ -103,7 +116,7 @@ export const DishToOrderItem = ({
                 <button
                     type="button"
                     hidden={!dishConfirmed || index === 0}
-                    onClick={() => {}}
+                    onClick={handleRemoveDish}
                     className=" px-4 py-2 min-w-12 bg-red-700 text-white rounded-lg hover:bg-red-800 transition text-sm font-medium z-10 pointer-events-auto "
                 >
                     ✘

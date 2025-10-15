@@ -47,9 +47,6 @@ export async function POST(request: Request) {
 export async function GET() {
     try {
         const orders = await prisma.order.findMany({
-            include: {
-                dishes: true,
-            },
             orderBy: {
                 createdAt: "desc",
             },
