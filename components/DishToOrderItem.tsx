@@ -3,22 +3,39 @@ import { Selector } from "./SelectorComponent";
 
 export const DishToOrderItem = ({
     dishes,
-    dishToOrder,
     index,
+    addToOrderList,
     updateOrderList,
     removeDish,
 }: any) => {
     const [dishConfirmed, setDishConfirmed] = useState(false);
     const [dishSelected, setDishSelected] = useState<any>(null);
+    const [editingDish, setEditingDish] = useState(false);
+
     const [quantity, setQuantity] = useState(1);
 
     const handleConfirmDish = () => {
         setDishConfirmed(true);
         disableDishItem();
-        console.log({ ...dishSelected, quantity });
-        updateOrderList({ ...dishSelected, quantity });
+
+        if (editingDish) {
+            console.log("Editing dish");
+            updateOrderList({ ...dishSelected, quantity }, index);
+            setEditingDish(false);
+            return;
+        }
+
+        console.log("Confirming dish");
+        addToOrderList({ ...dishSelected, quantity });
     };
-    const handleUnconfirmDish = () => setDishConfirmed(false);
+    const handleUnconfirmDish = () => {
+        console.log("Unconfirming dish");
+        setDishConfirmed(false);
+        setEditingDish(true);
+        disableDishItem();
+
+
+    };
 
     const disableDishItem = () => {
         return dishConfirmed ? "pointer-events-none opacity-60" : "";

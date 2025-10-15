@@ -24,9 +24,10 @@ export default function OrderRegistration() {
     ]);
 
     const [dishes, setDishes] = useState<any[]>([]);
+    const emptyDish = { id: "", dish: "", quantity: 0, extras: "" };
 
     const [dishesToOrder, setDishesToOrder] = useState<DishItem[]>([
-        { id: "", dish: "", quantity: 1, extras: "" },
+        emptyDish,
     ]);
 
     const [comments, setComments] = useState("");
@@ -65,10 +66,11 @@ export default function OrderRegistration() {
     }, []);
 
     const addDish = (dishSelected: any) => {
-        console.log(dishSelected);
-
-        setDishesToOrder([...dishesToOrder, dishSelected]);
-        console.log(dishesToOrder);
+        setDishesToOrder((prev) => [
+            ...prev.slice(0, -1),
+            dishSelected,
+            emptyDish,
+        ]);
     };
 
     const removeDish = (id: string) => {
@@ -77,16 +79,16 @@ export default function OrderRegistration() {
         }
     };
 
-    const updateDish = (
-        id: string,
-        field: keyof DishItem,
-        value: string | number
-    ) => {
-        setDishesToOrder(
-            dishesToOrder.map((d) =>
-                d.id === id ? { ...d, [field]: value } : d
-            )
-        );
+    const updateDish = (dishToOrder: any, index: number) => {
+        console.log("Current dishes: ", dishesToOrder);
+        console.log("Dish to update: ", dishToOrder);
+        dishesToOrder[index] = dishToOrder;
+
+        console.log("Dis updated at list: ", dishesToOrder[index]);
+        console.log("Dishes Updated: ", dishesToOrder);
+
+        setDishesToOrder([...dishesToOrder]);
+        console.log("Updated React", dishesToOrder);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -238,7 +240,8 @@ export default function OrderRegistration() {
                                     dishToOrder={dishToOrder}
                                     dishes={dishes}
                                     removeDish={removeDish}
-                                    updateOrderList={addDish}
+                                    addToOrderList={addDish}
+                                    updateOrderList={updateDish}
                                 />
                             ))}
                         </div>
