@@ -14,7 +14,7 @@ export async function GET() {
     } catch (error) {
         console.log("Error fetching nationality:", {error});
         return NextResponse.json(
-            { error: "Failed to fetch nationality", details: error },
+            { error },
             { status: 500 }
         );
     }

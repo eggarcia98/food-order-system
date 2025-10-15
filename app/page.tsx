@@ -42,7 +42,7 @@ export default function OrderRegistration() {
             const data = await response.json();
             setNationalityList(data);
         } catch (error) {
-            console.error("Error fetching nationalities:", error);
+            console.log("Error fetching nationalities:", {error});
         }
     };
 
