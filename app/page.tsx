@@ -15,7 +15,7 @@ interface DishItem {
 export default function OrderRegistration() {
     const [phoneNumber, setPhoneNumber] = useState("");
 
-    const [lastName, setLastname] = useState("");
+    const [lastname, setLastname] = useState("");
     const [firstname, setFirstname] = useState("");
 
     const [nationality, setNationality] = useState("");
@@ -90,9 +90,13 @@ export default function OrderRegistration() {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    phoneNumber,
-                    name,
-                    dishes: dishesToOrder.filter((d) => d.dish.trim() !== ""),
+                    client: {
+                        firstName: firstname,
+                        lastName: lastname,
+                        nationality,
+                        phoneNumber
+                    },
+                    dishes: dishesToOrder.slice(0, -1), 
                     comments,
                 }),
             });
@@ -108,7 +112,7 @@ export default function OrderRegistration() {
             setLastname("");
             setFirstname("");
             setDishesToOrder([
-                { id: crypto.randomUUID(), dish: "", quantity: 1, extras: "" },
+                { id: "", dish: "", quantity: 1, extras: "" },
             ]);
             setComments("");
         } catch (error) {
@@ -204,7 +208,7 @@ export default function OrderRegistration() {
                                 <input
                                     type="text"
                                     required
-                                    value={lastName}
+                                    value={lastname}
                                     onChange={(e) =>
                                         setLastname(e.target.value)
                                     }
