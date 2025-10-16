@@ -5,7 +5,6 @@ export const runtime = "edge";
 export async function POST(request: Request) {
     try {
         const { client, dishes, comments } = await request.json();
-
         const order = await prisma.order.create({
             data: {
                 customer: {
@@ -16,7 +15,7 @@ export async function POST(request: Request) {
                         create: {
                             first_name: client.firstName,
                             last_name: client.lastName,
-                            nationality_id: client.nationalityId,
+                            nationality_id: client?.nationality?.id,
                             phone_number: client.phoneNumber,
                             // email: client.email,
                         },
@@ -33,13 +32,14 @@ export async function POST(request: Request) {
                 comments,
             },
             include: {
-                client: true,
-                dishes: true,
+                // client: true,
+                // dishes: true,
             },
         });
 
         return NextResponse.json(order);
     } catch (error) {
+        console.error("Error creating order:", error);
         return NextResponse.json({ error }, { status: 500 });
     }
 }
