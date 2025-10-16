@@ -12,7 +12,6 @@ export async function GET() {
 
         return NextResponse.json(nationality);
     } catch (error) {
-        console.log("Error fetching nationality:", {error});
         return NextResponse.json(
             { error },
             { status: 500 }

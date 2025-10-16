@@ -42,7 +42,7 @@ export default function OrderRegistration() {
             const data = await response.json();
             setNationalityList(data);
         } catch (error) {
-            console.log("Error fetching nationalities:", {error});
+            console.error("Error fetching nationalities:", {error});
         }
     };
 
@@ -61,10 +61,6 @@ export default function OrderRegistration() {
         fetchNationalities();
         fetchDishes();
     }, []);
-
-    useEffect(() => {
-        console.log("Dishes to order updated:", dishesToOrder);
-    }, [dishesToOrder]);
 
     const addDish = (dishSelected: any) => {
         setDishesToOrder((prev) => [
