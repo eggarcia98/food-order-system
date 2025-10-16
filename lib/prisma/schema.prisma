@@ -7,17 +7,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Order {
-  id          String   @id @default(cuid())
-  phoneNumber String   @map("phone_number")
-  name        String
-  comments    String   @default("")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+// model Order {
+//   id          String   @id @default(cuid())
+//   phoneNumber String   @map("phone_number")
+//   name        String
+//   comments    String   @default("")
+//   createdAt   DateTime @default(now()) @map("created_at")
+//   updatedAt   DateTime @updatedAt @map("updated_at")
   
 
-  @@map("orders")
-}
+//   @@map("orders")
+// }
 
 model Dish {
   id       Int    @id @default(autoincrement())
