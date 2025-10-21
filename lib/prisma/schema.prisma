@@ -36,9 +36,11 @@ model OrderItem {
   order_id  Int
   quantity  Int
   dish_id   Int
+  side_id   Int?
   // Relations
   order     Order    @relation(fields: [order_id], references: [id], onDelete: Cascade)
   dish      Dish     @relation(fields: [dish_id], references: [id])
+  side      Side?     @relation(fields: [side_id], references: [id])
 
   @@map("order_item")
 }
@@ -57,4 +59,15 @@ model Nationality {
   name String @unique
 
   @@map("nationality")
+}
+
+model Side {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  cost Float
+  price Float
+  description String?
+
+  OrderItem OrderItem[]
+  @@map("side")
 }
