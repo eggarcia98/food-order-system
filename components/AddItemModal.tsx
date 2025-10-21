@@ -6,7 +6,6 @@ export default function AddItemModal({ open, setOpen, dishes, sides }: any) {
     bottom-0 left-0 right-0 rounded-t-3xl
     max-h-[70vh] md:max-h-[80vh] md:rounded-2xl md:w-[90%] md:max-w-lg md:left-1/2 md:top-1/2 md:translate-x-[-50%] md:translate-y-[-50%]
   `}
-            style={{ height: "85vh" }}
         >
             <div className="flex flex-col h-full overflow-y-auto">
                 <h2 className="text-xl font-semibold mb-4 text-center">

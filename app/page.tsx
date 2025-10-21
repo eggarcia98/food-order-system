@@ -234,7 +234,6 @@ export default function OrderRegistration() {
                                 />
                             </div>
                         </div>
-                        <button>Add Item</button>
 
                         {/* Overlay */}
                         <div
@@ -259,12 +258,12 @@ export default function OrderRegistration() {
                                 <h2 className="text-xl font-semibold text-gray-800">
                                     Order List
                                 </h2>
-                                <button
+                                <div
                                     onClick={() => setOpen(true)}
                                     className="bg-orange-400 text-white px-4 py-2 rounded-xl hover:bg-orange-500"
                                 >
                                     + Add Item
-                                </button>
+                                </div>
                             </div>
                             <div className="flex items-center gap-2 bg-gray-200 p-5 rounded-lg"></div>
                         </div>
