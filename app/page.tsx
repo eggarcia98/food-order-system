@@ -233,12 +233,7 @@ export default function OrderRegistration() {
                                 />
                             </div>
                         </div>
-                        <button
-                            onClick={() => setOpen(true)}
-                            className="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700"
-                        >
-                            Add Item
-                        </button>
+                        <button>Add Item</button>
 
                         {/* Overlay */}
                         <div
@@ -252,22 +247,13 @@ export default function OrderRegistration() {
 
                         <div
                             className={`fixed z-50 bg-white shadow-xl p-6 transition-all duration-500 ease-out
-          ${open ? "opacity-100" : "opacity-0 pointer-events-none"}
-          
-          /* Mobile style: slide from bottom */
-          bottom-0 left-0 right-0 rounded-t-3xl h-[70vh] translate-y-0
-          ${open ? "translate-y-0" : "translate-y-full"}
-
-          /* Desktop override: center + fade/scale */
-          md:bottom-auto md:left-1/2 md:top-1/2 md:right-auto
-          md:translate-x-[-50%] md:translate-y-[-50%]
-          md:rounded-2xl md:w-[90%] md:max-w-lg md:h-auto
-          md:transition-transform md:duration-300
-          md:${open ? "scale-100" : "scale-90 translate-y-[-45%] opacity-0"}
-        `}
-                            style={{ height: "70vh" }}
+    ${open ? "opacity-100" : "opacity-0 pointer-events-none"}
+    bottom-0 left-0 right-0 rounded-t-3xl
+    max-h-[70vh] md:max-h-[80vh] md:rounded-2xl md:w-[90%] md:max-w-lg md:left-1/2 md:top-1/2 md:translate-x-[-50%] md:translate-y-[-50%]
+  `}
+                            style={{ height: "85vh" }}
                         >
-                            <div className="p-6 h-full flex flex-col">
+                            <div className="flex flex-col h-full overflow-y-auto">
                                 <h2 className="text-xl font-semibold mb-4 text-center">
                                     Add Item
                                 </h2>
@@ -352,24 +338,18 @@ export default function OrderRegistration() {
 
                         {/* Dishes */}
                         <div className="space-y-4">
-                            <div className="flex justify-between items-center">
+                            <div className="flex  justify-between items-center">
                                 <h2 className="text-xl font-semibold text-gray-800">
-                                    Dishes
+                                    Order List
                                 </h2>
+                                <button
+                                    onClick={() => setOpen(true)}
+                                    className="bg-orange-400 text-white px-4 py-2 rounded-xl hover:bg-orange-500"
+                                >
+                                    + Add Item
+                                </button>
                             </div>
-
-                            {dishesToOrder.map((dishToOrder, index) => (
-                                <DishToOrderItem
-                                    key={index + "-" + dishToOrder.id}
-                                    index={index}
-                                    dishToOrder={dishToOrder}
-                                    sides={sides}
-                                    dishes={dishes}
-                                    removeToOrderList={removeDish}
-                                    addToOrderList={addDish}
-                                    updateOrderList={updateDish}
-                                />
-                            ))}
+                            <div className="flex items-center gap-2 bg-gray-200 p-5 rounded-lg"></div>
                         </div>
 
                         {/* Comments */}
