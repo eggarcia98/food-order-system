@@ -3,6 +3,7 @@ import { Selector } from "./SelectorComponent";
 
 export const DishToOrderItem = ({
     dishes,
+    sides,
     index,
     addToOrderList,
     updateOrderList,
@@ -13,6 +14,7 @@ export const DishToOrderItem = ({
     const [dishSelected, setDishSelected] = useState<any>(null);
     const [editingDish, setEditingDish] = useState(false);
 
+    console.log("Dish to order item - sides: ", sides);
     const [quantity, setQuantity] = useState(1);
 
     useEffect(() => {
@@ -83,6 +85,18 @@ export const DishToOrderItem = ({
                             currentValue={dishToOrder}
                             onChangeParent={setDishSelected}
                             selectorList={dishes}
+                            className="appearance-none w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition center"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Side Name *
+                        </label>
+                        <Selector
+                            placeholder="Select Side"
+                            returnSelectedValue={true}
+                            selectorList={sides}
                             className="appearance-none w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition center"
                         />
                     </div>

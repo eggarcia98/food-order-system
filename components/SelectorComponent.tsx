@@ -30,6 +30,8 @@ export const Selector: FC<SelectorProps> = ({
 }) => {
     const [selectedValue, setSelectedValue] = useState(currentValue);
 
+        console.log("Current List: ", selectorList);
+
     useEffect(() => {
         setSelectedValue(currentValue);
     }, []);

@@ -23,6 +23,10 @@ export default function OrderRegistration() {
         { id: 1, name: "Ecuadorian" },
     ]);
 
+    const [sides, setSides] = useState<any[]>([]);
+    const emptySide = { id: "", name: "", price: 0 };
+    const [sidesToOrder, setSidesToOrder] = useState<any[]>([emptySide]);
+
     const [dishes, setDishes] = useState<any[]>([]);
     const emptyDish = { id: "", dish: "", quantity: 0, extras: "" };
 
@@ -57,9 +61,21 @@ export default function OrderRegistration() {
         }
     };
 
+    const fetchSides = async () => {
+        try {
+            const response = await fetch("/api/sides");
+            if (!response.ok) throw new Error("Failed to fetch");
+            const data = await response.json();
+            setSides(data);
+        } catch (error) {
+            console.error("Error fetching sides:", error);
+        }
+    };
+
     useEffect(() => {
         fetchNationalities();
         fetchDishes();
+        fetchSides();
     }, []);
 
     const addDish = (dishSelected: any) => {
@@ -231,6 +247,7 @@ export default function OrderRegistration() {
                                     key={index + "-" + dishToOrder.id}
                                     index={index}
                                     dishToOrder={dishToOrder}
+                                    sides={sides}
                                     dishes={dishes}
                                     removeToOrderList={removeDish}
                                     addToOrderList={addDish}
