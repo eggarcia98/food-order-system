@@ -13,8 +13,6 @@ export const DishToOrderItem = ({
     const [dishConfirmed, setDishConfirmed] = useState(false);
     const [dishSelected, setDishSelected] = useState<any>(null);
     const [editingDish, setEditingDish] = useState(false);
-
-    console.log("Dish to order item - sides: ", sides);
     const [quantity, setQuantity] = useState(1);
 
     useEffect(() => {

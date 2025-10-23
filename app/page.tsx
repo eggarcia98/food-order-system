@@ -83,22 +83,8 @@ export default function OrderRegistration() {
         fetchSides();
     }, []);
 
-    const addDish = (dishSelected: any) => {
-        setDishesToOrder((prev) => [
-            ...prev.slice(0, -1),
-            dishSelected,
-            emptyDish,
-        ]);
-    };
-
     const removeDish = (index: number) => {
         setDishesToOrder((prev) => prev.filter((_, i) => i !== index));
-    };
-
-    const updateDish = (dishToOrder: any, index: number) => {
-        setDishesToOrder((prev) =>
-            prev.map((dish, i) => (i === index ? dishToOrder : dish))
-        );
     };
 
     useEffect(() => {
