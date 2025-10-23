@@ -84,7 +84,9 @@ export default function OrderRegistration() {
     }, []);
 
     const removeDish = (index: number) => {
-        setDishesToOrder((prev) => prev.filter((_, i) => i !== index));
+        const updatedDishes = [...confirmedOrderList];
+        updatedDishes.splice(index, 1);
+        setConfirmedOrderList(updatedDishes);
     };
 
     useEffect(() => {
@@ -258,7 +260,21 @@ export default function OrderRegistration() {
                                     + Add Item
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2 bg-gray-200 p-5 rounded-lg"></div>
+                            <div className="flex items-center gap-2 bg-gray-200 p-5 rounded-lg">
+                                {confirmedOrderList.length === 0 ? (
+                                    <p className="text-gray-500">
+                                        No items added yet. Click "Add Item" to
+                                        start your order.
+                                    </p>
+                                ) : (
+                                    <div className="w-full space-y-4">
+                                        <DishToOrderItem
+                                            orderList={confirmedOrderList}
+                                            removeItemFromOrder={removeDish}
+                                        />
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         {/* Comments */}
