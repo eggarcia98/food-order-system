@@ -13,7 +13,7 @@ export default function AddItemModal({
         quantity: 0,
     });
     const [sidesSelected, setSidesSelected] = React.useState<any>([]);
-    const [quantity, setQuantity] = React.useState<number>(0);
+    const [quantity, setQuantity] = React.useState<number>(1);
 
     const updateSidesList = (side: any) => {
         const isSelected = !!sidesSelected.find((s: any) => s.id === side.id);
@@ -38,7 +38,7 @@ export default function AddItemModal({
             quantity: 0,
         });
         setSidesSelected([]);
-        setQuantity(0);
+        setQuantity(1);
     };
 
     const handleDishSelect = (dish: any) => {
@@ -152,20 +152,20 @@ export default function AddItemModal({
 
                 {/* Actions */}
                 <div className="mt-6 flex justify-end gap-2">
-                    <button
+                    <div
                         onClick={() => {
                             setOpen(false);
                         }}
                         className="px-4 py-2 rounded-xl bg-gray-200 hover:bg-gray-300"
                     >
                         Cancel
-                    </button>
-                    <button
+                    </div>
+                    <div
                         onClick={() => confirmOrderItem()}
                         className="px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700"
                     >
                         Add
-                    </button>
+                    </div>
                 </div>
             </div>
         </div>

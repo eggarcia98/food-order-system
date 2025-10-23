@@ -2,9 +2,34 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 export const runtime = "edge";
 
+interface OrderItem {
+    dish: Dish;
+    quantity: number;
+    sides: Side[];
+}
+
+interface Dish {
+    id: number;
+    name: string;
+    price: number;
+    img?: string;
+}
+
+interface Side {
+    id: number;
+    name: string;
+    price: number;
+}
+
 export async function POST(request: Request) {
     try {
         const { client, dishes, comments } = await request.json();
+        const parsedDishes: OrderItem[] = dishes.map((item: OrderItem) => ({
+            id: item.dish.id,
+            quantity: item.quantity,
+            sides: item.sides,
+        }));
+
         const order = await prisma.order.create({
             data: {
                 customer: {
@@ -23,12 +48,12 @@ export async function POST(request: Request) {
                 },
                 order_code: `ORD-BRI${Date.now()}`,
                 order_item: {
-                    create: dishes.map((dish: any) => ({
+                    create: parsedDishes.map((dish: any) => ({
                         dish_id: dish.id,
                         quantity: dish.quantity,
                     })),
                 },
-                
+
                 comments,
             },
             include: {

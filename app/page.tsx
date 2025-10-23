@@ -6,11 +6,23 @@ import { DishToOrderItem } from "@/components/DishToOrderItem";
 import { Selector } from "@/components/SelectorComponent";
 import { useEffect, useState } from "react";
 
-interface DishItem {
-    id: string;
-    dish: string;
+interface OrderItem {
+    dish: Dish;
     quantity: number;
-    extras: string;
+    sides: Side[];
+}
+
+interface Dish {
+    id: number;
+    name: string;
+    price: number;
+    img?: string;
+}
+
+interface Side {
+    id: number;
+    name: string;
+    price: number;
 }
 
 export default function OrderRegistration() {
@@ -19,7 +31,7 @@ export default function OrderRegistration() {
     const [lastname, setLastname] = useState("");
     const [firstname, setFirstname] = useState("");
 
-    const [confirmedOrderList, setConfirmedOrderList] = useState<any>([]);
+    const [confirmedOrderList, setConfirmedOrderList] = useState<OrderItem[]>([]);
 
     const [nationality, setNationality] = useState("");
     const [nationalityList, setNationalityList] = useState([
@@ -29,13 +41,7 @@ export default function OrderRegistration() {
     const [open, setOpen] = useState(false);
 
     const [sides, setSides] = useState<any[]>([]);
-    const emptySide = { id: "", name: "", price: 0 };
-    const [sidesToOrder, setSidesToOrder] = useState<any[]>([emptySide]);
-
     const [dishes, setDishes] = useState<any[]>([]);
-    const emptyDish = { id: "", dish: "", quantity: 0, extras: "" };
-
-    const [dishesToOrder, setDishesToOrder] = useState<DishItem[]>([emptyDish]);
 
     const [comments, setComments] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -109,7 +115,7 @@ export default function OrderRegistration() {
                         nationality,
                         phoneNumber,
                     },
-                    dishes: dishesToOrder.slice(0, -1),
+                    dishes: confirmedOrderList,
                     comments,
                 }),
             });
@@ -124,9 +130,9 @@ export default function OrderRegistration() {
             setPhoneNumber("");
             setLastname("");
             setFirstname("");
-            setDishesToOrder([{ id: "", dish: "", quantity: 1, extras: "" }]);
             setComments("");
         } catch (error) {
+            console.error("Error submitting order:", error);
             setMessage({
                 type: "error",
                 text: "Failed to register order. Please try again.",
