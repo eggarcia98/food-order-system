@@ -1,4 +1,4 @@
-import React from "react";
+import React, { use, useEffect } from "react";
 
 export default function AddItemModal({ open, setOpen, dishes, sides }: any) {
     const [orderItem, setOrderItem] = React.useState<any>(null);
@@ -29,6 +29,11 @@ export default function AddItemModal({ open, setOpen, dishes, sides }: any) {
     const toogleSideSelection = (sideId: any) => {
         return sidesSelected.find((s: any) => s.id === sideId);
     };
+
+    useEffect(() => {
+        console.log("Selected sides updated:", setSidesSelected);
+        console.log("Order dish:", orderItem);
+    }, [ orderItem]);
 
     return (
         <div
