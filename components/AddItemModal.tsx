@@ -17,7 +17,6 @@ export default function AddItemModal({
 
     const updateSidesList = (side: any) => {
         const isSelected = !!sidesSelected.find((s: any) => s.id === side.id);
-
         const updatedSides = [...sidesSelected];
 
         if (isSelected) {
@@ -25,7 +24,6 @@ export default function AddItemModal({
                 updatedSides.findIndex((s: any) => s.id === side.id),
                 1
             );
-
             return updatedSides;
         }
 
