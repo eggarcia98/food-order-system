@@ -1,15 +1,28 @@
 // app/page.tsx
 "use client";
 
+import AddItemModal from "@/components/AddItemModal";
 import { DishToOrderItem } from "@/components/DishToOrderItem";
 import { Selector } from "@/components/SelectorComponent";
 import { useEffect, useState } from "react";
 
-interface DishItem {
-    id: string;
-    dish: string;
+interface OrderItem {
+    dish: Dish;
     quantity: number;
-    extras: string;
+    sides: Side[];
+}
+
+interface Dish {
+    id: number;
+    name: string;
+    price: number;
+    img?: string;
+}
+
+interface Side {
+    id: number;
+    name: string;
+    price: number;
 }
 
 export default function OrderRegistration() {
@@ -18,15 +31,17 @@ export default function OrderRegistration() {
     const [lastname, setLastname] = useState("");
     const [firstname, setFirstname] = useState("");
 
+    const [confirmedOrderList, setConfirmedOrderList] = useState<OrderItem[]>([]);
+
     const [nationality, setNationality] = useState("");
     const [nationalityList, setNationalityList] = useState([
         { id: 1, name: "Ecuadorian" },
     ]);
 
-    const [dishes, setDishes] = useState<any[]>([]);
-    const emptyDish = { id: "", dish: "", quantity: 0, extras: "" };
+    const [open, setOpen] = useState(false);
 
-    const [dishesToOrder, setDishesToOrder] = useState<DishItem[]>([emptyDish]);
+    const [sides, setSides] = useState<any[]>([]);
+    const [dishes, setDishes] = useState<any[]>([]);
 
     const [comments, setComments] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,7 +57,7 @@ export default function OrderRegistration() {
             const data = await response.json();
             setNationalityList(data);
         } catch (error) {
-            console.error("Error fetching nationalities:", {error});
+            console.error("Error fetching nationalities:", { error });
         }
     };
 
@@ -57,28 +72,32 @@ export default function OrderRegistration() {
         }
     };
 
+    const fetchSides = async () => {
+        try {
+            const response = await fetch("/api/sides");
+            if (!response.ok) throw new Error("Failed to fetch");
+            const data = await response.json();
+            setSides(data);
+        } catch (error) {
+            console.error("Error fetching sides:", error);
+        }
+    };
+
     useEffect(() => {
         fetchNationalities();
         fetchDishes();
+        fetchSides();
     }, []);
 
-    const addDish = (dishSelected: any) => {
-        setDishesToOrder((prev) => [
-            ...prev.slice(0, -1),
-            dishSelected,
-            emptyDish,
-        ]);
-    };
-
     const removeDish = (index: number) => {
-        setDishesToOrder((prev) => prev.filter((_, i) => i !== index));
+        const updatedDishes = [...confirmedOrderList];
+        updatedDishes.splice(index, 1);
+        setConfirmedOrderList(updatedDishes);
     };
 
-    const updateDish = (dishToOrder: any, index: number) => {
-        setDishesToOrder((prev) =>
-            prev.map((dish, i) => (i === index ? dishToOrder : dish))
-        );
-    };
+    // useEffect(() => {
+    //     console.log("Confirmed Order List: ", confirmedOrderList);
+    // }, [confirmedOrderList]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -94,9 +113,9 @@ export default function OrderRegistration() {
                         firstName: firstname,
                         lastName: lastname,
                         nationality,
-                        phoneNumber
+                        phoneNumber,
                     },
-                    dishes: dishesToOrder.slice(0, -1), 
+                    dishes: confirmedOrderList,
                     comments,
                 }),
             });
@@ -111,11 +130,10 @@ export default function OrderRegistration() {
             setPhoneNumber("");
             setLastname("");
             setFirstname("");
-            setDishesToOrder([
-                { id: "", dish: "", quantity: 1, extras: "" },
-            ]);
             setComments("");
+            setConfirmedOrderList([]);
         } catch (error) {
+            console.error("Error submitting order:", error);
             setMessage({
                 type: "error",
                 text: "Failed to register order. Please try again.",
@@ -218,25 +236,52 @@ export default function OrderRegistration() {
                             </div>
                         </div>
 
+                        {/* Overlay */}
+                        <div
+                            className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${
+                                open
+                                    ? "opacity-100 visible"
+                                    : "opacity-0 invisible"
+                            }`}
+                            onClick={() => setOpen(false)}
+                        ></div>
+
+                        <AddItemModal
+                            dishes={dishes}
+                            sides={sides}
+                            open={open}
+                            setOpen={setOpen}
+                            setConfirmedOrderList={setConfirmedOrderList}
+                        />
+
                         {/* Dishes */}
                         <div className="space-y-4">
-                            <div className="flex justify-between items-center">
+                            <div className="flex  justify-between items-center">
                                 <h2 className="text-xl font-semibold text-gray-800">
-                                    Dishes
+                                    Order List
                                 </h2>
+                                <div
+                                    onClick={() => setOpen(true)}
+                                    className="bg-orange-400 text-white px-4 py-2 rounded-xl hover:bg-orange-500"
+                                >
+                                    + Add Item
+                                </div>
                             </div>
-
-                            {dishesToOrder.map((dishToOrder, index) => (
-                                <DishToOrderItem
-                                    key={index + "-" + dishToOrder.id}
-                                    index={index}
-                                    dishToOrder={dishToOrder}
-                                    dishes={dishes}
-                                    removeToOrderList={removeDish}
-                                    addToOrderList={addDish}
-                                    updateOrderList={updateDish}
-                                />
-                            ))}
+                            <div className="flex items-center gap-2 bg-gray-200 p-5 rounded-lg">
+                                {confirmedOrderList.length === 0 ? (
+                                    <p className="text-gray-500">
+                                        No items added yet. Click "Add Item" to
+                                        start your order.
+                                    </p>
+                                ) : (
+                                    <div className="w-full space-y-4">
+                                        <DishToOrderItem
+                                            orderList={confirmedOrderList}
+                                            removeItemFromOrder={removeDish}
+                                        />
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         {/* Comments */}
