@@ -131,6 +131,7 @@ export default function OrderRegistration() {
             setLastname("");
             setFirstname("");
             setComments("");
+            setConfirmedOrderList([]);
         } catch (error) {
             console.error("Error submitting order:", error);
             setMessage({
