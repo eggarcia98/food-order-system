@@ -1,39 +1,84 @@
 import React, { use, useEffect } from "react";
 
-export default function AddItemModal({ open, setOpen, dishes, sides }: any) {
-    const [orderItem, setOrderItem] = React.useState<any>(null);
+export default function AddItemModal({
+    open,
+    setOpen,
+    dishes,
+    sides,
+    setConfirmedOrderList,
+}: any) {
+    const [orderItem, setOrderItem] = React.useState<any>({
+        dish: null,
+        sides: [],
+        quantity: 0,
+    });
 
     const [sidesSelected, setSidesSelected] = React.useState<any>([]);
+
+    const updateSidesList = (side: any) => {
+        const isSelected = !!sidesSelected.find((s: any) => s.id === side.id);
+
+        const updatedSides = [...sidesSelected];
+
+        if (isSelected) {
+            updatedSides.splice(
+                updatedSides.findIndex((s: any) => s.id === side.id),
+                1
+            );
+
+            return updatedSides;
+        }
+
+        updatedSides.push(side);
+        return updatedSides;
+    };
+
+    const resetOrderForm = () => {
+        setOrderItem({
+            dish: null,
+            sides: [],
+            quantity: 0,
+        });
+        setSidesSelected([]);
+    };
 
     const handleDishSelect = (dish: any) => {
         setOrderItem((prev: any) => ({ ...prev, dish }));
     };
 
-    const toggleDishSelection = (dishId: any) => {
-        return orderItem?.dish?.id === dishId;
-    };
-
     const handleSideSelect = (side: any) => {
-        setSidesSelected((prev: any) => {
-            if (prev.find((s: any) => s.id === side.id)) {
-                return prev.filter((s: any) => s.id !== side.id);
-            } else {
-                return [...prev, side];
-            }
-        });
-
-        setOrderItem((prev: any) => ({ ...prev, sides: sidesSelected }));
-
+        const updatedSides = updateSidesList(side);
+        setSidesSelected(updatedSides);
     };
 
-    const toogleSideSelection = (sideId: any) => {
-        return sidesSelected.find((s: any) => s.id === sideId);
+    const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const quantity = Number(e.target.value);
+        console.log("Quantity: ", quantity);
+        setOrderItem((prev: any) => ({ ...prev, quantity }));
     };
+
+    const toggleDishSelection = (dishId: any) => orderItem?.dish?.id === dishId;
+
+    const toggleSideSelection = (sideId: any) =>
+        sidesSelected.find((s: any) => s.id === sideId);
 
     useEffect(() => {
-        console.log("Selected sides updated:", setSidesSelected);
-        console.log("Order dish:", orderItem);
-    }, [ orderItem]);
+        setOrderItem((prev: any) => ({
+            ...prev,
+            sides: sidesSelected,
+        }));
+    }, [sidesSelected]);
+
+    const confirmOrderItem = () => {
+        console.log("Final Order Item: ", orderItem);
+        setConfirmedOrderList((prev: any) => [...prev, orderItem]);
+        resetOrderForm();
+        setOpen(false);
+    };
+
+    // useEffect(() => {
+    //     console.log("Current Order Item: ", orderItem);
+    // }, [orderItem]);
 
     return (
         <div
@@ -85,7 +130,7 @@ export default function AddItemModal({ open, setOpen, dishes, sides }: any) {
                                 key={side.id}
                                 onClick={() => handleSideSelect(side)}
                                 className={`border rounded-lg p-2 text-sm ${
-                                    toogleSideSelection(side.id)
+                                    toggleSideSelection(side.id)
                                         ? "border-green-600 bg-green-50"
                                         : "border-gray-200"
                                 }`}
@@ -101,8 +146,7 @@ export default function AddItemModal({ open, setOpen, dishes, sides }: any) {
                     <label className="text-lg font-medium">Quantity</label>
                     <input
                         type="number"
-                        value={0}
-                        onChange={(e) => {}}
+                        onChange={(e) => handleQuantityChange(e)}
                         min={1}
                         className="border rounded-lg w-20 text-center"
                     />
@@ -111,13 +155,15 @@ export default function AddItemModal({ open, setOpen, dishes, sides }: any) {
                 {/* Actions */}
                 <div className="mt-6 flex justify-end gap-2">
                     <button
-                        onClick={() => setOpen(false)}
+                        onClick={() => {
+                            setOpen(false);
+                        }}
                         className="px-4 py-2 rounded-xl bg-gray-200 hover:bg-gray-300"
                     >
                         Cancel
                     </button>
                     <button
-                        onClick={() => setOpen(false)}
+                        onClick={() => confirmOrderItem()}
                         className="px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700"
                     >
                         Add

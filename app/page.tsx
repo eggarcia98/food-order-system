@@ -19,6 +19,8 @@ export default function OrderRegistration() {
     const [lastname, setLastname] = useState("");
     const [firstname, setFirstname] = useState("");
 
+    const [confirmedOrderList, setConfirmedOrderList] = useState<any>([]);
+
     const [nationality, setNationality] = useState("");
     const [nationalityList, setNationalityList] = useState([
         { id: 1, name: "Ecuadorian" },
@@ -98,6 +100,10 @@ export default function OrderRegistration() {
             prev.map((dish, i) => (i === index ? dishToOrder : dish))
         );
     };
+
+    useEffect(() => {
+        console.log("Confirmed Order List: ", confirmedOrderList);
+    }, [confirmedOrderList]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -250,6 +256,7 @@ export default function OrderRegistration() {
                             sides={sides}
                             open={open}
                             setOpen={setOpen}
+                            setConfirmedOrderList={setConfirmedOrderList}
                         />
 
                         {/* Dishes */}
