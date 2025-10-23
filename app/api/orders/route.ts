@@ -23,12 +23,8 @@ interface Side {
 
 export async function POST(request: Request) {
     try {
-        const { client, dishes, comments } = await request.json();
-        const parsedDishes: OrderItem[] = dishes.map((item: OrderItem) => ({
-            id: item.dish.id,
-            quantity: item.quantity,
-            sides: item.sides,
-        }));
+        const { client, dishes: itemsOrder, comments } = await request.json();
+        const parsedDishes: OrderItem[] = [...itemsOrder]
 
         const order = await prisma.order.create({
             data: {
@@ -48,10 +44,18 @@ export async function POST(request: Request) {
                 },
                 order_code: `ORD-BRI${Date.now()}`,
                 order_item: {
-                    create: parsedDishes.map((dish: any) => ({
-                        dish_id: dish.id,
-                        quantity: dish.quantity,
+                    create: parsedDishes.map((orderItem: OrderItem) => ({
+                        dish_id: orderItem.dish.id,
+                        quantity: orderItem.quantity
                     })),
+                },
+                order_side_item: {
+                    create: parsedDishes.flatMap((orderItem: OrderItem) =>
+                        orderItem.sides.map((side: Side) => ({
+                            side_id: side.id,
+                            quantity: orderItem.quantity,
+                        }))
+                    ),
                 },
 
                 comments,

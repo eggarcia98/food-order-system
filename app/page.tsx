@@ -95,9 +95,9 @@ export default function OrderRegistration() {
         setConfirmedOrderList(updatedDishes);
     };
 
-    useEffect(() => {
-        console.log("Confirmed Order List: ", confirmedOrderList);
-    }, [confirmedOrderList]);
+    // useEffect(() => {
+    //     console.log("Confirmed Order List: ", confirmedOrderList);
+    // }, [confirmedOrderList]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
