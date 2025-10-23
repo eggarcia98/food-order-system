@@ -1,4 +1,4 @@
-import React, { use, useEffect } from "react";
+import React, {  useEffect } from "react";
 
 export default function AddItemModal({
     open,
@@ -12,8 +12,8 @@ export default function AddItemModal({
         sides: [],
         quantity: 0,
     });
-
     const [sidesSelected, setSidesSelected] = React.useState<any>([]);
+    const [quantity, setQuantity] = React.useState<number>(0);
 
     const updateSidesList = (side: any) => {
         const isSelected = !!sidesSelected.find((s: any) => s.id === side.id);
@@ -40,6 +40,7 @@ export default function AddItemModal({
             quantity: 0,
         });
         setSidesSelected([]);
+        setQuantity(0);
     };
 
     const handleDishSelect = (dish: any) => {
@@ -52,9 +53,7 @@ export default function AddItemModal({
     };
 
     const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const quantity = Number(e.target.value);
-        console.log("Quantity: ", quantity);
-        setOrderItem((prev: any) => ({ ...prev, quantity }));
+        setQuantity(Number(e.target.value));
     };
 
     const toggleDishSelection = (dishId: any) => orderItem?.dish?.id === dishId;
@@ -66,11 +65,11 @@ export default function AddItemModal({
         setOrderItem((prev: any) => ({
             ...prev,
             sides: sidesSelected,
+            quantity,
         }));
-    }, [sidesSelected]);
+    }, [sidesSelected, quantity]);
 
     const confirmOrderItem = () => {
-        console.log("Final Order Item: ", orderItem);
         setConfirmedOrderList((prev: any) => [...prev, orderItem]);
         resetOrderForm();
         setOpen(false);
@@ -146,6 +145,7 @@ export default function AddItemModal({
                     <label className="text-lg font-medium">Quantity</label>
                     <input
                         type="number"
+                        value={quantity}
                         onChange={(e) => handleQuantityChange(e)}
                         min={1}
                         className="border rounded-lg w-20 text-center"
