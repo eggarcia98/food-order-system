@@ -4,6 +4,7 @@
 import AddItemModal from "@/components/AddItemModal";
 import { DishToOrderItem } from "@/components/DishToOrderItem";
 import { Selector } from "@/components/SelectorComponent";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 interface OrderItem {
@@ -153,6 +154,13 @@ export default function OrderRegistration() {
                     <p className="text-gray-600 mb-8">
                         Register customer orders quickly and easily
                     </p>
+
+                    <Link
+                        href="/orders"
+                        className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm font-medium"
+                    >
+                        View Orders
+                    </Link>
 
                     {message && (
                         <div

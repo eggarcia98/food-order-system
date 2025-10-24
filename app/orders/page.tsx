@@ -1,0 +1,275 @@
+// app/orders/page.tsx
+"use client";
+
+import { useState, useEffect } from "react";
+import Link from "next/link";
+
+export interface Order {
+    id: number;
+    order_code: string;
+    customer_id: number;
+    comments: string;
+    created_at: string; // ISO date string
+    customer: Customer;
+    order_item: OrderItem[];
+    order_side_item: OrderSideItem[];
+}
+
+export interface Customer {
+    id: number;
+    first_name: string;
+    last_name: string;
+    phone_number: string;
+    nationality_id: number;
+}
+
+export interface OrderItem {
+    id: number;
+    order_id: number;
+    quantity: number;
+    dish_id: number;
+    dish: Dish;
+}
+
+export interface Dish {
+    id: number;
+    name: string;
+    price: number;
+    description: string;
+    img?: string;
+    extras?: string;
+}
+
+export interface OrderSideItem {
+    id: number;
+    order_id: number;
+    side_id: number;
+    quantity: number;
+    side: Side;
+}
+
+export interface Side {
+    id: number;
+    name: string;
+    cost: number;
+    price: number;
+    description: string;
+}
+
+export default function OrdersList() {
+    const [orders, setOrders] = useState<Order[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [searchTerm, setSearchTerm] = useState("");
+
+    useEffect(() => {
+        fetchOrders();
+    }, []);
+
+    const fetchOrders = async () => {
+        try {
+            setIsLoading(true);
+            const response = await fetch("/api/orders");
+            if (!response.ok) throw new Error("Failed to fetch orders");
+            const data: Order[] = await response.json();
+            console.log("Fetched orders:", data);
+            setOrders(data);
+        } catch (err) {
+            setError("Failed to load orders. Please try again.");
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const filteredOrders = orders.filter((order) => {
+        const customerName = `${order.customer.first_name} ${order.customer.last_name}`;
+
+        return customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            order.customer.phone_number.includes(searchTerm) ||
+            order.order_item.some((item) =>
+                item.dish.name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+    });
+
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        return date.toLocaleString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+    };
+
+    const getTotalItems = (orderItem: OrderItem[]) => {
+        return orderItem.reduce((sum, item) => sum + item.quantity, 0);
+    };
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
+                    <p className="mt-4 text-gray-600">Loading orders...</p>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 py-12 px-4">
+            <div className="max-w-6xl mx-auto">
+                {/* Header */}
+                <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                                Orders History
+                            </h1>
+                            <p className="text-gray-600">
+                                View and search past orders
+                            </p>
+                        </div>
+                        <Link
+                            href="/"
+                            className="px-6 py-3 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700 transition shadow-lg hover:shadow-xl"
+                        >
+                            + New Order
+                        </Link>
+                    </div>
+
+                    {/* Search Bar */}
+                    <div className="mt-6">
+                        <input
+                            type="text"
+                            placeholder="Search by name, phone, or dish..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white appearance-none"
+                        />
+                    </div>
+                </div>
+
+                {/* Error Message */}
+                {error && (
+                    <div className="bg-red-50 text-red-800 border border-red-200 rounded-lg p-4 mb-6">
+                        {error}
+                    </div>
+                )}
+
+                {/* Orders List */}
+                {filteredOrders.length === 0 ? (
+                    <div className="bg-white rounded-2xl shadow-xl p-12 text-center">
+                        <div className="text-gray-400 mb-4">
+                            <svg
+                                className="w-16 h-16 mx-auto"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                />
+                            </svg>
+                        </div>
+                        <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                            {searchTerm ? "No orders found" : "No orders yet"}
+                        </h3>
+                        <p className="text-gray-500">
+                            {searchTerm
+                                ? "Try a different search term"
+                                : "Start by creating your first order"}
+                        </p>
+                    </div>
+                ) : (
+                    <div className="space-y-4">
+                        {filteredOrders.map((order) => (
+                            <div
+                                key={order.id}
+                                className="bg-white rounded-xl shadow-md hover:shadow-lg transition p-6"
+                            >
+                                {/* Order Header */}
+                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 pb-4 border-b border-gray-200">
+                                    <div>
+                                        <h3 className="text-xl font-bold text-gray-900">
+                                            {order.customer.first_name}{" "}
+                                            {order.customer.last_name}
+                                        </h3>
+                                        <p className="text-gray-600">
+                                            {order.customer.phone_number}
+                                        </p>
+                                    </div>
+                                    <div className="text-right mt-2 md:mt-0">
+                                        <p className="text-sm text-gray-500">
+                                            {formatDate(order.created_at)}
+                                        </p>
+                                        <p className="text-sm font-medium text-orange-600">
+                                            {getTotalItems(order.order_item)}{" "}
+                                            item(s)
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Dishes */}
+                                <div className="space-y-3">
+                                    <h4 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">
+                                        Dishes:
+                                    </h4>
+                                    <div className="grid gap-3">
+                                        {order.order_item.map((orderItem) => (
+                                            <div
+                                                key={orderItem.id}
+                                                className="flex justify-between items-start bg-gray-50 p-3 rounded-lg"
+                                            >
+                                                <div className="flex-1">
+                                                    <p className="font-medium text-gray-900">
+                                                        {orderItem.dish.name}
+                                                    </p>
+                                                </div>
+                                                <div className="ml-4 flex items-center justify-center bg-orange-100 text-orange-800 font-semibold px-3 py-1 rounded-full text-sm">
+                                                    x{orderItem.quantity}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Comments */}
+                                {order.comments && (
+                                    <div className="mt-4 pt-4 border-t border-gray-200">
+                                        <h4 className="font-semibold text-gray-700 text-sm uppercase tracking-wide mb-2">
+                                            Comments:
+                                        </h4>
+                                        <p className="text-gray-600 italic">
+                                            {order.comments}
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                {/* Summary */}
+                {filteredOrders.length > 0 && (
+                    <div className="mt-6 bg-white rounded-xl shadow-md p-6 text-center">
+                        <p className="text-gray-600">
+                            Showing{" "}
+                            <span className="font-bold text-orange-600">
+                                {filteredOrders.length}
+                            </span>{" "}
+                            of{" "}
+                            <span className="font-bold">{orders.length}</span>{" "}
+                            total orders
+                        </p>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
