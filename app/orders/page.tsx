@@ -62,6 +62,31 @@ export default function OrdersList() {
     const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
 
+    // Get current week (Monday - Sunday)
+    const getWeekDates = () => {
+        const now = new Date();
+        const dayOfWeek = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
+        const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Adjust if Sunday
+
+        const monday = new Date(now);
+        monday.setDate(now.getDate() + diff + 1); // I have to check timezone of database
+        monday.setHours(0, 0, 0, 0);
+
+        const sunday = new Date(monday);
+        sunday.setDate(monday.getDate() + 6);
+        sunday.setHours(23, 59, 59, 999);
+
+        return { monday, sunday };
+    };
+
+    const { monday: currentMonday, sunday: currentSunday } = getWeekDates();
+    const [startDate, setStartDate] = useState(
+        currentMonday.toISOString().split("T")[0]
+    );
+    const [endDate, setEndDate] = useState(
+        currentSunday.toISOString().split("T")[0]
+    );
+
     useEffect(() => {
         fetchOrders();
     }, []);
@@ -85,11 +110,22 @@ export default function OrdersList() {
     const filteredOrders = orders.filter((order) => {
         const customerName = `${order.customer.first_name} ${order.customer.last_name}`;
 
-        return customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        const matchesSearch =
+            customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             order.customer.phone_number.includes(searchTerm) ||
             order.order_item.some((item) =>
                 item.dish.name.toLowerCase().includes(searchTerm.toLowerCase())
             );
+
+        const orderDate = new Date(order.created_at);
+        const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+
+        const matchesDate = orderDate >= start && orderDate <= end;
+
+        return matchesSearch && matchesDate;
     });
 
     const formatDate = (dateString: string) => {
@@ -105,6 +141,26 @@ export default function OrdersList() {
 
     const getTotalItems = (orderItem: OrderItem[]) => {
         return orderItem.reduce((sum, item) => sum + item.quantity, 0);
+    };
+
+    const setThisWeek = () => {
+        const { monday, sunday } = getWeekDates();
+        setStartDate(monday.toISOString().split("T")[0]);
+        setEndDate(sunday.toISOString().split("T")[0]);
+    };
+
+    const setToday = () => {
+        const today = new Date().toISOString().split("T")[0];
+        setStartDate(today);
+        setEndDate(today);
+    };
+
+    const setThisMonth = () => {
+        const now = new Date();
+        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        setStartDate(firstDay.toISOString().split("T")[0]);
+        setEndDate(lastDay.toISOString().split("T")[0]);
     };
 
     if (isLoading) {
@@ -149,6 +205,63 @@ export default function OrdersList() {
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white appearance-none"
                         />
+                    </div>
+
+                    {/* Date Filter */}
+                    <div className="mt-6 space-y-4">
+                        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+                            Date Range
+                        </h3>
+
+                        {/* Quick Filters */}
+                        <div className="flex flex-wrap gap-2">
+                            <button
+                                onClick={setToday}
+                                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm font-medium"
+                            >
+                                Today
+                            </button>
+                            <button
+                                onClick={setThisWeek}
+                                className="px-4 py-2 bg-orange-100 text-orange-700 rounded-lg hover:bg-orange-200 transition text-sm font-medium"
+                            >
+                                This Week
+                            </button>
+                            <button
+                                onClick={setThisMonth}
+                                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm font-medium"
+                            >
+                                This Month
+                            </button>
+                        </div>
+
+                        {/* Date Inputs */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Start Date
+                                </label>
+                                <input
+                                    type="date"
+                                    value={startDate}
+                                    onChange={(e) =>
+                                        setStartDate(e.target.value)
+                                    }
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white appearance-none"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    End Date
+                                </label>
+                                <input
+                                    type="date"
+                                    value={endDate}
+                                    onChange={(e) => setEndDate(e.target.value)}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white appearance-none"
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
 
