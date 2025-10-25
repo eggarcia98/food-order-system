@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect } from "react";
 
 export default function AddItemModal({
@@ -95,7 +97,7 @@ export default function AddItemModal({
                 </button>
             </div>
 
-            <div className="flex flex-col h-full overflow-y-auto p-4 pb-16">
+            <div className="flex flex-col h-full overflow-y-auto p-4 pb-16 scroll-smooth">
                 {/* Dishes */}
                 <div>
                     <h3 className="text-lg font-semibold mb-2">Dishes</h3>
