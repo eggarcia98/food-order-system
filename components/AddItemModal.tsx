@@ -1,4 +1,4 @@
-import React, {  useEffect } from "react";
+import React, { useEffect } from "react";
 
 export default function AddItemModal({
     open,
@@ -79,20 +79,27 @@ export default function AddItemModal({
 
     return (
         <div
-            className={`fixed z-50 bg-white shadow-xl p-6 transition-all duration-500 ease-out
-    ${open ? "opacity-100" : "opacity-0 pointer-events-none"}
-    bottom-0 left-0 right-0 rounded-t-3xl
-    max-h-[70vh] md:max-h-[80vh] md:rounded-2xl md:w-[90%] md:max-w-lg md:left-1/2 md:top-1/2 md:translate-x-[-50%] md:translate-y-[-50%]
+            className={`fixed inset-x-0 bottom-0 z-50 bg-white shadow-xl transition-transform duration-500 ease-out
+    ${open ? "translate-y-0" : "translate-y-full"}
+    rounded-t-3xl max-h-[80vh] flex flex-col
+    md:rounded-2xl md:left-1/2 md:top-1/2 md:bottom-auto md:translate-x-[-50%] md:translate-y-[-50%]
+    md:max-w-lg md:w-[90%] md:h-auto
   `}
         >
-            <div className="flex flex-col h-full overflow-y-auto">
-                <h2 className="text-xl font-semibold mb-4 text-center">
-                    Add Item
-                </h2>
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+                <h2 className="text-lg font-semibold">Add Item</h2>
+                <button
+                    onClick={() => setOpen(false)}
+                    className="text-gray-500 hover:text-gray-700"
+                >
+                    ✕
+                </button>
+            </div>
 
+            <div className="flex-1 overflow-y-auto p-4">
                 {/* Dishes */}
                 <div>
-                    <h3 className="text-lg font-medium mb-2">Dishes</h3>
+                    <h3 className="text-lg font-semibold mb-2">Dishes</h3>
                     <div className="grid grid-cols-2 gap-3">
                         {dishes.map((dish) => (
                             <div
@@ -120,7 +127,7 @@ export default function AddItemModal({
 
                 {/* Sides */}
                 <div className="mt-6">
-                    <h3 className="text-lg font-medium mb-2">Sides</h3>
+                    <h3 className="text-lg font-semibold mb-2">Sides</h3>
                     <div className="grid grid-cols-2 gap-2">
                         {sides.map((side) => (
                             <div
@@ -140,7 +147,7 @@ export default function AddItemModal({
 
                 {/* Quantity */}
                 <div className="mt-6 flex items-center justify-between">
-                    <label className="text-lg font-medium">Quantity</label>
+                    <label className="text-lg font-semibold">Quantity</label>
                     <input
                         type="number"
                         value={quantity}
