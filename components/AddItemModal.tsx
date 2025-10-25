@@ -79,11 +79,10 @@ export default function AddItemModal({
 
     return (
         <div
-            className={`fixed inset-x-0 bottom-0 z-50 bg-white shadow-xl transition-transform duration-500 ease-out
-    ${open ? "translate-y-0" : "translate-y-full"}
-    rounded-t-3xl max-h-[80vh] flex flex-col
-    md:rounded-2xl md:left-1/2 md:top-1/2 md:bottom-auto md:translate-x-[-50%] md:translate-y-[-50%]
-    md:max-w-lg md:w-[90%] md:h-auto
+            className={`fixed z-50 bg-white shadow-xl p-6 transition-all duration-500 ease-out
+    ${open ? "opacity-100" : "opacity-0 pointer-events-none"}
+    bottom-0 left-0 right-0 rounded-t-3xl
+    max-h-[70vh] md:max-h-[80vh] md:rounded-2xl md:w-[90%] md:max-w-lg md:left-1/2 md:top-1/2 md:translate-x-[-50%] md:translate-y-[-50%]
   `}
         >
             <div className="p-4 border-b border-gray-200 flex justify-between items-center">
@@ -96,7 +95,7 @@ export default function AddItemModal({
                 </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4">
+            <div className="flex flex-col h-full overflow-y-auto p-4 pb-16">
                 {/* Dishes */}
                 <div>
                     <h3 className="text-lg font-semibold mb-2">Dishes</h3>
