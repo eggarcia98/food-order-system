@@ -71,6 +71,7 @@ export default function AddItemModal({
                 id: side.id,
                 name: side.name,
                 quantity: sideQuantities[side.id],
+                price: side.price,
             }));
 
         setSidesSelected(updatedSides);

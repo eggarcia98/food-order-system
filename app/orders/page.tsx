@@ -108,6 +108,17 @@ export default function OrdersList() {
         }
     };
 
+    const getSidesForOrder = (order: Order) => {
+        return order.order_side_item.map((osi) => {
+            return {
+                id: osi.side.id,
+                name: osi.side.name,
+                price: osi.side.price,
+                quantity: osi.quantity,
+            };
+        });
+    };
+
     const filteredOrders = orders.filter((order) => {
         const customerName = `${order.customer.first_name} ${order.customer.last_name}`;
 
@@ -180,6 +191,19 @@ export default function OrdersList() {
         const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
         setStartDate(firstDay.toISOString().split("T")[0]);
         setEndDate(lastDay.toISOString().split("T")[0]);
+    };
+
+    const getTotal = (order: Order) => {
+        const sidesForOrder = getSidesForOrder(order);
+        const sidesTotal = sidesForOrder.reduce(
+            (acc, side) => acc + side.price * side.quantity,
+            0
+        );
+        const dishesTotal = order.order_item.reduce(
+            (acc, item) => acc + item.dish.price * item.quantity,
+            0
+        );
+        return sidesTotal + dishesTotal;
     };
 
     if (isLoading) {
@@ -336,14 +360,14 @@ export default function OrdersList() {
                                             {order.customer.phone_number}
                                         </p>
                                     </div>
-                                    <div className="text-right mt-2 md:mt-0">
-                                        <div className="text-xs md:text-sm text-orange-600">
+                                    <div className="text-right mt-2 md:mt-0 text-xs md:text-sm">
+                                        <div className="text-orange-600">
                                             Status: {order.status.name}
                                         </div>
-                                        <p className="text-xs md:text-sm text-gray-500">
+                                        <p className="text-gray-500">
                                             {formatDate(order.created_at)}
                                         </p>
-                                        <p className="text-xs md:text-sm font-medium text-orange-600">
+                                        <p className="font-medium text-orange-600">
                                             {getTotalItems(order.order_item)}{" "}
                                             item(s)
                                         </p>
@@ -351,8 +375,8 @@ export default function OrdersList() {
                                 </div>
 
                                 {/* Dishes */}
-                                <div className="space-y-3">
-                                    <h4 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">
+                                <div className="space-y-3 text-sm md:text-md">
+                                    <h4 className="font-semibold text-gray-700  uppercase tracking-wide">
                                         Dishes:
                                     </h4>
                                     <div className="grid gap-3">
@@ -366,7 +390,7 @@ export default function OrdersList() {
                                                         {orderItem.dish.name}
                                                     </p>
                                                 </div>
-                                                <div className="ml-4 flex items-center justify-center bg-orange-100 text-orange-800 font-semibold px-3 py-1 rounded-full text-sm">
+                                                <div className="ml-4 flex items-center justify-center bg-orange-100 text-orange-800 font-semibold px-3  rounded-full ">
                                                     x{orderItem.quantity}
                                                 </div>
                                             </div>
@@ -374,10 +398,40 @@ export default function OrdersList() {
                                     </div>
                                 </div>
 
+                                {/* Sides */}
+                                <div className="space-y-3 text-sm md:text-md">
+                                    {getSidesForOrder(order).length > 0 && (
+                                        <p className="text-sm text-gray-600 mt-1">
+                                            <h4 className="font-semibold text-gray-700  uppercase tracking-wide">
+                                                Sides:
+                                            </h4>
+                                            <div className="grid gap-3">
+                                                {getSidesForOrder(order).map(
+                                                    (side) => (
+                                                        <div
+                                                            key={side.id}
+                                                            className="flex justify-between items-start bg-gray-50 p-3 rounded-lg"
+                                                        >
+                                                            <div className="flex-1">
+                                                                <p className="font-medium text-gray-900">
+                                                                    {side.name}
+                                                                </p>
+                                                            </div>
+                                                            <div className="ml-4 flex items-center justify-center bg-orange-100 text-orange-800 font-semibold px-3  rounded-full ">
+                                                                x{side.quantity}
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                )}
+                                            </div>
+                                        </p>
+                                    )}
+                                </div>
+
                                 {/* Comments */}
                                 {order.comments && (
-                                    <div className="mt-4 pt-4 border-t border-gray-200">
-                                        <h4 className="font-semibold text-gray-700 text-sm uppercase tracking-wide mb-2">
+                                    <div className="mt-4 pt-4 border-t border-gray-200 md:text-md text-sm">
+                                        <h4 className="font-semibold text-gray-700 uppercase tracking-wide mb-2">
                                             Comments:
                                         </h4>
                                         <p className="text-gray-600 italic">
@@ -386,11 +440,20 @@ export default function OrdersList() {
                                     </div>
                                 )}
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+                                <div className="mt-4 pt-4 border-t border-gray-200 md:text-md text-sm flex justify-between items-center">
+                                    <h4 className="font-semibold text-gray-700 uppercase tracking-wide mb-2">
+                                        Total:
+                                    </h4>
+                                    <p className="text-gray-600">
+                                        ${getTotal(order).toFixed(2)}
+                                    </p>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4 ">
                                     {order.status.id !== 5 &&
                                         order.status.id === 1 && (
                                             <div
-                                                className="mt-6 px-4 py-2 mx-15 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition text-center cursor-pointer"
+                                                className="mt-6 px-4 py-2 md:mx-15 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition text-center cursor-pointer"
                                                 onClick={() =>
                                                     updateOrderStatus(
                                                         order.id,
@@ -404,7 +467,7 @@ export default function OrdersList() {
                                     {order.status.id !== 6 &&
                                         order.status.id === 1 && (
                                             <div
-                                                className="mt-6 px-4 py-2 mx-15 
+                                                className="mt-6 px-4 py-2 md:mx-15 
                                                     bg-red-700 text-white font-semibold rounded-lg hover:bg-red-800 transition text-center cursor-pointer"
                                                 onClick={() =>
                                                     updateOrderStatus(
