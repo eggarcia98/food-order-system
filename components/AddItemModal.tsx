@@ -79,6 +79,8 @@ export default function AddItemModal({
     //     console.log("Current Order Item: ", orderItem);
     // }, [orderItem]);
 
+    if (!open) return null;
+
     return (
         <div
             className={`fixed inset-x-0 bottom-0 z-50 bg-white shadow-xl transition-transform duration-500 ease-out
