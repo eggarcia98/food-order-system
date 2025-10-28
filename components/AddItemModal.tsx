@@ -100,7 +100,7 @@ export default function AddItemModal({
                 </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 pb-16 smooth-scroll">
+            <div className="flex-1 overflow-y-auto p-4 smooth-scroll">
                 {/* Dishes */}
                 <div>
                     <h3 className="text-lg font-semibold mb-2">Dishes</h3>
