@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma"; // or your db connection
 
 
-export async function PUT(_req: Request, { params }: Params) {
+export async function PUT(_req: Request, { params }) {
     const { orderId } = params;
 
     // Get status_id from body if needed
