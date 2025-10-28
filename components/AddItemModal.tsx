@@ -17,6 +17,27 @@ export default function AddItemModal({
     const [sidesSelected, setSidesSelected] = React.useState<any>([]);
     const [quantity, setQuantity] = React.useState<number>(1);
 
+    useEffect(() => {
+        setQuantities(() =>
+            sides.reduce((acc, s) => ({ ...acc, [s.id]: 0 }), {})
+        );
+    }, [sides]);
+
+    const [sideQuantities, setQuantities] = React.useState<any>({});
+
+    const handleIncrement = (id: number) => {
+        console.log("Incrementing side id:", sideQuantities);
+        const updated = { ...sideQuantities, [id]: sideQuantities[id] + 1 };
+        setQuantities(updated);
+    };
+
+    const handleDecrement = (id: number) => {
+        console.log("Decrementing side id:", id);
+        if (sideQuantities[id] <= 0) return;
+        const updated = { ...sideQuantities, [id]: sideQuantities[id] - 1 };
+        setQuantities(updated);
+    };
+
     const updateSidesList = (side: any) => {
         const isSelected = !!sidesSelected.find((s: any) => s.id === side.id);
         const updatedSides = [...sidesSelected];
@@ -132,6 +153,32 @@ export default function AddItemModal({
                 {/* Sides */}
                 <div className="mt-6">
                     <h3 className="text-lg font-semibold mb-2">Sides</h3>
+                    {sides.map((side) => (
+                        <div
+                            key={side.id}
+                            className="flex justify-between items-center border rounded-lg p-2 px-3"
+                        >
+                            <span className="font-medium">{side.name}</span>
+                            <div className="flex items-center gap-2">
+                                <div
+                                    className="px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 font-bold"
+                                    onClick={() => handleDecrement(side.id)}
+                                >
+                                    -
+                                </div>
+                                <span className="w-6 text-center">
+                                    {sideQuantities[side.id] ?? 0}
+                                </span>
+                                <div
+                                    className="px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 font-bold"
+                                    onClick={() => handleIncrement(side.id)}
+                                >
+                                    +
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+
                     <div className="grid grid-cols-2 gap-2">
                         {sides.map((side) => (
                             <div
