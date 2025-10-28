@@ -119,7 +119,7 @@ export default function OrderRegistration() {
                         nationality,
                         phoneNumber,
                     },
-                    dishes: confirmedOrderList,
+                    itemsOrder: confirmedOrderList,
                     comments,
                 }),
             });

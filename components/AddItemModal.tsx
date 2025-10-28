@@ -46,7 +46,6 @@ export default function AddItemModal({
     const [sideQuantities, setSideQuantities] = React.useState<any>({});
 
     const handleIncrement = (id: number) => {
-        console.log("Incrementing side id:", sideQuantities);
         const updatedSideQuantities = {
             ...sideQuantities,
             [id]: sideQuantities[id] + 1,
@@ -74,7 +73,6 @@ export default function AddItemModal({
                 quantity: sideQuantities[side.id],
             }));
 
-        console.log("Updated sides selected: ", updatedSides);
         setSidesSelected(updatedSides);
     };
 
@@ -113,13 +111,12 @@ export default function AddItemModal({
     }, [quantity, sidesSelected, mainDishSelected]);
 
     useEffect(() => {
-        console.log("Side Quantities Updated: ", sideQuantities);
         updateSidesList();
     }, [sideQuantities]);
     
-    useEffect(() => {
-        console.log("Current Order Item: ", orderItem);
-    }, [orderItem]);
+    // useEffect(() => {
+    //     console.log("Current Order Item: ", orderItem);
+    // }, [orderItem]);
 
     if (!open) return null;
 
