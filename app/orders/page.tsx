@@ -108,6 +108,17 @@ export default function OrdersList() {
         }
     };
 
+    const getSidesForOrder = (order: Order) => {
+        return order.order_side_item.map((osi) => {
+            return {
+                id: osi.side.id,
+                name: osi.side.name,
+                price: osi.side.price,
+                quantity: osi.quantity,
+            };
+        });
+    };
+
     const filteredOrders = orders.filter((order) => {
         const customerName = `${order.customer.first_name} ${order.customer.last_name}`;
 
@@ -180,6 +191,19 @@ export default function OrdersList() {
         const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
         setStartDate(firstDay.toISOString().split("T")[0]);
         setEndDate(lastDay.toISOString().split("T")[0]);
+    };
+
+    const getTotal = (order: Order) => {
+        const sidesForOrder = getSidesForOrder(order);
+        const sidesTotal = sidesForOrder.reduce(
+            (acc, side) => acc + side.price * side.quantity,
+            0
+        );
+        const dishesTotal = order.order_item.reduce(
+            (acc, item) => acc + item.dish.price * item.quantity,
+            0
+        );
+        return sidesTotal + dishesTotal;
     };
 
     if (isLoading) {
@@ -374,6 +398,36 @@ export default function OrdersList() {
                                     </div>
                                 </div>
 
+                                {/* Sides */}
+                                <div className="space-y-3 text-sm md:text-md">
+                                    {getSidesForOrder(order).length > 0 && (
+                                        <p className="text-sm text-gray-600 mt-1">
+                                            <h4 className="font-semibold text-gray-700  uppercase tracking-wide">
+                                                Sides:
+                                            </h4>
+                                            <div className="grid gap-3">
+                                                {getSidesForOrder(order).map(
+                                                    (side) => (
+                                                        <div
+                                                            key={side.id}
+                                                            className="flex justify-between items-start bg-gray-50 p-3 rounded-lg"
+                                                        >
+                                                            <div className="flex-1">
+                                                                <p className="font-medium text-gray-900">
+                                                                    {side.name}
+                                                                </p>
+                                                            </div>
+                                                            <div className="ml-4 flex items-center justify-center bg-orange-100 text-orange-800 font-semibold px-3  rounded-full ">
+                                                                x{side.quantity}
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                )}
+                                            </div>
+                                        </p>
+                                    )}
+                                </div>
+
                                 {/* Comments */}
                                 {order.comments && (
                                     <div className="mt-4 pt-4 border-t border-gray-200 md:text-md text-sm">
@@ -385,6 +439,15 @@ export default function OrdersList() {
                                         </p>
                                     </div>
                                 )}
+
+                                <div className="mt-4 pt-4 border-t border-gray-200 md:text-md text-sm flex justify-between items-center">
+                                    <h4 className="font-semibold text-gray-700 uppercase tracking-wide mb-2">
+                                        Total:
+                                    </h4>
+                                    <p className="text-gray-600">
+                                        ${getTotal(order).toFixed(2)}
+                                    </p>
+                                </div>
 
                                 <div className="grid grid-cols-2 gap-4 ">
                                     {order.status.id !== 5 &&

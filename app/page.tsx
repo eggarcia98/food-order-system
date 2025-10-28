@@ -53,7 +53,6 @@ export default function OrderRegistration() {
         text: string;
     } | null>(null);
 
-   
     const fetchNationalities = async () => {
         try {
             const response = await fetch("/api/nationalities");
