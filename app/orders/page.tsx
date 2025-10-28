@@ -328,9 +328,9 @@ export default function OrdersList() {
                                 {/* Order Header */}
                                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 pb-4 border-b border-gray-200">
                                     <div>
-                                        <h3 className="text-xl font-bold text-gray-900">
+                                        <h3 className="text-lg md:text-xl font-bold text-gray-900">
                                             {order.customer.first_name}{" "}
-                                            {order.customer.last_name} -
+                                            {order.customer.last_name}
                                         </h3>
                                         <p className="text-gray-600">
                                             {order.customer.phone_number}
