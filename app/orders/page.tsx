@@ -336,14 +336,14 @@ export default function OrdersList() {
                                             {order.customer.phone_number}
                                         </p>
                                     </div>
-                                    <div className="text-right mt-2 md:mt-0">
-                                        <div className="text-xs md:text-sm text-orange-600">
+                                    <div className="text-right mt-2 md:mt-0 text-xs md:text-sm">
+                                        <div className="text-orange-600">
                                             Status: {order.status.name}
                                         </div>
-                                        <p className="text-xs md:text-sm text-gray-500">
+                                        <p className="text-gray-500">
                                             {formatDate(order.created_at)}
                                         </p>
-                                        <p className="text-xs md:text-sm font-medium text-orange-600">
+                                        <p className="font-medium text-orange-600">
                                             {getTotalItems(order.order_item)}{" "}
                                             item(s)
                                         </p>
@@ -351,8 +351,8 @@ export default function OrdersList() {
                                 </div>
 
                                 {/* Dishes */}
-                                <div className="space-y-3">
-                                    <h4 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">
+                                <div className="space-y-3 text-sm md:text-md">
+                                    <h4 className="font-semibold text-gray-700  uppercase tracking-wide">
                                         Dishes:
                                     </h4>
                                     <div className="grid gap-3">
@@ -366,7 +366,7 @@ export default function OrdersList() {
                                                         {orderItem.dish.name}
                                                     </p>
                                                 </div>
-                                                <div className="ml-4 flex items-center justify-center bg-orange-100 text-orange-800 font-semibold px-3 py-1 rounded-full text-sm">
+                                                <div className="ml-4 flex items-center justify-center bg-orange-100 text-orange-800 font-semibold px-3  rounded-full ">
                                                     x{orderItem.quantity}
                                                 </div>
                                             </div>
@@ -376,8 +376,8 @@ export default function OrdersList() {
 
                                 {/* Comments */}
                                 {order.comments && (
-                                    <div className="mt-4 pt-4 border-t border-gray-200">
-                                        <h4 className="font-semibold text-gray-700 text-sm uppercase tracking-wide mb-2">
+                                    <div className="mt-4 pt-4 border-t border-gray-200 md:text-md text-sm">
+                                        <h4 className="font-semibold text-gray-700 uppercase tracking-wide mb-2">
                                             Comments:
                                         </h4>
                                         <p className="text-gray-600 italic">
