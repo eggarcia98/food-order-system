@@ -1,6 +1,24 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { use, useEffect } from "react";
+
+interface DishItem {
+    id: number;
+    name: string;
+    price: number;
+    quantity?: number;
+}
+
+interface SideItem {
+    id: number;
+    name: string;
+    price?: number;
+    quantity?: number;
+}
+interface OrderItem {
+    dish: DishItem | null;
+    sides: SideItem[];
+}
 
 export default function AddItemModal({
     open,
@@ -9,47 +27,68 @@ export default function AddItemModal({
     sides,
     setConfirmedOrderList,
 }: any) {
-    const [orderItem, setOrderItem] = React.useState<any>({
+    const [orderItem, setOrderItem] = React.useState<OrderItem>({
         dish: null,
         sides: [],
-        quantity: 0,
     });
+
+    const [mainDishSelected, setMainDishSelected] = React.useState<any>(null);
+
     const [sidesSelected, setSidesSelected] = React.useState<any>([]);
     const [quantity, setQuantity] = React.useState<number>(1);
 
-    const updateSidesList = (side: any) => {
-        const isSelected = !!sidesSelected.find((s: any) => s.id === side.id);
-        const updatedSides = [...sidesSelected];
+    useEffect(() => {
+        setSideQuantities(() =>
+            sides.reduce((acc, s) => ({ ...acc, [s.id]: 0 }), {})
+        );
+    }, [sides]);
 
-        if (isSelected) {
-            updatedSides.splice(
-                updatedSides.findIndex((s: any) => s.id === side.id),
-                1
-            );
-            return updatedSides;
-        }
+    const [sideQuantities, setSideQuantities] = React.useState<any>({});
 
-        updatedSides.push(side);
-        return updatedSides;
+    const handleIncrement = (id: number) => {
+        const updatedSideQuantities = {
+            ...sideQuantities,
+            [id]: sideQuantities[id] + 1,
+        };
+        setSideQuantities(updatedSideQuantities);
+    };
+
+    const handleDecrement = async (id: number) => {
+
+        if (sideQuantities[id] <= 0) return;
+        const updatedSideQuantities = {
+            ...sideQuantities,
+            [id]: sideQuantities[id] - 1,
+        };
+        setSideQuantities(updatedSideQuantities);
+    };
+
+    const updateSidesList = () => {
+        // Get the ids of sides with quantity > 0 and update sides Selected with an array of objects wiht { id, name, quantity }
+        const updatedSides = sides
+            .filter((side) => sideQuantities[side.id] > 0)
+            .map((side) => ({
+                id: side.id,
+                name: side.name,
+                quantity: sideQuantities[side.id],
+            }));
+
+        setSidesSelected(updatedSides);
     };
 
     const resetOrderForm = () => {
         setOrderItem({
             dish: null,
             sides: [],
-            quantity: 0,
         });
         setSidesSelected([]);
+        setMainDishSelected(null);
+        setSideQuantities({})
         setQuantity(1);
     };
 
     const handleDishSelect = (dish: any) => {
-        setOrderItem((prev: any) => ({ ...prev, dish }));
-    };
-
-    const handleSideSelect = (side: any) => {
-        const updatedSides = updateSidesList(side);
-        setSidesSelected(updatedSides);
+        setMainDishSelected(dish);
     };
 
     const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,23 +97,23 @@ export default function AddItemModal({
 
     const toggleDishSelection = (dishId: any) => orderItem?.dish?.id === dishId;
 
-    const toggleSideSelection = (sideId: any) =>
-        sidesSelected.find((s: any) => s.id === sideId);
-
-    useEffect(() => {
-        setOrderItem((prev: any) => ({
-            ...prev,
-            sides: sidesSelected,
-            quantity,
-        }));
-    }, [sidesSelected, quantity]);
-
     const confirmOrderItem = () => {
         setConfirmedOrderList((prev: any) => [...prev, orderItem]);
         resetOrderForm();
         setOpen(false);
     };
 
+    useEffect(() => {
+        setOrderItem({
+            dish: { ...mainDishSelected, quantity },
+            sides: sidesSelected,
+        });
+    }, [quantity, sidesSelected, mainDishSelected]);
+
+    useEffect(() => {
+        updateSidesList();
+    }, [sideQuantities]);
+    
     // useEffect(() => {
     //     console.log("Current Order Item: ", orderItem);
     // }, [orderItem]);
@@ -100,7 +139,7 @@ export default function AddItemModal({
                 </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 pb-16 smooth-scroll">
+            <div className="flex-1 overflow-y-auto p-4 smooth-scroll">
                 {/* Dishes */}
                 <div>
                     <h3 className="text-lg font-semibold mb-2">Dishes</h3>
@@ -129,10 +168,50 @@ export default function AddItemModal({
                     </div>
                 </div>
 
+                {/* Quantity */}
+                <div className="mt-6 flex items-center justify-between">
+                    <label className="text-lg font-semibold">Quantity</label>
+                    <input
+                        type="number"
+                        value={quantity}
+                        onChange={(e) => handleQuantityChange(e)}
+                        min={1}
+                        className="border rounded-lg w-20 text-center"
+                    />
+                </div>
+
                 {/* Sides */}
                 <div className="mt-6">
                     <h3 className="text-lg font-semibold mb-2">Sides</h3>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="flex flex-col gap-2">
+                        {sides.map((side) => (
+                            <div
+                                key={side.id}
+                                className="flex justify-between items-center  border-b p-2 px-3 text-sm"
+                            >
+                                <span className="">{side.name}</span>
+                                <div className="flex items-center gap-2">
+                                    <div
+                                        className="px-2  rounded bg-gray-200 hover:bg-gray-300 font-bold"
+                                        onClick={() => handleDecrement(side.id)}
+                                    >
+                                        -
+                                    </div>
+                                    <span className="w-6 text-center">
+                                        {sideQuantities[side.id] ?? 0}
+                                    </span>
+                                    <div
+                                        className="px-2 rounded bg-gray-200 hover:bg-gray-300 font-bold"
+                                        onClick={() => handleIncrement(side.id)}
+                                    >
+                                        +
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* <div className="grid grid-cols-2 gap-2">
                         {sides.map((side) => (
                             <div
                                 key={side.id}
@@ -146,19 +225,7 @@ export default function AddItemModal({
                                 {side.name} (${side.price})
                             </div>
                         ))}
-                    </div>
-                </div>
-
-                {/* Quantity */}
-                <div className="mt-6 flex items-center justify-between">
-                    <label className="text-lg font-semibold">Quantity</label>
-                    <input
-                        type="number"
-                        value={quantity}
-                        onChange={(e) => handleQuantityChange(e)}
-                        min={1}
-                        className="border rounded-lg w-20 text-center"
-                    />
+                    </div> */}
                 </div>
 
                 {/* Actions */}

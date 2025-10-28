@@ -4,7 +4,6 @@ export const runtime = "edge";
 
 interface OrderItem {
     dish: Dish;
-    quantity: number;
     sides: Side[];
 }
 
@@ -13,17 +12,20 @@ interface Dish {
     name: string;
     price: number;
     img?: string;
+    quantity: number;
 }
 
 interface Side {
     id: number;
     name: string;
     price: number;
+    quantity: number;
 }
 
 export async function POST(request: Request) {
     try {
-        const { client, dishes: itemsOrder, comments } = await request.json();
+        const { client, itemsOrder, comments } = await request.json();
+
         const parsedDishes: OrderItem[] = [...itemsOrder]
 
         const order = await prisma.order.create({
@@ -46,14 +48,14 @@ export async function POST(request: Request) {
                 order_item: {
                     create: parsedDishes.map((orderItem: OrderItem) => ({
                         dish_id: orderItem.dish.id,
-                        quantity: orderItem.quantity
+                        quantity: orderItem.dish.quantity,
                     })),
                 },
                 order_side_item: {
                     create: parsedDishes.flatMap((orderItem: OrderItem) =>
                         orderItem.sides.map((side: Side) => ({
                             side_id: side.id,
-                            quantity: orderItem.quantity,
+                            quantity: side.quantity,
                         }))
                     ),
                 },
