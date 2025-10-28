@@ -5,12 +5,13 @@ export const DishToOrderItem = ({ orderList, removeItemFromOrder }: any) => {
 
     const getTotal = (item: any) => {
         const sidesTotal = item.sides.reduce(
-            (acc: number, side: any) => acc + side.price,
+            (acc: number, side: any) => acc + (side.price * side.quantity || 0),
             0
         );
-        return (item.dish.price + sidesTotal) * item.quantity;
+        return item.dish.price * item.dish.quantity + sidesTotal;
     };
 
+    console.log("orderList in DishToOrderItem:", orderList);
     return (
         <ul className="divide-y divide-gray-100">
             {orderList.map((item, index) => (
