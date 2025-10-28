@@ -94,7 +94,6 @@ export async function GET() {
             },
         });
 
-        console.log("Fetched orders:", orders);
         return NextResponse.json(orders);
     } catch (error) {
         console.error("Error fetching orders:", error);
