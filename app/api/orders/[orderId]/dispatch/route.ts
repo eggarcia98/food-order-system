@@ -1,7 +1,7 @@
 // app/api/orders/[orderId]/dispatch/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma"; // or your db connection
-
+export const runtime = "edge";
 
 export async function PUT(_req: Request, { params }) {
     const { orderId } = params;
