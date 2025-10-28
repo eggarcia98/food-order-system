@@ -328,22 +328,22 @@ export default function OrdersList() {
                                 {/* Order Header */}
                                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 pb-4 border-b border-gray-200">
                                     <div>
-                                        <h3 className="text-lg md:text-xl font-bold text-gray-900">
+                                        <h3 className="text-base md:text-xl font-bold text-gray-900">
                                             {order.customer.first_name}{" "}
                                             {order.customer.last_name}
                                         </h3>
-                                        <p className="text-gray-600">
+                                        <p className="text-xs md:text-md text-gray-600">
                                             {order.customer.phone_number}
                                         </p>
                                     </div>
                                     <div className="text-right mt-2 md:mt-0">
-                                        <div className="text-sm text-orange-600">
+                                        <div className="text-xs md:text-sm text-orange-600">
                                             Status: {order.status.name}
                                         </div>
-                                        <p className="text-sm text-gray-500">
+                                        <p className="text-xs md:text-sm text-gray-500">
                                             {formatDate(order.created_at)}
                                         </p>
-                                        <p className="text-sm font-medium text-orange-600">
+                                        <p className="text-xs md:text-sm font-medium text-orange-600">
                                             {getTotalItems(order.order_item)}{" "}
                                             item(s)
                                         </p>
