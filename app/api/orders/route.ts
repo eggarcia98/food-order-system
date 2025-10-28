@@ -90,6 +90,7 @@ export async function GET() {
                         side: true,
                     },
                 },
+                status: true,
             },
         });
 

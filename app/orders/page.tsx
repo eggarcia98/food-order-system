@@ -13,6 +13,7 @@ export interface Order {
     customer: Customer;
     order_item: OrderItem[];
     order_side_item: OrderSideItem[];
+    status: any;
 }
 
 export interface Customer {
@@ -137,6 +138,24 @@ export default function OrdersList() {
             hour: "2-digit",
             minute: "2-digit",
         });
+    };
+
+    const updateOrderStatus = async (orderId: number, status_id: number) => {
+        try {
+            const response = await fetch(`/api/orders/${orderId}/dispatch`, {
+                method: "PUT",
+                body: JSON.stringify({ status_id }),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            if (!response.ok) throw new Error("Failed to update order status");
+            // Refresh orders after updating status
+            fetchOrders();
+        } catch (err) {
+            console.error(err);
+            setError("Failed to update order status. Please try again.");
+        }
     };
 
     const getTotalItems = (orderItem: OrderItem[]) => {
@@ -311,13 +330,16 @@ export default function OrdersList() {
                                     <div>
                                         <h3 className="text-xl font-bold text-gray-900">
                                             {order.customer.first_name}{" "}
-                                            {order.customer.last_name}
+                                            {order.customer.last_name} -
                                         </h3>
                                         <p className="text-gray-600">
                                             {order.customer.phone_number}
                                         </p>
                                     </div>
                                     <div className="text-right mt-2 md:mt-0">
+                                        <div className="text-sm text-orange-600">
+                                            Status: {order.status.name}
+                                        </div>
                                         <p className="text-sm text-gray-500">
                                             {formatDate(order.created_at)}
                                         </p>
@@ -363,6 +385,38 @@ export default function OrdersList() {
                                         </p>
                                     </div>
                                 )}
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+                                    {order.status.id !== 5 &&
+                                        order.status.id === 1 && (
+                                            <div
+                                                className="mt-6 px-4 py-2 mx-15 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition text-center cursor-pointer"
+                                                onClick={() =>
+                                                    updateOrderStatus(
+                                                        order.id,
+                                                        5
+                                                    )
+                                                }
+                                            >
+                                                Confirm
+                                            </div>
+                                        )}
+                                    {order.status.id !== 6 &&
+                                        order.status.id === 1 && (
+                                            <div
+                                                className="mt-6 px-4 py-2 mx-15 
+                                                    bg-red-700 text-white font-semibold rounded-lg hover:bg-red-800 transition text-center cursor-pointer"
+                                                onClick={() =>
+                                                    updateOrderStatus(
+                                                        order.id,
+                                                        6
+                                                    )
+                                                }
+                                            >
+                                                Cancel
+                                            </div>
+                                        )}
+                                </div>
                             </div>
                         ))}
                     </div>
