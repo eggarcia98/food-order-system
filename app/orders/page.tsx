@@ -386,11 +386,11 @@ export default function OrdersList() {
                                     </div>
                                 )}
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+                                <div className="grid grid-cols-2 gap-4 ">
                                     {order.status.id !== 5 &&
                                         order.status.id === 1 && (
                                             <div
-                                                className="mt-6 px-4 py-2 mx-15 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition text-center cursor-pointer"
+                                                className="mt-6 px-4 py-2 md:mx-15 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition text-center cursor-pointer"
                                                 onClick={() =>
                                                     updateOrderStatus(
                                                         order.id,
@@ -404,7 +404,7 @@ export default function OrdersList() {
                                     {order.status.id !== 6 &&
                                         order.status.id === 1 && (
                                             <div
-                                                className="mt-6 px-4 py-2 mx-15 
+                                                className="mt-6 px-4 py-2 md:mx-15 
                                                     bg-red-700 text-white font-semibold rounded-lg hover:bg-red-800 transition text-center cursor-pointer"
                                                 onClick={() =>
                                                     updateOrderStatus(
