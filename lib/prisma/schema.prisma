@@ -25,10 +25,13 @@ model Order {
   comments    String?
   created_at  DateTime    @default(now())
   order_side_item OrderSideItem[]
+  status_id Int     @default(1)
 
   // Relations
   customer    Customer?   @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+  status      Status      @relation(fields: [status_id], references: [id])    
   order_item OrderItem[]
+
   @@map("order")  
 }
 
@@ -87,4 +90,12 @@ model Side {
 
   SideOrderItem OrderSideItem[]
   @@map("side")
+}
+
+model Status {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  Order Order[]
+  @@map("status")
 }

@@ -90,9 +90,11 @@ export async function GET() {
                         side: true,
                     },
                 },
+                status: true,
             },
         });
 
+        console.log("Fetched orders:", orders);
         return NextResponse.json(orders);
     } catch (error) {
         console.error("Error fetching orders:", error);
