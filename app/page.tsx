@@ -5,7 +5,7 @@ import AddItemModal from "@/components/AddItemModal";
 import { DishToOrderItem } from "@/components/DishToOrderItem";
 import { Selector } from "@/components/SelectorComponent";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 interface OrderItem {
     dish: Dish;
@@ -36,7 +36,7 @@ export default function OrderRegistration() {
         []
     );
 
-    const [nationality, setNationality] = useState("");
+    const [nationality, setNationality] = useState({});
     const [nationalityList, setNationalityList] = useState([
         { id: 1, name: "Ecuadorian" },
     ]);
@@ -52,6 +52,8 @@ export default function OrderRegistration() {
         type: "success" | "error";
         text: string;
     } | null>(null);
+
+    const [previousCustomers, setPreviousCustomers] = useState<any[]>([]);
 
     const fetchNationalities = async () => {
         try {
@@ -86,10 +88,22 @@ export default function OrderRegistration() {
         }
     };
 
+    const fetchPreviousCustomers = async () => {
+        try {
+            const response = await fetch("/api/customers");
+            if (!response.ok) throw new Error("Failed to fetch");
+            const data = await response.json();
+            setPreviousCustomers(data);
+        } catch (error) {
+            console.error("Error fetching previous customers:", error);
+        }
+    };
+
     useEffect(() => {
         fetchNationalities();
         fetchDishes();
         fetchSides();
+        fetchPreviousCustomers();
     }, []);
 
     const removeDish = (index: number) => {
@@ -146,6 +160,35 @@ export default function OrderRegistration() {
         }
     };
 
+    // Autocomplete states
+
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const [filteredSuggestions, setFilteredSuggestions] = useState<any[]>([]);
+    const suggestionsRef = useRef<HTMLDivElement>(null);
+
+    const handlePhoneNumberChange = (value: string) => {
+        setPhoneNumber(value);
+
+        if (value.length > 0) {
+            const filtered = previousCustomers.filter((customer) =>
+                customer.phone_number.includes(value)
+            );
+            console.log("Filtered Suggestions:", filtered);
+            setFilteredSuggestions(filtered);
+            setShowSuggestions(filtered.length > 0);
+        } else {
+            setShowSuggestions(false);
+        }
+    };
+
+    const selectSuggestion = (customer) => {
+        setPhoneNumber(customer.phone_number);
+        setNationality({id: customer.nationality_id})
+        setFirstname(customer.first_name || "");
+        setLastname(customer.last_name || "");
+        setShowSuggestions(false);
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 py-12 px-4">
             <div className="max-w-3xl mx-auto">
@@ -187,16 +230,79 @@ export default function OrderRegistration() {
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
                                         Phone Number *
                                     </label>
-                                    <input
-                                        type="tel"
-                                        required
-                                        value={phoneNumber}
-                                        onChange={(e) =>
-                                            setPhoneNumber(e.target.value)
-                                        }
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
-                                        placeholder="+61 642 123 456"
-                                    />
+                                    <div
+                                        className="relative"
+                                        ref={suggestionsRef}
+                                    >
+                                        <input
+                                            type="tel"
+                                            required
+                                            value={phoneNumber}
+                                            onChange={(e) =>
+                                                handlePhoneNumberChange(
+                                                    e.target.value
+                                                )
+                                            }
+                                            onFocus={() =>
+                                                phoneNumber.length > 0 &&
+                                                filteredSuggestions.length >
+                                                    0 &&
+                                                setShowSuggestions(true)
+                                            }
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition bg-white appearance-none"
+                                            placeholder="+1 234 567 8900"
+                                            autoComplete="off"
+                                        />
+
+                                        {/* Suggestions Dropdown */}
+                                        {showSuggestions &&
+                                            filteredSuggestions.length > 0 && (
+                                                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto">
+                                                    {filteredSuggestions.map(
+                                                        (customer, index) => (
+                                                            <button
+                                                                key={index}
+                                                                type="button"
+                                                                onClick={() =>
+                                                                    selectSuggestion(
+                                                                        customer
+                                                                    )
+                                                                }
+                                                                className="w-full px-4 py-3 text-left hover:bg-orange-50 transition flex justify-between items-center border-b border-gray-100 last:border-b-0"
+                                                            >
+                                                                <div>
+                                                                    <p className="font-medium text-gray-900">
+                                                                        {
+                                                                            customer.phone_number
+                                                                        }
+                                                                    </p>
+                                                                    <p className="text-sm text-gray-600">
+                                                                        {customer.first_name +
+                                                                            " " +
+                                                                            customer.last_name}
+                                                                    </p>
+                                                                </div>
+                                                                <svg
+                                                                    className="w-5 h-5 text-orange-500"
+                                                                    fill="none"
+                                                                    stroke="currentColor"
+                                                                    viewBox="0 0 24 24"
+                                                                >
+                                                                    <path
+                                                                        strokeLinecap="round"
+                                                                        strokeLinejoin="round"
+                                                                        strokeWidth={
+                                                                            2
+                                                                        }
+                                                                        d="M9 5l7 7-7 7"
+                                                                    />
+                                                                </svg>
+                                                            </button>
+                                                        )
+                                                    )}
+                                                </div>
+                                            )}
+                                    </div>
                                 </div>
 
                                 <div className="w-full">
