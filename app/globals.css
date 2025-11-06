@@ -1,15 +1,53 @@
 @import "tailwindcss";
 
+/* Usage Suggestion
+#D82229
+Brand Accent, Buttons, Call-to-Action (CTA). A vibrant, energetic color.
+#23A0E5
+Headings, Important Links, Secondary CTA. A bright, friendly contrast to the red.
+#99171C
+Subheadings, Active States (Hover), Borders. A slightly deeper red for complementary accents.
+#F5F5F5
+Main Background, Content Areas. A slightly off-white that keeps the page clean while letting the other colors pop.
+#1A1A1A
+Main Body Text, Icons, Footers. A very dark gray/near-black for high readability.
+could you help me setting a new palette color following the above description
+ */
+
 :root {
-  --background: #ffffff;
   --foreground: #171717;
+  --font-geist-sans: 'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-geist-mono: 'Geist Mono', 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
+  --color-brand-red: #D82229;
+  --color-brand-blue: #23A0E5;
+  --color-brand-dark-red: #99171C;
+  --color-background-light: #F5F5F5;
+  --color-foreground-dark: #1A1A1A;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-background: var(--color-background-light);
+  --color-foreground: var(--color-foreground-dark);
+  --color-border: var(--color-brand-dark-red);
+
+  --color-accent: var(--color-brand-red);
+  --color-accent-secondary: var(--color-brand-blue);
+
+  --color-text: var(--color-foreground-dark);
+  --color-text-secondary: var(--color-foreground-dark);
+
+  --color-link: var(--color-brand-blue);
+  --color-link-hover: var(--color-brand-red); 
+
+  --color-button-background: var(--color-brand-red);
+  --color-button-text: var(--color-background-light);
+
+  --color-button-background-hover: var(--color-brand-dark-red);
+  --color-button-text-hover: var(--color-background-light);
+
+
 }
 
 @media (prefers-color-scheme: dark) {
