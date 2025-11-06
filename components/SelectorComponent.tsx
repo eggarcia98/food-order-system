@@ -51,6 +51,18 @@ export const Selector: FC<SelectorProps> = ({
             value={selectedValue.id}
             onChange={handleChange}
             className={className}
+            style={{ 
+                borderColor: 'var(--color-border)',
+                color: 'var(--color-text)' 
+            }}
+            onFocus={(e) => {
+                e.currentTarget.style.borderColor = 'var(--color-brand-blue)';
+                e.currentTarget.style.boxShadow = '0 0 0 2px rgba(35, 160, 229, 0.2)';
+            }}
+            onBlur={(e) => {
+                e.currentTarget.style.borderColor = 'var(--color-border)';
+                e.currentTarget.style.boxShadow = 'none';
+            }}
         >
             <option value="">{placeholder}</option>
 

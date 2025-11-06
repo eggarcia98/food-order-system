@@ -183,37 +183,70 @@ export default function OrderRegistration() {
 
     const selectSuggestion = (customer) => {
         setPhoneNumber(customer.phone_number);
-        setNationality({id: customer.nationality_id})
+        setNationality({ id: customer.nationality_id });
         setFirstname(customer.first_name || "");
         setLastname(customer.last_name || "");
         setShowSuggestions(false);
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 py-12 px-4">
+        <div className="min-h-screen py-12 px-4 bg-background">
             <div className="max-w-3xl mx-auto">
-                <div className="bg-white rounded-2xl shadow-xl p-8">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                <div
+                    className="bg-white rounded-2xl shadow-xl p-8 border-t-4"
+                    style={{ borderTopColor: "var(--color-brand-blue)" }}
+                >
+                    <h1
+                        className="text-3xl font-bold mb-2"
+                        style={{ color: "var(--color-foreground-dark)" }}
+                    >
                         Food Order Registration
                     </h1>
-                    <p className="text-gray-600 mb-8">
+                    <p
+                        className="mb-4"
+                        style={{ color: "var(--color-text-secondary)" }}
+                    >
                         Register customer orders quickly and easily
                     </p>
 
-                    <Link
-                        href="/orders"
-                        className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm font-medium"
-                    >
-                        View Orders
-                    </Link>
+                    <div className="flex justify-end">
+                        <Link
+                            href="/orders"
+                            className="px-4 py-2 rounded-lg transition text-sm font-medium  "
+                            style={{
+                                backgroundColor: "var(--color-brand-blue)",
+                                color: "var(--color-background-light)",
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundColor =
+                                    "rgba(35, 160, 229, 0.8)";
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundColor =
+                                    "var(--color-brand-blue)";
+                            }}
+                        >
+                            View Orders
+                        </Link>
+                    </div>
 
                     {message && (
                         <div
-                            className={`mb-6 p-4 rounded-lg ${
-                                message.type === "success"
-                                    ? "bg-green-50 text-green-800 border border-green-200"
-                                    : "bg-red-50 text-red-800 border border-red-200"
-                            }`}
+                            className="mb-6 p-4 rounded-lg border"
+                            style={{
+                                backgroundColor:
+                                    message.type === "success"
+                                        ? "rgba(35, 160, 229, 0.1)"
+                                        : "rgba(216, 34, 41, 0.1)",
+                                color:
+                                    message.type === "success"
+                                        ? "var(--color-brand-blue)"
+                                        : "var(--color-brand-red)",
+                                borderColor:
+                                    message.type === "success"
+                                        ? "var(--color-brand-blue)"
+                                        : "var(--color-brand-red)",
+                            }}
                         >
                             {message.text}
                         </div>
@@ -221,14 +254,38 @@ export default function OrderRegistration() {
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {/* Customer Info */}
-                        <div className="space-y-4">
-                            <h2 className="text-xl font-semibold text-gray-800">
-                                Customer Information
-                            </h2>
+                        <div className="space-y-4 mt-4">
+                            <div className="flex items-center gap-3 mb-2">
+                                <div
+                                    className="w-1 h-6 rounded-full"
+                                    style={{
+                                        backgroundColor:
+                                            "var(--color-brand-blue)",
+                                    }}
+                                ></div>
+                                <h2
+                                    className="text-xl font-semibold "
+                                    style={{
+                                        color: "var(--color-foreground-dark)",
+                                    }}
+                                >
+                                    Customer Information
+                                </h2>
+                            </div>
                             <div className="flex flex-row gap-4">
                                 <div className="w-full">
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Phone Number *
+                                    <label
+                                        className="block text-sm font-medium mb-2"
+                                        style={{ color: "var(--color-text)" }}
+                                    >
+                                        Phone Number{" "}
+                                        <span
+                                            style={{
+                                                color: "var(--color-brand-blue)",
+                                            }}
+                                        >
+                                            *
+                                        </span>
                                     </label>
                                     <div
                                         className="relative"
@@ -243,13 +300,30 @@ export default function OrderRegistration() {
                                                     e.target.value
                                                 )
                                             }
-                                            onFocus={() =>
-                                                phoneNumber.length > 0 &&
-                                                filteredSuggestions.length >
-                                                    0 &&
-                                                setShowSuggestions(true)
-                                            }
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition bg-white appearance-none"
+                                            onFocus={(e) => {
+                                                if (
+                                                    phoneNumber.length > 0 &&
+                                                    filteredSuggestions.length >
+                                                        0
+                                                ) {
+                                                    setShowSuggestions(true);
+                                                }
+                                                e.currentTarget.style.borderColor =
+                                                    "var(--color-brand-blue)";
+                                                e.currentTarget.style.boxShadow =
+                                                    "0 0 0 2px rgba(35, 160, 229, 0.2)";
+                                            }}
+                                            onBlur={(e) => {
+                                                e.currentTarget.style.borderColor =
+                                                    "var(--color-border)";
+                                                e.currentTarget.style.boxShadow =
+                                                    "none";
+                                            }}
+                                            className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent transition bg-white appearance-none"
+                                            style={{
+                                                borderColor:
+                                                    "var(--color-border)",
+                                            }}
                                             placeholder="+1 234 567 8900"
                                             autoComplete="off"
                                         />
@@ -268,25 +342,50 @@ export default function OrderRegistration() {
                                                                         customer
                                                                     )
                                                                 }
-                                                                className="w-full px-4 py-3 text-left hover:bg-orange-50 transition flex justify-between items-center border-b border-gray-100 last:border-b-0"
+                                                                className="w-full px-4 py-3 text-left transition flex justify-between items-center border-b border-gray-100 last:border-b-0"
+                                                                onMouseEnter={(
+                                                                    e
+                                                                ) => {
+                                                                    e.currentTarget.style.backgroundColor =
+                                                                        "rgba(35, 160, 229, 0.05)";
+                                                                }}
+                                                                onMouseLeave={(
+                                                                    e
+                                                                ) => {
+                                                                    e.currentTarget.style.backgroundColor =
+                                                                        "transparent";
+                                                                }}
                                                             >
                                                                 <div>
-                                                                    <p className="font-medium text-gray-900">
+                                                                    <p
+                                                                        className="font-medium"
+                                                                        style={{
+                                                                            color: "var(--color-foreground-dark)",
+                                                                        }}
+                                                                    >
                                                                         {
                                                                             customer.phone_number
                                                                         }
                                                                     </p>
-                                                                    <p className="text-sm text-gray-600">
+                                                                    <p
+                                                                        className="text-sm"
+                                                                        style={{
+                                                                            color: "var(--color-brand-blue)",
+                                                                        }}
+                                                                    >
                                                                         {customer.first_name +
                                                                             " " +
                                                                             customer.last_name}
                                                                     </p>
                                                                 </div>
                                                                 <svg
-                                                                    className="w-5 h-5 text-orange-500"
+                                                                    className="w-5 h-5"
                                                                     fill="none"
                                                                     stroke="currentColor"
                                                                     viewBox="0 0 24 24"
+                                                                    style={{
+                                                                        color: "var(--color-brand-red)",
+                                                                    }}
                                                                 >
                                                                     <path
                                                                         strokeLinecap="round"
@@ -306,7 +405,10 @@ export default function OrderRegistration() {
                                 </div>
 
                                 <div className="w-full">
-                                    <label className="block text-sm font-medium text-gray-700 mb-2 ">
+                                    <label
+                                        className="block text-sm font-medium mb-2"
+                                        style={{ color: "var(--color-text)" }}
+                                    >
                                         Nationality
                                     </label>
                                     <Selector
@@ -320,8 +422,18 @@ export default function OrderRegistration() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    First Name *
+                                <label
+                                    className="block text-sm font-medium mb-2"
+                                    style={{ color: "var(--color-text)" }}
+                                >
+                                    First Name{" "}
+                                    <span
+                                        style={{
+                                            color: "var(--color-brand-blue)",
+                                        }}
+                                    >
+                                        *
+                                    </span>
                                 </label>
                                 <input
                                     type="text"
@@ -330,14 +442,39 @@ export default function OrderRegistration() {
                                     onChange={(e) =>
                                         setFirstname(e.target.value)
                                     }
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
+                                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent transition"
+                                    style={{
+                                        borderColor: "var(--color-border)",
+                                    }}
+                                    onFocus={(e) => {
+                                        e.currentTarget.style.borderColor =
+                                            "var(--color-brand-blue)";
+                                        e.currentTarget.style.boxShadow =
+                                            "0 0 0 2px rgba(35, 160, 229, 0.2)";
+                                    }}
+                                    onBlur={(e) => {
+                                        e.currentTarget.style.borderColor =
+                                            "var(--color-border)";
+                                        e.currentTarget.style.boxShadow =
+                                            "none";
+                                    }}
                                     placeholder="John"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Last Name *
+                                <label
+                                    className="block text-sm font-medium mb-2"
+                                    style={{ color: "var(--color-text)" }}
+                                >
+                                    Last Name{" "}
+                                    <span
+                                        style={{
+                                            color: "var(--color-brand-blue)",
+                                        }}
+                                    >
+                                        *
+                                    </span>
                                 </label>
                                 <input
                                     type="text"
@@ -346,7 +483,22 @@ export default function OrderRegistration() {
                                     onChange={(e) =>
                                         setLastname(e.target.value)
                                     }
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
+                                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent transition"
+                                    style={{
+                                        borderColor: "var(--color-border)",
+                                    }}
+                                    onFocus={(e) => {
+                                        e.currentTarget.style.borderColor =
+                                            "var(--color-brand-blue)";
+                                        e.currentTarget.style.boxShadow =
+                                            "0 0 0 2px rgba(35, 160, 229, 0.2)";
+                                    }}
+                                    onBlur={(e) => {
+                                        e.currentTarget.style.borderColor =
+                                            "var(--color-border)";
+                                        e.currentTarget.style.boxShadow =
+                                            "none";
+                                    }}
                                     placeholder="Doe"
                                 />
                             </div>
@@ -373,22 +525,85 @@ export default function OrderRegistration() {
                         {/* Dishes */}
                         <div className="space-y-4">
                             <div className="flex  justify-between items-center">
-                                <h2 className="text-xl font-semibold text-gray-800">
-                                    Order List
-                                </h2>
+                                <div className="flex items-center gap-3">
+                                    <div
+                                        className="w-1 h-6 rounded-full"
+                                        style={{
+                                            backgroundColor:
+                                                "var(--color-brand-blue)",
+                                        }}
+                                    ></div>
+                                    <h2
+                                        className="text-xl font-semibold"
+                                        style={{
+                                            color: "var(--color-foreground-dark)",
+                                        }}
+                                    >
+                                        Order List
+                                    </h2>
+                                </div>
                                 <div
                                     onClick={() => setOpen(true)}
-                                    className="bg-orange-400 text-white px-4 py-2 rounded-xl hover:bg-orange-500"
+                                    className="px-4 py-2 rounded-xl cursor-pointer transition"
+                                    style={{
+                                        backgroundColor:
+                                            "var(--color-brand-blue)",
+                                        color: "var(--color-background-light)",
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.backgroundColor =
+                                            "rgba(35, 160, 229, 0.8)";
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.backgroundColor =
+                                            "var(--color-brand-blue)";
+                                    }}
                                 >
                                     + Add Item
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2 bg-gray-200 p-5 rounded-lg">
+                            <div
+                                className="flex items-center gap-2 p-5 rounded-lg"
+                                style={{
+                                    backgroundColor:
+                                        "var(--color-background-light)",
+                                }}
+                            >
                                 {confirmedOrderList.length === 0 ? (
-                                    <p className="text-gray-500">
-                                        No items added yet. Click "Add Item" to
-                                        start your order.
-                                    </p>
+                                    <div className="flex items-center gap-3 w-full">
+                                        <div
+                                            className="w-8 h-8 rounded-full flex items-center justify-center"
+                                            style={{
+                                                backgroundColor:
+                                                    "rgba(35, 160, 229, 0.1)",
+                                            }}
+                                        >
+                                            <svg
+                                                className="w-4 h-4"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                                style={{
+                                                    color: "var(--color-brand-blue)",
+                                                }}
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                                                />
+                                            </svg>
+                                        </div>
+                                        <p
+                                            style={{
+                                                color: "var(--color-text-secondary)",
+                                            }}
+                                        >
+                                            No items added yet. Click "Add Item"
+                                            to start your order.
+                                        </p>
+                                    </div>
                                 ) : (
                                     <div className="w-full space-y-4">
                                         <DishToOrderItem
@@ -402,14 +617,38 @@ export default function OrderRegistration() {
 
                         {/* Comments */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Comments
-                            </label>
+                            <div className="flex items-center gap-2 mb-2">
+                                <div
+                                    className="w-1 h-4 rounded-full"
+                                    style={{
+                                        backgroundColor:
+                                            "var(--color-brand-blue)",
+                                    }}
+                                ></div>
+                                <label
+                                    className="block text-sm font-medium"
+                                    style={{ color: "var(--color-text)" }}
+                                >
+                                    Comments
+                                </label>
+                            </div>
                             <textarea
                                 value={comments}
                                 onChange={(e) => setComments(e.target.value)}
                                 rows={3}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition resize-none"
+                                className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent transition resize-none"
+                                style={{ borderColor: "var(--color-border)" }}
+                                onFocus={(e) => {
+                                    e.currentTarget.style.borderColor =
+                                        "var(--color-brand-blue)";
+                                    e.currentTarget.style.boxShadow =
+                                        "0 0 0 2px rgba(35, 160, 229, 0.2)";
+                                }}
+                                onBlur={(e) => {
+                                    e.currentTarget.style.borderColor =
+                                        "var(--color-border)";
+                                    e.currentTarget.style.boxShadow = "none";
+                                }}
                                 placeholder="Additional notes or special instructions..."
                             />
                         </div>
@@ -418,7 +657,25 @@ export default function OrderRegistration() {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="w-full py-4 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition shadow-lg hover:shadow-xl"
+                            className="w-full py-4 font-semibold rounded-lg disabled:cursor-not-allowed transition shadow-lg hover:shadow-xl"
+                            style={{
+                                backgroundColor: isSubmitting
+                                    ? "#9CA3AF"
+                                    : "var(--color-brand-blue)",
+                                color: "var(--color-background-light)",
+                            }}
+                            onMouseEnter={(e) => {
+                                if (!isSubmitting) {
+                                    e.currentTarget.style.backgroundColor =
+                                        "rgba(35, 160, 229, 0.8)";
+                                }
+                            }}
+                            onMouseLeave={(e) => {
+                                if (!isSubmitting) {
+                                    e.currentTarget.style.backgroundColor =
+                                        "var(--color-brand-blue)";
+                                }
+                            }}
                         >
                             {isSubmitting ? "Submitting..." : "Register Order"}
                         </button>
