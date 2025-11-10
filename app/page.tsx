@@ -192,39 +192,18 @@ export default function OrderRegistration() {
     return (
         <div className="min-h-screen py-12 px-4 bg-background">
             <div className="max-w-3xl mx-auto">
-                <div
-                    className="bg-white rounded-2xl shadow-xl p-8 border-t-4"
-                    style={{ borderTopColor: "var(--color-brand-blue)" }}
-                >
-                    <h1
-                        className="text-3xl font-bold mb-2"
-                        style={{ color: "var(--color-foreground-dark)" }}
-                    >
+                <div className="bg-white rounded-2xl shadow-xl p-8 border-t-4 border-accent-secondary">
+                    <h1 className="text-3xl font-bold mb-2 text-text-secondary">
                         Food Order Registration
                     </h1>
-                    <p
-                        className="mb-4"
-                        style={{ color: "var(--color-text-secondary)" }}
-                    >
+                    <p className="mb-4 text-gray-500">
                         Register customer orders quickly and easily
                     </p>
 
                     <div className="flex justify-end">
                         <Link
                             href="/orders"
-                            className="px-4 py-2 rounded-lg transition text-sm font-medium  "
-                            style={{
-                                backgroundColor: "var(--color-brand-blue)",
-                                color: "var(--color-background-light)",
-                            }}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.backgroundColor =
-                                    "rgba(35, 160, 229, 0.8)";
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.backgroundColor =
-                                    "var(--color-brand-blue)";
-                            }}
+                            className="px-4 py-2 rounded-lg transition text-sm font-medium bg-accent-secondary text-button-text hover:bg-button-hover-overlay"
                         >
                             View Orders
                         </Link>

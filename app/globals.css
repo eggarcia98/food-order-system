@@ -23,6 +23,7 @@ could you help me setting a new palette color following the above description
   --color-brand-dark-red: #99171C;
   --color-background-light: #F5F5F5;
   --color-foreground-dark: #1A1A1A;
+  --color-hover-overlay: rgba(35, 160, 229, 0.7);
 }
 
 @theme inline {
@@ -43,6 +44,7 @@ could you help me setting a new palette color following the above description
 
   --color-button-background: var(--color-brand-red);
   --color-button-text: var(--color-background-light);
+  --color-button-hover-overlay: var(--color-hover-overlay);
 
   --color-button-background-hover: var(--color-brand-dark-red);
   --color-button-text-hover: var(--color-background-light);
