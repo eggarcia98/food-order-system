@@ -26,6 +26,8 @@ interface Side {
     price: number;
 }
 
+
+// Dis is a comment 
 export default function OrderRegistration() {
     const [phoneNumber, setPhoneNumber] = useState("");
 
@@ -211,21 +213,11 @@ export default function OrderRegistration() {
 
                     {message && (
                         <div
-                            className="mb-6 p-4 rounded-lg border"
-                            style={{
-                                backgroundColor:
-                                    message.type === "success"
-                                        ? "rgba(35, 160, 229, 0.1)"
-                                        : "rgba(216, 34, 41, 0.1)",
-                                color:
-                                    message.type === "success"
-                                        ? "var(--color-brand-blue)"
-                                        : "var(--color-brand-red)",
-                                borderColor:
-                                    message.type === "success"
-                                        ? "var(--color-brand-blue)"
-                                        : "var(--color-brand-red)",
-                            }}
+                            className={`p-2 m-3 rounded-md ${
+                                message.type === "success"
+                                    ? "bg-blue-50 text-accent-secondary border-accent-secondary"
+                                    : "bg-red-50 text-accent border border-accent"
+                            }`}
                         >
                             {message.text}
                         </div>
