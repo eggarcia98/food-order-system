@@ -13,7 +13,7 @@ export const DishToOrderItem = ({ orderList, removeItemFromOrder }: any) => {
 
     console.log("orderList in DishToOrderItem:", orderList);
     return (
-        <ul className="divide-y" style={{ borderColor: 'rgba(153, 23, 28, 0.1)' }}>
+        <ul className="divide-y border-brand">
             {orderList.map((item, index) => (
                 <li
                     key={index}
@@ -29,18 +29,14 @@ export const DishToOrderItem = ({ orderList, removeItemFromOrder }: any) => {
                         )}
 
                         <div>
-                            <p className="font-medium" style={{ color: 'var(--color-foreground-dark)' }}>
+                            <p className="font-medium text-foreground">
                                 {item.dish.name}
                             </p>
-                            <p className="text-sm" style={{ color: 'var(--color-brand-red)' }}>
-                                ${item.dish.price.toFixed(2)} × {item.quantity}
-                            </p>
+                            <p className="text-sm text-brand-red">${item.dish.price.toFixed(2)} × {item.quantity}</p>
 
                             {item.sides.length > 0 && (
-                                <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>
-                                    <span className="font-medium" style={{ color: 'var(--color-foreground-dark)' }}>
-                                        Sides:
-                                    </span>{" "}
+                                <p className="text-sm mt-1 text-secondary">
+                                    <span className="font-medium text-foreground">Sides:</span>{" "}
                                     {item.sides.map((s) => s.name).join(", ")}
                                 </p>
                             )}
@@ -48,20 +44,11 @@ export const DishToOrderItem = ({ orderList, removeItemFromOrder }: any) => {
                     </div>
 
                     <div className="flex items-center gap-3 mt-3 sm:mt-0">
-                        <p className="font-semibold" style={{ color: 'var(--color-foreground-dark)' }}>
-                            ${getTotal(item).toFixed(2)}
-                        </p>
+                        <p className="font-semibold text-foreground">${getTotal(item).toFixed(2)}</p>
 
                         <button
                             onClick={() => removeItemFromOrder(index)}
-                            className="text-sm font-medium transition"
-                            style={{ color: 'var(--color-brand-red)' }}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.color = 'var(--color-brand-dark-red)';
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.color = 'var(--color-brand-red)';
-                            }}
+                            className="text-sm font-medium transition text-brand-red"
                         >
                             Remove
                         </button>

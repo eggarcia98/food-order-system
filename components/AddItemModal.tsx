@@ -130,18 +130,11 @@ export default function AddItemModal({
     md:max-w-lg md:w-[90%] md:h-auto
   `}
         >
-            <div className="p-4 border-b flex justify-between items-center" style={{ borderColor: 'var(--color-border)' }}>
-                <h2 className="text-lg font-semibold" style={{ color: 'var(--color-foreground-dark)' }}>Add Item</h2>
+            <div className="p-4 border-b flex justify-between items-center border-brand">
+                <h2 className="text-lg font-semibold text-foreground">Add Item</h2>
                 <button
                     onClick={() => setOpen(false)}
-                    className="transition"
-                    style={{ color: 'var(--color-text-secondary)' }}
-                    onMouseEnter={(e) => {
-                        e.currentTarget.style.color = 'var(--color-brand-red)';
-                    }}
-                    onMouseLeave={(e) => {
-                        e.currentTarget.style.color = 'var(--color-text-secondary)';
-                    }}
+                    className="transition text-secondary"
                 >
                     ✕
                 </button>
@@ -151,36 +144,27 @@ export default function AddItemModal({
                 {/* Dishes */}
                 <div>
                     <div className="flex items-center gap-2 mb-2">
-                        <div 
-                            className="w-1 h-4 rounded-full" 
-                            style={{ backgroundColor: 'var(--color-brand-blue)' }}
-                        ></div>
-                        <h3 className="text-lg font-semibold" style={{ color: 'var(--color-foreground-dark)' }}>Dishes</h3>
+                        <div className="w-1 h-4 rounded-full bg-brand-blue"></div>
+                        <h3 className="text-lg font-semibold text-foreground">Dishes</h3>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                         {dishes.map((dish) => (
                             <div
                                 key={dish.id}
                                 onClick={() => handleDishSelect(dish)}
-                                className="border rounded-xl p-3 flex flex-col items-center cursor-pointer transition"
-                                style={{
-                                    borderColor: toggleDishSelection(dish.id) 
-                                        ? 'var(--color-brand-blue)' 
-                                        : 'var(--color-border)',
-                                    backgroundColor: toggleDishSelection(dish.id) 
-                                        ? 'rgba(35, 160, 229, 0.08)' 
-                                        : 'transparent'
-                                }}
+                                className={`border rounded-xl p-3 flex flex-col items-center cursor-pointer transition ${
+                                    toggleDishSelection(dish.id)
+                                        ? 'border-brand-blue bg-brand-blue-15'
+                                        : 'border-brand'
+                                }`}
                             >
                                 <img
                                     src={dish.img}
                                     alt={dish.name}
                                     className="w-20 h-20 object-cover rounded-lg mb-2"
                                 />
-                                <p className="font-medium" style={{ color: 'var(--color-foreground-dark)' }}>{dish.name}</p>
-                                <p className="text-sm" style={{ color: 'var(--color-brand-red)' }}>
-                                    ${dish.price}
-                                </p>
+                                <p className="font-medium text-foreground">{dish.name}</p>
+                                <p className="text-sm text-brand-red">${dish.price}</p>
                             </div>
                         ))}
                     </div>
@@ -188,68 +172,41 @@ export default function AddItemModal({
 
                 {/* Quantity */}
                 <div className="mt-6 flex items-center justify-between">
-                    <label className="text-lg font-semibold" style={{ color: 'var(--color-foreground-dark)' }}>Quantity</label>
+                    <label className="text-lg font-semibold text-foreground">Quantity</label>
                     <input
                         type="number"
                         value={quantity}
                         onChange={(e) => handleQuantityChange(e)}
                         min={1}
-                        className="border rounded-lg w-20 text-center transition"
-                        style={{ borderColor: 'var(--color-border)' }}
-                        onFocus={(e) => {
-                            e.currentTarget.style.borderColor = 'var(--color-brand-blue)';
-                            e.currentTarget.style.boxShadow = '0 0 0 2px rgba(35, 160, 229, 0.2)';
-                        }}
-                        onBlur={(e) => {
-                            e.currentTarget.style.borderColor = 'var(--color-border)';
-                            e.currentTarget.style.boxShadow = 'none';
-                        }}
+                        className="border rounded-lg w-20 text-center transition input-brand"
                     />
                 </div>
 
                 {/* Sides */}
                 <div className="mt-6">
                     <div className="flex items-center gap-2 mb-2">
-                        <div 
-                            className="w-1 h-4 rounded-full" 
-                            style={{ backgroundColor: 'var(--color-brand-blue)' }}
-                        ></div>
-                        <h3 className="text-lg font-semibold" style={{ color: 'var(--color-foreground-dark)' }}>Sides</h3>
+                        <div className="w-1 h-4 rounded-full bg-brand-blue"></div>
+                        <h3 className="text-lg font-semibold text-foreground">Sides</h3>
                     </div>
                     <div className="flex flex-col gap-2">
                         {sides.map((side) => (
                             <div
                                 key={side.id}
-                                className="flex justify-between items-center border-b p-2 px-3 text-sm"
-                                style={{ borderColor: 'var(--color-border)' }}
+                                className="flex justify-between items-center border-b p-2 px-3 text-sm border-brand"
                             >
-                                <span style={{ color: 'var(--color-text)' }}>{side.name}</span>
+                                <span className="text-secondary">{side.name}</span>
                                 <div className="flex items-center gap-2">
                                     <div
-                                        className="px-2 rounded font-bold cursor-pointer transition"
-                                        style={{ backgroundColor: 'var(--color-background-light)' }}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.backgroundColor = 'rgba(35, 160, 229, 0.1)';
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.backgroundColor = 'var(--color-background-light)';
-                                        }}
+                                        className="px-2 rounded font-bold cursor-pointer transition bg-bg-light"
                                         onClick={() => handleDecrement(side.id)}
                                     >
                                         -
                                     </div>
-                                    <span className="w-6 text-center" style={{ color: 'var(--color-brand-red)' }}>
+                                    <span className="w-6 text-center text-brand-red">
                                         {sideQuantities[side.id] ?? 0}
                                     </span>
                                     <div
-                                        className="px-2 rounded font-bold cursor-pointer transition"
-                                        style={{ backgroundColor: 'var(--color-background-light)' }}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.backgroundColor = 'rgba(35, 160, 229, 0.1)';
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.backgroundColor = 'var(--color-background-light)';
-                                        }}
+                                        className="px-2 rounded font-bold cursor-pointer transition bg-bg-light"
                                         onClick={() => handleIncrement(side.id)}
                                     >
                                         +
@@ -282,33 +239,13 @@ export default function AddItemModal({
                         onClick={() => {
                             setOpen(false);
                         }}
-                        className="px-4 py-2 rounded-xl cursor-pointer transition"
-                        style={{ 
-                            backgroundColor: 'var(--color-background-light)', 
-                            color: 'var(--color-text)' 
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = 'rgba(153, 23, 28, 0.1)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'var(--color-background-light)';
-                        }}
+                        className="px-4 py-2 rounded-xl cursor-pointer transition bg-bg-light text-secondary"
                     >
                         Cancel
                     </div>
                     <div
                         onClick={() => confirmOrderItem()}
-                        className="px-4 py-2 rounded-xl cursor-pointer transition"
-                        style={{ 
-                            backgroundColor: 'var(--color-brand-blue)', 
-                            color: 'var(--color-background-light)' 
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = 'rgba(35, 160, 229, 0.8)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'var(--color-brand-blue)';
-                        }}
+                        className="px-4 py-2 rounded-xl cursor-pointer transition btn-brand-blue"
                     >
                         Add
                     </div>
