@@ -25,7 +25,10 @@ interface Side {
     price: number;
 }
 
-export default function NewOrderModal() {
+export default function NewOrderModal({
+    openNewOrderModal = true,
+    setOpenNewOrderModal,
+}: any) {
     const [phoneNumber, setPhoneNumber] = useState("");
 
     const [lastname, setLastname] = useState("");
@@ -40,7 +43,7 @@ export default function NewOrderModal() {
         { id: 1, name: "Ecuadorian" },
     ]);
 
-    const [open, setOpen] = useState(false);
+    const [openAddItemModal, setOpenAddItemModal] = useState(false);
 
     const [sides, setSides] = useState<any[]>([]);
     const [dishes, setDishes] = useState<any[]>([]);
@@ -187,278 +190,321 @@ export default function NewOrderModal() {
         setLastname(customer.last_name || "");
         setShowSuggestions(false);
     };
+
+    if (!openNewOrderModal) return null;
+
     return (
-        <div className="min-h-screen py-12 px-4 bg-background">
-            <div className="max-w-3xl mx-auto">
-                <div className="bg-white rounded-2xl shadow-xl p-8 border-t-4 border-top-brand-blue">
-                    <h1 className="text-3xl font-bold mb-2 text-foreground">
-                        Food Order Registration
-                    </h1>
-                    <p className="mb-4 text-secondary">
-                        Register customer orders quickly and easily
-                    </p>
+        <div
+            className={`fixed inset-x-0 bottom-0 z-50 bg-white shadow-xl transition-transform duration-500 ease-out
+    ${openNewOrderModal ? "translate-y-0" : "translate-y-full"}
+    rounded-t-3xl max-h-[80vh] flex flex-col
+    md:rounded-2xl md:left-1/2 md:top-1/2 md:bottom-auto md:translate-x-[-50%] md:translate-y-[-50%]
+    md:max-w-lg md:w-[90%] md:h-auto
+  `}
+        >
+            <div className="p-4 border-b flex justify-between items-center border-brand">
+                <h2 className="text-lg font-semibold text-foreground">
+                    Add Item
+                </h2>
+                <button
+                    onClick={() => setOpenNewOrderModal(false)}
+                    className="transition text-secondary"
+                >
+                    ✕
+                </button>
+            </div>
 
-                    <div className="flex justify-end">
-                        <Link
-                            href="/orders"
-                            className="px-4 py-2 rounded-lg transition text-sm font-medium btn-brand-blue"
-                        >
-                            View Orders
-                        </Link>
-                    </div>
+            <div className="min-h-screen py-12 px-4 bg-background">
+                <div className="max-w-3xl mx-auto">
+                    <div className="bg-white rounded-2xl shadow-xl p-8 border-t-4 border-top-brand-blue">
+                        <h1 className="text-3xl font-bold mb-2 text-foreground">
+                            Food Order Registration
+                        </h1>
+                        <p className="mb-4 text-secondary">
+                            Register customer orders quickly and easily
+                        </p>
 
-                    {message && (
-                        <div
-                            className={`p-2 m-3 rounded-md ${
-                                message.type === "success"
-                                    ? "bg-blue-50 text-accent-secondary border-accent-secondary"
-                                    : "bg-red-50 text-accent border border-accent"
-                            }`}
-                        >
-                            {message.text}
+                        <div className="flex justify-end">
+                            <Link
+                                href="/orders"
+                                className="px-4 py-2 rounded-lg transition text-sm font-medium btn-brand-blue"
+                            >
+                                View Orders
+                            </Link>
                         </div>
-                    )}
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Customer Info */}
-                        <div className="space-y-4 mt-4">
-                            <div className="flex items-center gap-3 mb-2">
-                                <div className="w-1 h-6 rounded-full bg-brand-blue"></div>
-                                <h2 className="text-xl font-semibold text-foreground">
-                                    Customer Information
-                                </h2>
+                        {message && (
+                            <div
+                                className={`p-2 m-3 rounded-md ${
+                                    message.type === "success"
+                                        ? "bg-blue-50 text-accent-secondary border-accent-secondary"
+                                        : "bg-red-50 text-accent border border-accent"
+                                }`}
+                            >
+                                {message.text}
                             </div>
-                            <div className="flex flex-row gap-4">
-                                <div className="w-full">
+                        )}
+
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            {/* Customer Info */}
+                            <div className="space-y-4 mt-4">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className="w-1 h-6 rounded-full bg-brand-blue"></div>
+                                    <h2 className="text-xl font-semibold text-foreground">
+                                        Customer Information
+                                    </h2>
+                                </div>
+                                <div className="flex flex-row gap-4">
+                                    <div className="w-full">
+                                        <label className="block text-sm font-medium mb-2 text-secondary">
+                                            Phone Number{" "}
+                                            <span className="text-brand-blue">
+                                                *
+                                            </span>
+                                        </label>
+                                        <div
+                                            className="relative"
+                                            ref={suggestionsRef}
+                                        >
+                                            <input
+                                                type="tel"
+                                                required
+                                                value={phoneNumber}
+                                                onChange={(e) =>
+                                                    handlePhoneNumberChange(
+                                                        e.target.value
+                                                    )
+                                                }
+                                                onFocus={() => {
+                                                    if (
+                                                        phoneNumber.length >
+                                                            0 &&
+                                                        filteredSuggestions.length >
+                                                            0
+                                                    ) {
+                                                        setShowSuggestions(
+                                                            true
+                                                        );
+                                                    }
+                                                }}
+                                                className="w-full px-4 py-3 border rounded-lg transition bg-white appearance-none input-brand"
+                                                placeholder="+1 234 567 8900"
+                                                autoComplete="off"
+                                            />
+
+                                            {/* Suggestions Dropdown */}
+                                            {showSuggestions &&
+                                                filteredSuggestions.length >
+                                                    0 && (
+                                                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto">
+                                                        {filteredSuggestions.map(
+                                                            (
+                                                                customer,
+                                                                index
+                                                            ) => (
+                                                                <button
+                                                                    key={index}
+                                                                    type="button"
+                                                                    onClick={() =>
+                                                                        selectSuggestion(
+                                                                            customer
+                                                                        )
+                                                                    }
+                                                                    className="w-full px-4 py-3 text-left transition flex justify-between items-center border-b border-gray-100 last:border-b-0 suggestion"
+                                                                >
+                                                                    <div>
+                                                                        <p className="font-medium text-foreground">
+                                                                            {
+                                                                                customer.phone_number
+                                                                            }
+                                                                        </p>
+                                                                        <p className="text-sm text-brand-blue">
+                                                                            {customer.first_name +
+                                                                                " " +
+                                                                                customer.last_name}
+                                                                        </p>
+                                                                    </div>
+                                                                    <svg
+                                                                        className="w-5 h-5 text-brand-red"
+                                                                        fill="none"
+                                                                        stroke="currentColor"
+                                                                        viewBox="0 0 24 24"
+                                                                    >
+                                                                        <path
+                                                                            strokeLinecap="round"
+                                                                            strokeLinejoin="round"
+                                                                            strokeWidth={
+                                                                                2
+                                                                            }
+                                                                            d="M9 5l7 7-7 7"
+                                                                        />
+                                                                    </svg>
+                                                                </button>
+                                                            )
+                                                        )}
+                                                    </div>
+                                                )}
+                                        </div>
+                                    </div>
+
+                                    <div className="w-full">
+                                        <label className="block text-sm font-medium mb-2 text-secondary">
+                                            Nationality
+                                        </label>
+                                        <Selector
+                                            placeholder="Select Nationality"
+                                            returnSelectedValue={true}
+                                            onChangeParent={setNationality}
+                                            selectorList={nationalityList}
+                                            className="appearance-none w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition center"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
                                     <label className="block text-sm font-medium mb-2 text-secondary">
-                                        Phone Number{" "}
+                                        First Name{" "}
                                         <span className="text-brand-blue">
                                             *
                                         </span>
                                     </label>
-                                    <div
-                                        className="relative"
-                                        ref={suggestionsRef}
-                                    >
-                                        <input
-                                            type="tel"
-                                            required
-                                            value={phoneNumber}
-                                            onChange={(e) =>
-                                                handlePhoneNumberChange(
-                                                    e.target.value
-                                                )
-                                            }
-                                            onFocus={() => {
-                                                if (
-                                                    phoneNumber.length > 0 &&
-                                                    filteredSuggestions.length >
-                                                        0
-                                                ) {
-                                                    setShowSuggestions(true);
-                                                }
-                                            }}
-                                            className="w-full px-4 py-3 border rounded-lg transition bg-white appearance-none input-brand"
-                                            placeholder="+1 234 567 8900"
-                                            autoComplete="off"
-                                        />
-
-                                        {/* Suggestions Dropdown */}
-                                        {showSuggestions &&
-                                            filteredSuggestions.length > 0 && (
-                                                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto">
-                                                    {filteredSuggestions.map(
-                                                        (customer, index) => (
-                                                            <button
-                                                                key={index}
-                                                                type="button"
-                                                                onClick={() =>
-                                                                    selectSuggestion(
-                                                                        customer
-                                                                    )
-                                                                }
-                                                                className="w-full px-4 py-3 text-left transition flex justify-between items-center border-b border-gray-100 last:border-b-0 suggestion"
-                                                            >
-                                                                <div>
-                                                                    <p className="font-medium text-foreground">
-                                                                        {
-                                                                            customer.phone_number
-                                                                        }
-                                                                    </p>
-                                                                    <p className="text-sm text-brand-blue">
-                                                                        {customer.first_name +
-                                                                            " " +
-                                                                            customer.last_name}
-                                                                    </p>
-                                                                </div>
-                                                                <svg
-                                                                    className="w-5 h-5 text-brand-red"
-                                                                    fill="none"
-                                                                    stroke="currentColor"
-                                                                    viewBox="0 0 24 24"
-                                                                >
-                                                                    <path
-                                                                        strokeLinecap="round"
-                                                                        strokeLinejoin="round"
-                                                                        strokeWidth={
-                                                                            2
-                                                                        }
-                                                                        d="M9 5l7 7-7 7"
-                                                                    />
-                                                                </svg>
-                                                            </button>
-                                                        )
-                                                    )}
-                                                </div>
-                                            )}
-                                    </div>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={firstname}
+                                        onChange={(e) =>
+                                            setFirstname(e.target.value)
+                                        }
+                                        className="w-full px-4 py-3 border rounded-lg transition input-brand"
+                                        placeholder="John"
+                                    />
                                 </div>
 
-                                <div className="w-full">
+                                <div>
                                     <label className="block text-sm font-medium mb-2 text-secondary">
-                                        Nationality
+                                        Last Name{" "}
+                                        <span className="text-brand-blue">
+                                            *
+                                        </span>
                                     </label>
-                                    <Selector
-                                        placeholder="Select Nationality"
-                                        returnSelectedValue={true}
-                                        onChangeParent={setNationality}
-                                        selectorList={nationalityList}
-                                        className="appearance-none w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition center"
+                                    <input
+                                        type="text"
+                                        required
+                                        value={lastname}
+                                        onChange={(e) =>
+                                            setLastname(e.target.value)
+                                        }
+                                        className="w-full px-4 py-3 border rounded-lg transition input-brand"
+                                        placeholder="Doe"
                                     />
                                 </div>
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-medium mb-2 text-secondary">
-                                    First Name{" "}
-                                    <span className="text-brand-blue">*</span>
-                                </label>
-                                <input
-                                    type="text"
-                                    required
-                                    value={firstname}
-                                    onChange={(e) =>
-                                        setFirstname(e.target.value)
-                                    }
-                                    className="w-full px-4 py-3 border rounded-lg transition input-brand"
-                                    placeholder="John"
-                                />
-                            </div>
+                            {/* Overlay */}
+                            <div
+                                className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${
+                                    openAddItemModal
+                                        ? "opacity-100 visible"
+                                        : "opacity-0 invisible"
+                                }`}
+                                onClick={() => setOpenAddItemModal(false)}
+                            ></div>
 
-                            <div>
-                                <label className="block text-sm font-medium mb-2 text-secondary">
-                                    Last Name{" "}
-                                    <span className="text-brand-blue">*</span>
-                                </label>
-                                <input
-                                    type="text"
-                                    required
-                                    value={lastname}
-                                    onChange={(e) =>
-                                        setLastname(e.target.value)
-                                    }
-                                    className="w-full px-4 py-3 border rounded-lg transition input-brand"
-                                    placeholder="Doe"
-                                />
-                            </div>
-                        </div>
-
-                        {/* Overlay */}
-                        <div
-                            className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${
-                                open
-                                    ? "opacity-100 visible"
-                                    : "opacity-0 invisible"
-                            }`}
-                            onClick={() => setOpen(false)}
-                        ></div>
-
-                        <AddItemModal
-                            dishes={dishes}
-                            sides={sides}
-                            open={open}
-                            setOpen={setOpen}
-                            setConfirmedOrderList={setConfirmedOrderList}
-                        />
-
-                        {/* Dishes */}
-                        <div className="space-y-4">
-                            <div className="flex  justify-between items-center">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-1 h-6 rounded-full bg-brand-blue"></div>
-                                    <h2 className="text-xl font-semibold text-foreground">
-                                        Order List
-                                    </h2>
-                                </div>
-                                <div
-                                    onClick={() => setOpen(true)}
-                                    className="px-4 py-2 rounded-xl cursor-pointer transition btn-brand-blue"
-                                >
-                                    + Add Item
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2 p-5 rounded-lg bg-bg-light">
-                                {confirmedOrderList.length === 0 ? (
-                                    <div className="flex items-center gap-3 w-full">
-                                        <div className="w-8 h-8 rounded-full flex items-center justify-center badge-blue">
-                                            <svg
-                                                className="w-4 h-4 text-brand-blue"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth={2}
-                                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                                                />
-                                            </svg>
-                                        </div>
-                                        <p className="text-secondary">
-                                            No items added yet. Click "Add Item"
-                                            to start your order.
-                                        </p>
-                                    </div>
-                                ) : (
-                                    <div className="w-full space-y-4">
-                                        <DishToOrderItem
-                                            orderList={confirmedOrderList}
-                                            removeItemFromOrder={removeDish}
-                                        />
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Comments */}
-                        <div>
-                            <div className="flex items-center gap-2 mb-2">
-                                <div className="w-1 h-4 rounded-full bg-brand-blue"></div>
-                                <label className="block text-sm font-medium text-secondary">
-                                    Comments
-                                </label>
-                            </div>
-                            <textarea
-                                value={comments}
-                                onChange={(e) => setComments(e.target.value)}
-                                rows={3}
-                                className="w-full px-4 py-3 border rounded-lg transition resize-none input-brand"
-                                placeholder="Additional notes or special instructions..."
+                            <AddItemModal
+                                dishes={dishes}
+                                sides={sides}
+                                open={openAddItemModal}
+                                setOpen={setOpenAddItemModal}
+                                setConfirmedOrderList={setConfirmedOrderList}
                             />
-                        </div>
 
-                        {/* Submit */}
-                        <button
-                            type="submit"
-                            disabled={isSubmitting}
-                            className={`w-full py-4 font-semibold rounded-lg disabled:cursor-not-allowed transition shadow-lg hover:shadow-xl ${
-                                isSubmitting ? "bg-gray-400" : "btn-brand-blue"
-                            }`}
-                        >
-                            {isSubmitting ? "Submitting..." : "Register Order"}
-                        </button>
-                    </form>
+                            {/* Dishes */}
+                            <div className="space-y-4">
+                                <div className="flex  justify-between items-center">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-1 h-6 rounded-full bg-brand-blue"></div>
+                                        <h2 className="text-xl font-semibold text-foreground">
+                                            Order List
+                                        </h2>
+                                    </div>
+                                    <div
+                                        onClick={() =>
+                                            setOpenAddItemModal(true)
+                                        }
+                                        className="px-4 py-2 rounded-xl cursor-pointer transition btn-brand-blue"
+                                    >
+                                        + Add Item
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2 p-5 rounded-lg bg-bg-light">
+                                    {confirmedOrderList.length === 0 ? (
+                                        <div className="flex items-center gap-3 w-full">
+                                            <div className="w-8 h-8 rounded-full flex items-center justify-center badge-blue">
+                                                <svg
+                                                    className="w-4 h-4 text-brand-blue"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth={2}
+                                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                                                    />
+                                                </svg>
+                                            </div>
+                                            <p className="text-secondary">
+                                                No items added yet. Click "Add
+                                                Item" to start your order.
+                                            </p>
+                                        </div>
+                                    ) : (
+                                        <div className="w-full space-y-4">
+                                            <DishToOrderItem
+                                                orderList={confirmedOrderList}
+                                                removeItemFromOrder={removeDish}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Comments */}
+                            <div>
+                                <div className="flex items-center gap-2 mb-2">
+                                    <div className="w-1 h-4 rounded-full bg-brand-blue"></div>
+                                    <label className="block text-sm font-medium text-secondary">
+                                        Comments
+                                    </label>
+                                </div>
+                                <textarea
+                                    value={comments}
+                                    onChange={(e) =>
+                                        setComments(e.target.value)
+                                    }
+                                    rows={3}
+                                    className="w-full px-4 py-3 border rounded-lg transition resize-none input-brand"
+                                    placeholder="Additional notes or special instructions..."
+                                />
+                            </div>
+
+                            {/* Submit */}
+                            <button
+                                type="submit"
+                                disabled={isSubmitting}
+                                className={`w-full py-4 font-semibold rounded-lg disabled:cursor-not-allowed transition shadow-lg hover:shadow-xl ${
+                                    isSubmitting
+                                        ? "bg-gray-400"
+                                        : "btn-brand-blue"
+                                }`}
+                            >
+                                {isSubmitting
+                                    ? "Submitting..."
+                                    : "Register Order"}
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
