@@ -202,28 +202,24 @@ export default function NewOrderModal({
     md:max-w-lg md:w-[90%] md:h-auto
   `}
         >
-            <div className="p-4 border-b flex justify-between items-center border-brand">
-                <h2 className="text-lg font-semibold text-foreground">
-                    Add Item
-                </h2>
-                <button
-                    onClick={() => setOpenNewOrderModal(false)}
-                    className="transition text-secondary"
-                >
-                    ✕
-                </button>
-            </div>
-
             <div className="min-h-screen py-12 px-4 bg-background">
                 <div className="max-w-3xl mx-auto">
                     <div className="bg-white rounded-2xl shadow-xl p-8 border-t-4 border-top-brand-blue">
-                        <h1 className="text-3xl font-bold mb-2 text-foreground">
-                            Food Order Registration
-                        </h1>
+                        <div className=" border-b flex justify-between items-center border-brand">
+                            <h1 className="text-3xl font-bold mb-2 text-foreground">
+                                Food Order Registration
+                            </h1>
+                            <button
+                                onClick={() => setOpenNewOrderModal(false)}
+                                className="transition text-secondary"
+                            >
+                                ✕
+                            </button>
+                        </div>
+
                         <p className="mb-4 text-secondary">
                             Register customer orders quickly and easily
                         </p>
-
                         <div className="flex justify-end">
                             <Link
                                 href="/orders"
@@ -232,7 +228,6 @@ export default function NewOrderModal({
                                 View Orders
                             </Link>
                         </div>
-
                         {message && (
                             <div
                                 className={`p-2 m-3 rounded-md ${
@@ -244,7 +239,6 @@ export default function NewOrderModal({
                                 {message.text}
                             </div>
                         )}
-
                         <form onSubmit={handleSubmit} className="space-y-6">
                             {/* Customer Info */}
                             <div className="space-y-4 mt-4">

@@ -22,7 +22,7 @@ export default function Page() {
                 className="btn-brand-blue p-4 font-semibold rounded-lg disabled:cursor-not-allowed transition shadow-lg hover:shadow-xl "
                 onClick={() => handleOpenNewOrderModal(true)}
             >
-                Open New Order Modal
+                Order Now
             </button>
         </div>
     );
