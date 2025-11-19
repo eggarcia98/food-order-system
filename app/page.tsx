@@ -2,6 +2,7 @@
 "use client";
 
 import NewOrderModal from "@/components/NewOrderModal";
+import Link from "next/link";
 import { useState } from "react";
 
 // Dis is a comment
@@ -18,12 +19,12 @@ export default function Page() {
                 openNewOrderModal={openNewOrderModal}
                 setOpenNewOrderModal={handleOpenNewOrderModal}
             />
-            <button
+            <Link
                 className="btn-brand-blue p-4 font-semibold rounded-lg disabled:cursor-not-allowed transition shadow-lg hover:shadow-xl "
-                onClick={() => handleOpenNewOrderModal(true)}
+                href={"/new_order"}
             >
                 Order Now
-            </button>
+            </Link>
         </div>
     );
 }

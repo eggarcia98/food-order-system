@@ -44,7 +44,7 @@ export default function RootLayout({
                 </main>
 
                 {/* Infinite scrolling banner below header */}
-            <FooterComponent />
+                <FooterComponent />
             </body>
         </html>
     );
