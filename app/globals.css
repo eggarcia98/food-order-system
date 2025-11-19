@@ -106,6 +106,28 @@ body {
 .suggestion { background-color: transparent; }
 .suggestion:hover { background-color: rgba(35, 160, 229, 0.05); }
 
+/* Marquee / infinite scrolling banner */
+.text-on-brand { color: var(--color-background-light); }
+.marquee {
+  width: 100%;
+  overflow: hidden;
+}
+.marquee__content {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  white-space: nowrap;
+  will-change: transform;
+  animation: marquee 10s linear infinite;
+  color: var(--color-background-light);
+  font-weight: 600;
+}
+    
+@keyframes marquee {
+    0%   { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+}
+
 /* Small border utilities for components that previously used inline border colors */
 .border-b-brand-red { border-bottom-color: var(--color-brand-red); }
 .border-brand-red { border-color: var(--color-brand-red); }

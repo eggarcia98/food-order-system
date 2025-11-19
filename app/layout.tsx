@@ -5,13 +5,13 @@ import Image from "next/image";
 import "./globals.css";
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+    variable: "--font-geist-sans",
+    subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+    variable: "--font-geist-mono",
+    subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
@@ -20,46 +20,78 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <header className="bg-white border-b border-brand-blue">
-          <div className="max-w-6xl mx-auto px-6  flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-3">
-              <Image
-                src="/media/logo.png"
-                alt="Los Guayacos Restaurant"
-                width={250}
-                height={250}
-                className="object-contain w-[170px] sm:w-[180px] md:w-[210px] lg:w-[250px] h-auto my-2"
-              />
-            </Link>
+    return (
+        <html lang="en">
+            <body
+                className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen flex flex-col`}
+            >
+                <header className="bg-white border-b border-brand-blue">
+                    <div className="max-w-6xl mx-auto px-6  flex items-center justify-between">
+                        <Link href="/" className="flex items-center gap-3">
+                            <Image
+                                src="/media/logo.png"
+                                alt="Los Guayacos Restaurant"
+                                width={250}
+                                height={250}
+                                className="object-contain w-[170px] sm:w-[180px] md:w-[210px] lg:w-[250px] h-auto my-2"
+                            />
+                        </Link>
 
-            <nav aria-label="Main Navigation">
-              <ul className="flex items-center gap-6">
-                <li>
-                  <Link href="/" className="text-secondary hover:text-brand-blue">
-                    Home
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/orders" className="text-secondary hover:text-brand-blue">
-                    Orders
-                  </Link>
-                </li>
-              </ul>
-            </nav>
-          </div>
-        </header>
+                        <nav aria-label="Main Navigation">
+                            <ul className="flex items-center gap-6">
+                                <li>
+                                    <Link
+                                        href="/"
+                                        className="text-secondary hover:text-brand-blue"
+                                    >
+                                        Home
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link
+                                        href="/orders"
+                                        className="text-secondary hover:text-brand-blue"
+                                    >
+                                        Orders
+                                    </Link>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </header>
 
-        <main>{children}</main>
-      </body>
-    </html>
-  );
+                <main className="flex-1 overflow-auto">{children}</main>
+
+          {/* Infinite scrolling banner below header */}
+
+                <div
+                    className="marquee hidden"
+                    role="region"
+                    aria-label="Promotional banner"
+                >
+                    <div className="marquee__content">
+                        {/* Duplicate the message to create a seamless loop */}
+                        <Image
+                            src="/media/banner_item_1.png"
+                            alt="Delicious Ecuadorian Food"
+                            width={150}
+                            height={150}
+                            className="object-contain h-auto"
+                        />
+                        <Image
+                            src="/media/banner_item_2.png"
+                            alt="Delicious Ecuadorian Food"
+                            width={150}
+                            height={150}
+                            className="object-contain h-auto"
+                        />
+                    </div>
+                </div>
+            </body>
+        </html>
+    );
 }
