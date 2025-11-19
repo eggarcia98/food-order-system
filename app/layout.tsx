@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Link from "next/link";
 import Image from "next/image";
-import { Bungee } from "next/font/google";
+import { Fredoka } from "next/font/google";
 import "./globals.css";
+import HeaderComponent from "@/components/HeaderComponent";
+import FooterComponent from "@/components/FooterComponent";
 
-const bungee = Bungee({ 
+const bungee = Fredoka({
     variable: "--font-bungee",
     subsets: ["latin"],
-    weight: "400",
-}); 
-
+    weight: ["300", "400", "500", "600", "700"],
+});
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -37,68 +37,14 @@ export default function RootLayout({
             <body
                 className={`${geistSans.variable} ${geistMono.variable} ${bungee.variable} antialiased h-screen flex flex-col `}
             >
-                <header className="bg-white border-b border-brand-blue font-bungee ">
-                    <div className="max-w-6xl mx-auto px-6  flex items-center justify-between">
-                        <Link href="/" className="flex items-center gap-3">
-                            <Image
-                                src="/media/logo.png"
-                                alt="Los Guayacos Restaurant"
-                                width={250}
-                                height={250}
-                                className="object-contain w-[170px] sm:w-[180px] md:w-[210px] lg:w-[250px] h-auto my-2"
-                            />
-                        </Link>
+                <HeaderComponent />
 
-                        <nav aria-label="Main Navigation">
-                            <ul className="flex items-center gap-6">
-                                <li>
-                                    <Link
-                                        href="/"
-                                        className="text-secondary hover:text-brand-blue"
-                                    >
-                                        Home
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        href="/orders"
-                                        className="text-secondary hover:text-brand-blue"
-                                    >
-                                        Orders
-                                    </Link>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
-                </header>
-
-                <main className="flex-1 overflow-auto">{children}</main>
+                <main className="flex-1 overflow-auto font-bungee">
+                    {children}
+                </main>
 
                 {/* Infinite scrolling banner below header */}
-
-                <div
-                    className="marquee hidden"
-                    role="region"
-                    aria-label="Promotional banner"
-                >
-                    <div className="marquee__content">
-                        {/* Duplicate the message to create a seamless loop */}
-                        <Image
-                            src="/media/banner_item_1.png"
-                            alt="Delicious Ecuadorian Food"
-                            width={150}
-                            height={150}
-                            className="object-contain h-auto"
-                        />
-                        <Image
-                            src="/media/banner_item_2.png"
-                            alt="Delicious Ecuadorian Food"
-                            width={150}
-                            height={150}
-                            className="object-contain h-auto"
-                        />
-                    </div>
-                </div>
+                <FooterComponent />
             </body>
         </html>
     );
