@@ -16,11 +16,11 @@ export default function HeaderComponent() {
                 </Link>
 
                 <nav aria-label="Main Navigation">
-                    <ul className="flex items-center gap-6">
+                    <ul className="flex items-center gap-6 underline underline-offset-4 ">
                         <li>
                             <Link
                                 href="/"
-                                className="text-secondary hover:text-brand-blue"
+                                className="text-secondary hover:text-brand-blue decoration-3"
                             >
                                 Menu
                             </Link>
@@ -28,7 +28,7 @@ export default function HeaderComponent() {
                         <li>
                             <Link
                                 href="/orders"
-                                className="text-secondary hover:text-brand-blue"
+                                className="text-secondary hover:text-brand-blue decoration-3"
                             >
                                 Contact
                             </Link>
