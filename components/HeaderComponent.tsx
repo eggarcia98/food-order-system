@@ -1,9 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 
 export default function HeaderComponent() {
     return (
-        <header className="bg-white border-b border-brand-blue font-bungee font-bold text-xs sm:text-[20px] ">
+        <header className="bg-white border-b border-brand-blue font-bungee font-bold text-xs sm:text-[16px] ">
             <div className="max-w-6xl mx-auto px-6  flex items-center justify-between">
                 <Link href="/" className="flex items-center gap-3">
                     <Image
@@ -32,6 +34,14 @@ export default function HeaderComponent() {
                             >
                                 Contact
                             </Link>
+                        </li>
+                        <li>
+                            <button
+                                className="btn-brand-blue p-2 font-semibold rounded-lg disabled:cursor-not-allowed transition shadow-lg hover:shadow-xl "
+                                onClick={() => { }}
+                            >
+                                Order Now
+                            </button>
                         </li>
                     </ul>
                 </nav>

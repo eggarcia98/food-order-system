@@ -3,25 +3,8 @@ import Link from "next/link";
 
 export default function FooterComponent() {
     return (
-        <div className="font-bungee flex justify-start items-center  bg-white border-b border-brand-blue font-bold text-xs sm:text-[20px] p-4 border-t-1">
-            <ul className="flex gap-6 ">
-                <li>
-                    <Link
-                        href="/"
-                        className="text-secondary hover:text-brand-blue underline "
-                    >
-                        Menu
-                    </Link>
-                </li>
-                <li>
-                    <Link
-                        href="/orders"
-                        className="text-secondary hover:text-brand-blue"
-                    >
-                        Contact
-                    </Link>
-                </li>
-            </ul>
+        <div className="font-bungee flex justify-center items-center  bg-white border-b border-brand-blue font-medium text-xs sm:text-sm p-4 border-t-1">
+            Copyrights © {new Date().getFullYear()} Los Guayacos Restaurant. All rights reserved.
             <div
                 className="marquee hidden"
                 role="region"
