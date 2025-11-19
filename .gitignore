@@ -25,7 +25,7 @@
 *.pem
 
 #private media files
-/media
+public/media
 
 # debug
 npm-debug.log*
