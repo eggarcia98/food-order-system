@@ -24,6 +24,9 @@
 .DS_Store
 *.pem
 
+#private media files
+/media
+
 # debug
 npm-debug.log*
 yarn-debug.log*
