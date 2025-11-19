@@ -33,7 +33,7 @@ export default function RootLayout({
           <div className="max-w-6xl mx-auto px-6  flex items-center justify-between">
             <Link href="/" className="flex items-center gap-3">
               <Image
-                src="/logo.png"
+                src="/media/logo.png"
                 alt="Los Guayacos Restaurant"
                 width={250}
                 height={250}
