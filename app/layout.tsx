@@ -35,7 +35,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body
-                className={`${geistSans.variable} ${geistMono.variable} ${bungee.variable} antialiased h-screen flex flex-col `}
+                className={`${geistSans.variable} ${geistMono.variable} ${bungee.variable} antialiased  flex flex-col `}
             >
                 <HeaderComponent />
 
@@ -44,7 +44,7 @@ export default function RootLayout({
                 </main>
 
                 {/* Infinite scrolling banner below header */}
-                <FooterComponent />
+            <FooterComponent />
             </body>
         </html>
     );
