@@ -2,7 +2,15 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import Image from "next/image";
+import { Bungee } from "next/font/google";
 import "./globals.css";
+
+const bungee = Bungee({ 
+    variable: "--font-bungee",
+    subsets: ["latin"],
+    weight: "400",
+}); 
+
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -27,9 +35,9 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen flex flex-col`}
+                className={`${geistSans.variable} ${geistMono.variable} ${bungee.variable} antialiased h-screen flex flex-col `}
             >
-                <header className="bg-white border-b border-brand-blue">
+                <header className="bg-white border-b border-brand-blue font-bungee ">
                     <div className="max-w-6xl mx-auto px-6  flex items-center justify-between">
                         <Link href="/" className="flex items-center gap-3">
                             <Image
@@ -66,7 +74,7 @@ export default function RootLayout({
 
                 <main className="flex-1 overflow-auto">{children}</main>
 
-          {/* Infinite scrolling banner below header */}
+                {/* Infinite scrolling banner below header */}
 
                 <div
                     className="marquee hidden"
