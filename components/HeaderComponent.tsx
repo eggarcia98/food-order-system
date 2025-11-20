@@ -6,7 +6,7 @@ import { Menu } from "lucide-react";
 
 export default function HeaderComponent() {
     return (
-        <header className="bg-white border-b border-brand-blue font-bungee font-bold text-xs sm:text-[16px] ">
+        <header className="bg-white border-b border-brand-blue font-bungee font-bold text-xs sm:text-[16px] h-fit ">
             <div className="max-w-6xl mx-auto px-6 grid grid-cols-3 items-center md:flex sm:justify-between ">
                 {/* Mobile menu button */}
                 <button className="md:hidden  justify-self-start">
@@ -19,7 +19,7 @@ export default function HeaderComponent() {
                         alt="Los Guayacos Restaurant"
                         width={250}
                         height={250}
-                        className="object-contain w-[170px] sm:w-[180px] md:w-[210px] lg:w-[250px] h-auto my-2"
+                        className="object-contain w-[170px] sm:w-[180px] md:w-[210px] lg:w-[250px] min-w-[170px] h-auto my-2"
                     />
                 </Link>
 
