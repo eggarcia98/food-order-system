@@ -11,7 +11,7 @@ export default function HeaderComponent() {
         <header className="bg-white border-b border-brand-blue font-bungee font-bold text-xs sm:text-[16px] h-fit ">
             <div className="max-w-6xl mx-auto px-6 grid grid-cols-3 items-center md:flex sm:justify-between relative top-0 z-50">
                 {/* Mobile menu button */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 md:hidden">
                     <button
                         aria-label={menuOpen ? "Close menu" : "Open menu"}
                         aria-expanded={menuOpen}
@@ -70,7 +70,7 @@ export default function HeaderComponent() {
                     <ul className="hidden md:flex items-center gap-6 underline underline-offset-4 ">
                         <li>
                             <Link
-                                href="/"
+                                href="/menu"
                                 className="text-secondary hover:text-brand-blue decoration-3"
                             >
                                 Menu
