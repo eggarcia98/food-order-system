@@ -119,31 +119,31 @@ export default function MenuPage() {
                     {/* Items */}
                     <ul className="space-y-4  ">
                         <li className="flex items-center gap-4">
-                            <span className="flex-none w-52 md:w-60 text-lg font-medium">
+                            <span className="flex-none w-52 md:w-60 text-lg ">
                                 35g Albacore Fish
                             </span>
                             <span className="flex-1 border-b border-dashed border-gray-400"></span>
-                            <span className="flex-none w-16 text-right text-lg font-semibold">
+                            <span className="flex-none w-16 text-right text-lg ">
                                 $ 5
                             </span>
                         </li>
 
                         <li className="flex items-center gap-4">
-                            <span className="flex-none w-52 md:w-60 text-lg font-medium">
+                            <span className="flex-none w-52 md:w-60 text-lg ">
                                 Fried Egg
                             </span>
                             <span className="flex-1 border-b border-dashed border-gray-400"></span>
-                            <span className="flex-none w-16 text-right text-lg font-semibold">
+                            <span className="flex-none w-16 text-right text-lg ">
                                 $ 2
                             </span>
                         </li>
 
                         <li className="flex items-center gap-4">
-                            <span className="flex-none w-52 md:w-60 text-lg font-medium">
+                            <span className="flex-none w-52 md:w-60 text-lg ">
                                 Plantain Chips
                             </span>
                             <span className="flex-1 border-b border-dashed border-gray-400"></span>
-                            <span className="flex-none w-16 text-right text-lg font-semibold">
+                            <span className="flex-none w-16 text-right text-lg ">
                                 $ 3
                             </span>
                         </li>
@@ -153,7 +153,7 @@ export default function MenuPage() {
                                 Coca Cola
                             </span>
                             <span className="flex-1 border-b border-dashed border-gray-400"></span>
-                            <span className="flex-none w-16 text-right text-lg font-semibold">
+                            <span className="flex-none w-16 text-right text-lg ">
                                 $ 3
                             </span>
                         </li>
