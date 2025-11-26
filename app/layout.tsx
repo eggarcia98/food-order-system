@@ -39,9 +39,11 @@ export default function RootLayout({
             >
                 <HeaderComponent />
 
-                <main className="flex-1 overflow-auto font-bungee">
-                    {children}
-                </main>
+                <div className="bg-pattern">
+                    <main className="flex-1 overflow-auto font-bungee  backdrop-blur-xl bg-white/85">
+                        {children}
+                    </main>
+                </div>
 
                 {/* Infinite scrolling banner below header */}
                 <FooterComponent />
