@@ -8,7 +8,7 @@ import { useState } from "react";
 export default function HeaderComponent() {
     const [menuOpen, setMenuOpen] = useState(false);
     return (
-        <header className="bg-white border-b border-brand-blue font-bungee font-bold text-xs sm:text-[16px] h-fit ">
+        <header className="bg-white border-b border-brand-blue font-bold text-xs sm:text-[16px] h-fit ">
             <div className="max-w-6xl mx-auto px-6 grid grid-cols-3 items-center md:flex sm:justify-between relative top-0 z-50">
                 {/* Mobile menu button */}
                 <div className="flex items-center gap-2 md:hidden">

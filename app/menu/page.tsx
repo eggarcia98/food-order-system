@@ -4,7 +4,7 @@ export default function MenuPage() {
             <div className="grid grid-col-1 md:grid-cols-3 md:grid-rows-2  gap-6 space-y-4">
                 <div className="border-1 border-accent rounded-lg p-6 pt-5    col-span-3 w-full">
                     {/* Heading overlay */}
-                    <h2 className="relative -top-10  -left-3 w-fit   px-3 text-2xl font-extrabold tracking-wider">
+                    <h2 className="relative -top-10  -left-3 w-fit   px-3 text-2xl font-extrabold tracking-wider font-bungee">
                         THE MAINS
                     </h2>
 

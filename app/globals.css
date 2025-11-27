@@ -9,9 +9,8 @@
 
 :root {
   /* Fonts */
-  --font-bungee: 'Bungee', "Helvetica Neue";
-  --font-geist-mono: 'Geist Mono', 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
-  --font-geist-sans: 'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-guayacos: 'Fredoka', "Helvetica Neue", sans-serif;
+  --font-bungee: 'Bungee', "Helvetica Neue", sans-serif;
 
   /* Colors */
   --color-background: #F5F5F5;
@@ -39,7 +38,7 @@ html, body {
 }
 body {
   margin: 0;
-  font-family: var(--font-bunge)e;
+  font-family: var(--font-guayacos);
   background-color: var(--color-background);
   color: var(--color-foreground);
   -webkit-font-smoothing: antialiased;
@@ -64,6 +63,8 @@ body {
     background-size: 2500px;
     background-image: url('/media/seemless.png');
   }
+  /* Utility to apply the Bungee display font via className */
+  .font-bungee { font-family: var(--font-bungee); }
 }
 
 /* Text utilities */

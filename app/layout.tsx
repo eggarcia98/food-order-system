@@ -1,25 +1,19 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import Image from "next/image";
-import { Fredoka } from "next/font/google";
+import { Fredoka, Bungee } from "next/font/google";
 import "./globals.css";
 import HeaderComponent from "@/components/HeaderComponent";
 import FooterComponent from "@/components/FooterComponent";
 
-const bungee = Fredoka({
-    variable: "--font-bungee",
+const fredoka = Fredoka({
+    variable: "--font-guayacos",
     subsets: ["latin"],
     weight: ["300", "400", "500", "600", "700"],
 });
 
-const geistSans = Geist({
-    variable: "--font-geist-sans",
+const bungee = Bungee({
+    variable: "--font-bungee",
     subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
+    weight: ["400"],
 });
 
 export const metadata: Metadata = {
@@ -33,14 +27,12 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
-            <body
-                className={`${geistSans.variable} ${geistMono.variable} ${bungee.variable} antialiased  flex flex-col `}
-            >
+        <html lang="en" >
+            <body className={`${fredoka.variable} ${bungee.variable} antialiased flex flex-col`}>
                 <HeaderComponent />
 
                 <div className="bg-pattern">
-                    <main className="flex-1 overflow-auto font-bungee  backdrop-blur-xl bg-white/85">
+                    <main className="flex-1 overflow-auto   backdrop-blur-xl bg-white/85">
                         {children}
                     </main>
                 </div>
