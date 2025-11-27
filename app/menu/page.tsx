@@ -9,7 +9,7 @@ export default function MenuPage() {
                     </h2>
 
                     {/* Items */}
-                    <ul className="space-y-4 mt-2">
+                    <ul className="space-y-4 mt-2 ">
                         <div>
                             <div className="text-lg font-medium">
                                 ENCEBOLLADO (DRINK INCLUDED)

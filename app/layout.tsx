@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fredoka, Bungee } from "next/font/google";
+import { Fredoka, Bungee, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import HeaderComponent from "@/components/HeaderComponent";
 import FooterComponent from "@/components/FooterComponent";
@@ -16,6 +16,12 @@ const bungee = Bungee({
     weight: ["400"],
 });
 
+const ibmPlexMono = IBM_Plex_Mono({
+    variable: "--font-ibm-plex-mono",
+    subsets: ["latin"],
+    weight: ["100", "200", "300", "400", "500", "600", "700"],
+});
+
 export const metadata: Metadata = {
     title: "Los Guayacos Restaurant",
     description: "Ecuadorian Food",
@@ -27,8 +33,10 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en" >
-            <body className={`${fredoka.variable} ${bungee.variable} antialiased flex flex-col`}>
+        <html lang="en">
+            <body
+                className={`${fredoka.variable} ${bungee.variable} ${ibmPlexMono.variable} antialiased flex flex-col`}
+            >
                 <HeaderComponent />
 
                 <div className="bg-pattern">
