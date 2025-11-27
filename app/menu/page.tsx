@@ -2,14 +2,14 @@ export default function MenuPage() {
     return (
         <div className=" mx-auto relative w-auto max-w-6xl p-6 mt-10 mb-20 ">
             <div className="grid grid-col-1 md:grid-cols-3 md:grid-rows-2  gap-6 space-y-4">
-                <div className="border-1 border-accent rounded-lg p-6 pt-5 bg-white   col-span-3 w-full">
+                <div className="border-1 border-brand rounded-lg p-6 pt-5    col-span-3 w-full">
                     {/* Heading overlay */}
-                    <h2 className="relative -top-10  -left-3 w-fit bg-white px-3 text-2xl font-extrabold tracking-wider">
+                    <h2 className="relative -top-10 bg-white  -left-3 w-fit   px-3 text-2xl font-extrabold tracking-wider font-bungee rounded-xl">
                         THE MAINS
                     </h2>
 
                     {/* Items */}
-                    <ul className="space-y-4 mt-2">
+                    <ul className="space-y-4 mt-2 ">
                         <div>
                             <div className="text-lg font-medium">
                                 ENCEBOLLADO (DRINK INCLUDED)
@@ -110,40 +110,40 @@ export default function MenuPage() {
                     </ul>
                 </div>
 
-                <div className="border-1 h-fit border-accent rounded-lg p-6 bg-white col-span-3 md:col-span-2">
+                <div className="border-1 h-fit border-brand rounded-lg p-6 col-span-3 md:col-span-2">
                     {/* Heading overlay */}
-                    <h2 className="relative -top-10 -left-3 bg-white px-3 text-2xl font-extrabold tracking-wider w-fit">
+                    <h2 className="relative -top-10 -left-3 bg-white px-3 text-2xl font-extrabold tracking-wider w-fit rounded-xl">
                         EXTRAS
                     </h2>
 
                     {/* Items */}
                     <ul className="space-y-4  ">
                         <li className="flex items-center gap-4">
-                            <span className="flex-none w-52 md:w-60 text-lg font-medium">
+                            <span className="flex-none w-52 md:w-60 text-lg ">
                                 35g Albacore Fish
                             </span>
                             <span className="flex-1 border-b border-dashed border-gray-400"></span>
-                            <span className="flex-none w-16 text-right text-lg font-semibold">
+                            <span className="flex-none w-16 text-right text-lg ">
                                 $ 5
                             </span>
                         </li>
 
                         <li className="flex items-center gap-4">
-                            <span className="flex-none w-52 md:w-60 text-lg font-medium">
+                            <span className="flex-none w-52 md:w-60 text-lg ">
                                 Fried Egg
                             </span>
                             <span className="flex-1 border-b border-dashed border-gray-400"></span>
-                            <span className="flex-none w-16 text-right text-lg font-semibold">
+                            <span className="flex-none w-16 text-right text-lg ">
                                 $ 2
                             </span>
                         </li>
 
                         <li className="flex items-center gap-4">
-                            <span className="flex-none w-52 md:w-60 text-lg font-medium">
+                            <span className="flex-none w-52 md:w-60 text-lg ">
                                 Plantain Chips
                             </span>
                             <span className="flex-1 border-b border-dashed border-gray-400"></span>
-                            <span className="flex-none w-16 text-right text-lg font-semibold">
+                            <span className="flex-none w-16 text-right text-lg ">
                                 $ 3
                             </span>
                         </li>
@@ -153,16 +153,16 @@ export default function MenuPage() {
                                 Coca Cola
                             </span>
                             <span className="flex-1 border-b border-dashed border-gray-400"></span>
-                            <span className="flex-none w-16 text-right text-lg font-semibold">
+                            <span className="flex-none w-16 text-right text-lg ">
                                 $ 3
                             </span>
                         </li>
                     </ul>
                 </div>
 
-                <div className="border-1 h-fit border-accent-secondary rounded-lg p-6 bg-white col-span-3 md:col-span-1">
+                <div className="border-1 h-fit border-brand-blue rounded-lg p-6  col-span-3 md:col-span-1">
                     {/* Heading overlay */}
-                    <h2 className="relative -top-10 -left-3 bg-white px-3 text-2xl font-extrabold tracking-wider w-fit">
+                    <h2 className="relative -top-10 -left-3 bg-white px-3 text-2xl font-extrabold tracking-wider w-fit rounded-xl">
                         INFO
                     </h2>
                     {/* Items */}

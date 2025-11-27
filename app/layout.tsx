@@ -1,25 +1,26 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import Image from "next/image";
-import { Fredoka } from "next/font/google";
+import { Fredoka, Bungee, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import HeaderComponent from "@/components/HeaderComponent";
 import FooterComponent from "@/components/FooterComponent";
 
-const bungee = Fredoka({
-    variable: "--font-bungee",
+const fredoka = Fredoka({
+    variable: "--font-guayacos",
     subsets: ["latin"],
     weight: ["300", "400", "500", "600", "700"],
 });
 
-const geistSans = Geist({
-    variable: "--font-geist-sans",
+const bungee = Bungee({
+    variable: "--font-bungee",
     subsets: ["latin"],
+    weight: ["400"],
 });
 
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
+const ibmPlexMono = IBM_Plex_Mono({
+    variable: "--font-ibm-plex-mono",
     subsets: ["latin"],
+    style: ["normal", "italic"],
+    weight: ["100", "200", "300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -35,13 +36,15 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body
-                className={`${geistSans.variable} ${geistMono.variable} ${bungee.variable} antialiased  flex flex-col `}
+                className={`${fredoka.variable} ${bungee.variable} ${ibmPlexMono.variable} antialiased flex flex-col`}
             >
                 <HeaderComponent />
 
-                <main className="flex-1 overflow-auto font-bungee">
-                    {children}
-                </main>
+                <div className="bg-pattern">
+                    <main className="flex-1 overflow-auto   backdrop-blur-xl bg-white/85">
+                        {children}
+                    </main>
+                </div>
 
                 {/* Infinite scrolling banner below header */}
                 <FooterComponent />

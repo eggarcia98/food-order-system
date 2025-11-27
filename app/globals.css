@@ -1,138 +1,120 @@
 @import "tailwindcss";
 
-/* Usage Suggestion
-#D82229
-Brand Accent, Buttons, Call-to-Action (CTA). A vibrant, energetic color.
-#23A0E5
-Headings, Important Links, Secondary CTA. A bright, friendly contrast to the red.
-#99171C
-Subheadings, Active States (Hover), Borders. A slightly deeper red for complementary accents.
-#F5F5F5
-Main Background, Content Areas. A slightly off-white that keeps the page clean while letting the other colors pop.
-#1A1A1A
-Main Body Text, Icons, Footers. A very dark gray/near-black for high readability.
-could you help me setting a new palette color following the above description
- */
+/*
+  Cleaned and organized global stylesheet.
+  - Variables are grouped and alphabetized for discoverability
+  - Keep utilities minimal; prefer Tailwind classes in components
+  - Preserve a small set of app-specific utilities used across the UI
+*/
 
 :root {
-  --foreground: #171717;
-  --font-geist-sans: 'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-geist-mono: 'Geist Mono', 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
-  --font-bungee: 'Bungee', "Helvetica Neue";
-  --color-brand-red: #D82229;
+  /* Fonts */
+  --font-guayacos: 'Fredoka', "Helvetica Neue", sans-serif;
+  --font-bungee: 'Bungee', "Helvetica Neue", sans-serif;
+  --font-ibm-plex-mono: 'IBM Plex Mono', "Helvetica Neue", monospace;
+  
+
+  /* Colors */
+  --color-background: #F5F5F5;
   --color-brand-blue: #23A0E5;
   --color-brand-dark-red: #99171C;
-  --color-background-light: #F5F5F5;
-  --color-foreground-dark: #1A1A1A;
+  --color-brand-red: #D82229;
+  --color-foreground: #1A1A1A;
   --color-hover-overlay: rgba(35, 160, 229, 0.7);
-}
 
-@theme inline {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-bungee: var(--font-bungee);
-  --color-background: var(--color-background-light);
-  --color-foreground: var(--color-foreground-dark);
+  /* Small helpers */
   --color-border: var(--color-brand-dark-red);
-
-  --color-accent: var(--color-brand-red);
-  --color-accent-secondary: var(--color-brand-blue);
-
-  --color-text: var(--color-foreground-dark);
-  --color-text-secondary: var(--color-foreground-dark);
-
-  --color-link: var(--color-brand-blue);
-  --color-link-hover: var(--color-brand-red); 
-
-  --color-button-background: var(--color-brand-red);
-  --color-button-text: var(--color-background-light);
-  --color-button-hover-overlay: var(--color-hover-overlay);
-
-  --color-button-background-hover: var(--color-brand-dark-red);
-  --color-button-text-hover: var(--color-background-light);
-
-
 }
 
+/* Respect user's color-scheme with minimal overrides */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --color-background: #0a0a0a;
+    --color-foreground: #ededed;
   }
 }
 
+/* Base element rules */
+html, body {
+  height: 100%;
+}
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  font-family: var(--font-guayacos);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Utility classes that map to CSS variables so components can use classNames
-   instead of inline style props. These are small, focused helpers used across
-   the app to keep styling consistent with the variables defined above. */
+/* Small app-specific utilities (keep these limited; use Tailwind where possible) */
 
+/* Background utilities */
 .bg-brand-blue { background-color: var(--color-brand-blue); }
 .bg-brand-blue-10 { background-color: rgba(35, 160, 229, 0.1); }
-.bg-brand-blue-15 { background-color: rgba(35, 160, 229, 0.15); }
 .bg-brand-red { background-color: var(--color-brand-red); }
 .bg-brand-red-10 { background-color: rgba(216, 34, 41, 0.1); }
-.bg-bg-light { background-color: var(--color-background-light); }
+.bg-bg-light { background-color: var(--color-background); }
 
+/* Patterned background (kept as a utility layer to be opt-in) */
+@layer utilities {
+  .bg-pattern {
+    background-repeat: repeat;
+    background-position: center;
+    background-attachment: fixed;
+    background-size: 2500px;
+    background-image: url('/media/seemless.png');
+  }
+  /* Utility to apply the Bungee display font via className */
+  .font-bungee { font-family: var(--font-bungee); }
+}
+
+/* Text utilities */
 .text-brand-blue { color: var(--color-brand-blue); }
 .text-brand-red { color: var(--color-brand-red); }
-.text-foreground { color: var(--color-foreground-dark); }
-.text-secondary { color: var(--color-text-secondary); }
+.text-foreground { color: var(--color-foreground); }
 
-.border-brand { border-color: var(--color-border); }
-.border-top-brand-blue { border-top-color: var(--color-brand-blue); }
-
-.btn-brand-blue { background-color: var(--color-brand-blue); color: var(--color-background-light); }
-.btn-brand-blue:hover { background-color: rgba(35, 160, 229, 0.8); }
-.btn-brand-red { background-color: var(--color-brand-red); color: var(--color-background-light); }
+/* Buttons (minimal helpers; prefer component styles) */
+.btn-brand-blue { background-color: var(--color-brand-blue); color: var(--color-background); }
+.btn-brand-blue:hover { background-color: rgba(35, 160, 229, 0.85); }
+.btn-brand-red { background-color: var(--color-brand-red); color: var(--color-background); }
 .btn-brand-red:hover { background-color: var(--color-brand-dark-red); }
 
-.input-brand { border-color: var(--color-border); }
-.input-brand:focus { border-color: var(--color-brand-blue); box-shadow: 0 0 0 2px rgba(35, 160, 229, 0.2); outline: none; }
+/* Form inputs */
+.input-brand { border: 1px solid var(--color-border); }
+.input-brand:focus { border-color: var(--color-brand-blue); box-shadow: 0 0 0 3px rgba(35,160,229,0.12); outline: none; }
 
-.badge-blue { background-color: rgba(35, 160, 229, 0.1); color: var(--color-brand-blue); }
-.badge-red { background-color: rgba(216, 34, 41, 0.1); color: var(--color-brand-red); }
+/* Badges */
+.badge-blue { background-color: rgba(35, 160, 229, 0.08); color: var(--color-brand-blue); }
+.badge-red { background-color: rgba(216, 34, 41, 0.08); color: var(--color-brand-red); }
 
-.ring-brand-blue { box-shadow: 0 0 0 2px rgba(35, 160, 229, 0.2); }
-
-/* Additional utilities */
-.text-secondary:hover { color: var(--color-brand-red); }
+/* Borders & rings */
+.border-brand { border-color: var(--color-border); }
 .border-brand-blue { border-color: var(--color-brand-blue); }
-.bg-bg-light:hover { background-color: rgba(35, 160, 229, 0.1); }
-.text-brand-red:hover { color: var(--color-brand-dark-red); }
+.border-b-brand-red { border-bottom-color: var(--color-brand-red); }
+.ring-brand-blue { box-shadow: 0 0 0 3px rgba(35,160,229,0.12); }
 
+/* Misc UI helpers */
 .suggestion { background-color: transparent; }
-.suggestion:hover { background-color: rgba(35, 160, 229, 0.05); }
+.suggestion:hover { background-color: rgba(35,160,229,0.04); }
 
-/* Marquee / infinite scrolling banner */
-.text-on-brand { color: var(--color-background-light); }
-.marquee {
-  width: 100%;
-  overflow: hidden;
-}
+/* Marquee / infinite scrolling banner (kept small) */
+.marquee { width: 100%; overflow: hidden; }
 .marquee__content {
   display: inline-flex;
-  flex-wrap: nowrap;
-  align-items: center;
   white-space: nowrap;
   will-change: transform;
   animation: marquee 10s linear infinite;
-  color: var(--color-background-light);
-  font-weight: 600;
 }
-
 @keyframes marquee {
-    0%   { transform: translateX(0%); }
-    100% { transform: translateX(-50%); }
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
 }
 
-/* Small border utilities for components that previously used inline border colors */
-.border-b-brand-red { border-bottom-color: var(--color-brand-red); }
-.border-brand-red { border-color: var(--color-brand-red); }
+/* End of globals */
+/* Additional utilities */
 
+.text-secondary:hover { color: var(--color-brand-red); }
 
+.border-brand-blue { border-color: var(--color-brand-blue); }
 
