@@ -2,9 +2,9 @@ export default function MenuPage() {
     return (
         <div className=" mx-auto relative w-auto max-w-6xl p-6 mt-10 mb-20 ">
             <div className="grid grid-col-1 md:grid-cols-3 md:grid-rows-2  gap-6 space-y-4">
-                <div className="border-1 border-accent rounded-lg p-6 pt-5    col-span-3 w-full">
+                <div className="border-1 border-brand rounded-lg p-6 pt-5    col-span-3 w-full">
                     {/* Heading overlay */}
-                    <h2 className="relative -top-10  -left-3 w-fit   px-3 text-2xl font-extrabold tracking-wider font-bungee">
+                    <h2 className="relative -top-10 bg-white  -left-3 w-fit   px-3 text-2xl font-extrabold tracking-wider font-bungee rounded-xl">
                         THE MAINS
                     </h2>
 
@@ -110,9 +110,9 @@ export default function MenuPage() {
                     </ul>
                 </div>
 
-                <div className="border-1 h-fit border-accent rounded-lg p-6 bg-white col-span-3 md:col-span-2">
+                <div className="border-1 h-fit border-brand rounded-lg p-6 col-span-3 md:col-span-2">
                     {/* Heading overlay */}
-                    <h2 className="relative -top-10 -left-3 bg-white px-3 text-2xl font-extrabold tracking-wider w-fit">
+                    <h2 className="relative -top-10 -left-3 bg-white px-3 text-2xl font-extrabold tracking-wider w-fit rounded-xl">
                         EXTRAS
                     </h2>
 
@@ -160,9 +160,9 @@ export default function MenuPage() {
                     </ul>
                 </div>
 
-                <div className="border-1 h-fit border-accent-secondary rounded-lg p-6 bg-white col-span-3 md:col-span-1">
+                <div className="border-1 h-fit border-brand-blue rounded-lg p-6  col-span-3 md:col-span-1">
                     {/* Heading overlay */}
-                    <h2 className="relative -top-10 -left-3 bg-white px-3 text-2xl font-extrabold tracking-wider w-fit">
+                    <h2 className="relative -top-10 -left-3 bg-white px-3 text-2xl font-extrabold tracking-wider w-fit rounded-xl">
                         INFO
                     </h2>
                     {/* Items */}

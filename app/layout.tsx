@@ -19,6 +19,7 @@ const bungee = Bungee({
 const ibmPlexMono = IBM_Plex_Mono({
     variable: "--font-ibm-plex-mono",
     subsets: ["latin"],
+    style: ["normal", "italic"],
     weight: ["100", "200", "300", "400", "500", "600", "700"],
 });
 
