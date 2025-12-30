@@ -31,12 +31,29 @@ export default function LoginPage() {
         console.log("Apple login clicked");
     };
 
-    const handleLoginSubmit = (e: React.FormEvent) => {
+    const handleLoginSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         // TODO: Handle login authentication
         console.log("Login:", { email: loginEmail, password: loginPassword });
-        // Navigate to the app
-        router.push("/new_order");
+        try {
+            const response = await fetch("/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email: loginEmail,
+                    password: loginPassword,
+                }),
+            });
+
+            if (!response.ok) throw new Error("Failed to fetch orders");
+            const data = await response.json();
+            console.log("Fetched orders:", data);
+            
+        } catch (err) {
+            console.error(err);
+        }
     };
 
     const handleSignupSubmit = (e: React.FormEvent) => {
@@ -144,7 +161,7 @@ export default function LoginPage() {
                         <p className="text-sm text-center text-gray-600">
                             Don't have an account?{" "}
                             <a
-                                href="/signup"                                
+                                href="/signup"
                                 className="text-brand-red font-semibold hover:underline"
                             >
                                 Sign Up
