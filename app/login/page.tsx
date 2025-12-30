@@ -72,8 +72,61 @@ export default function LoginPage() {
                         <p className="text-center text-lg font-medium text-secondary">
                             Sign in to continue
                         </p>
+                        <form
+                            onSubmit={handleLoginSubmit}
+                            className="space-y-4"
+                        >
+                            <div>
+                                <label
+                                    htmlFor="loginEmail"
+                                    className="block text-sm font-medium text-gray-700 mb-1"
+                                >
+                                    Email{" "}
+                                    <span className="text-brand-red">*</span>
+                                </label>
+                                <input
+                                    type="email"
+                                    id="loginEmail"
+                                    value={loginEmail}
+                                    onChange={(e) =>
+                                        setLoginEmail(e.target.value)
+                                    }
+                                    required
+                                    className="w-full px-4 py-2 input-brand rounded-lg focus:ring-brand-blue transition"
+                                    placeholder="Enter your email"
+                                />
+                            </div>
 
-                        <SocialLoginButtons />
+                            <div>
+                                <label
+                                    htmlFor="loginPassword"
+                                    className="block text-sm font-medium text-gray-700 mb-1"
+                                >
+                                    Password{" "}
+                                    <span className="text-brand-red">*</span>
+                                </label>
+                                <input
+                                    type="password"
+                                    id="loginPassword"
+                                    value={loginPassword}
+                                    onChange={(e) =>
+                                        setLoginPassword(e.target.value)
+                                    }
+                                    required
+                                    className="w-full px-4 py-2 input-brand rounded-lg focus:ring-brand-blue transition"
+                                    placeholder="Enter your password"
+                                />
+                            </div>
+
+                            <div className="flex gap-3 pt-2">
+                                <button
+                                    type="submit"
+                                    className="flex-1 px-6 py-3 btn-brand-blue font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-xl"
+                                >
+                                    Login
+                                </button>
+                            </div>
+                        </form>
 
                         {/* Divider */}
                         <div className="relative">
@@ -87,102 +140,16 @@ export default function LoginPage() {
                             </div>
                         </div>
 
-                        {/* Email Login/Signup Buttons */}
-                        <div className="flex gap-3">
-                            <button
-                                onClick={() => setAuthMode("login")}
-                                className="flex-1 px-6 py-3 btn-brand-blue font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-xl"
-                            >
-                                Login
-                            </button>
+                        <SocialLoginButtons />
+                        <p className="text-sm text-center text-gray-600">
+                            Don't have an account?{" "}
                             <a
-                                href="/signup"
-                                className="flex-1 px-6 py-3 bg-[#D82229] text-center text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-xl"
+                                href="/signup"                                
+                                className="text-brand-red font-semibold hover:underline"
                             >
                                 Sign Up
                             </a>
-                        </div>
-
-                        {/* Login Form */}
-                        {authMode === "login" && (
-                            <form
-                                onSubmit={handleLoginSubmit}
-                                className="space-y-4"
-                            >
-                                <div>
-                                    <label
-                                        htmlFor="loginEmail"
-                                        className="block text-sm font-medium text-gray-700 mb-1"
-                                    >
-                                        Email{" "}
-                                        <span className="text-brand-red">
-                                            *
-                                        </span>
-                                    </label>
-                                    <input
-                                        type="email"
-                                        id="loginEmail"
-                                        value={loginEmail}
-                                        onChange={(e) =>
-                                            setLoginEmail(e.target.value)
-                                        }
-                                        required
-                                        className="w-full px-4 py-2 input-brand rounded-lg focus:ring-brand-blue transition"
-                                        placeholder="Enter your email"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label
-                                        htmlFor="loginPassword"
-                                        className="block text-sm font-medium text-gray-700 mb-1"
-                                    >
-                                        Password{" "}
-                                        <span className="text-brand-red">
-                                            *
-                                        </span>
-                                    </label>
-                                    <input
-                                        type="password"
-                                        id="loginPassword"
-                                        value={loginPassword}
-                                        onChange={(e) =>
-                                            setLoginPassword(e.target.value)
-                                        }
-                                        required
-                                        className="w-full px-4 py-2 input-brand rounded-lg focus:ring-brand-blue transition"
-                                        placeholder="Enter your password"
-                                    />
-                                </div>
-
-                                <div className="flex gap-3 pt-2">
-                                    <button
-                                        type="button"
-                                        onClick={() => setAuthMode("social")}
-                                        className="flex-1 px-6 py-3 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-lg transition-all duration-200 hover:bg-gray-50 shadow-md"
-                                    >
-                                        Back
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        className="flex-1 px-6 py-3 btn-brand-blue font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-xl"
-                                    >
-                                        Login
-                                    </button>
-                                </div>
-
-                                <p className="text-sm text-center text-gray-600">
-                                    Don't have an account?{" "}
-                                    <button
-                                        type="button"
-                                        onClick={() => setAuthMode("signup")}
-                                        className="text-brand-red font-semibold hover:underline"
-                                    >
-                                        Sign Up
-                                    </button>
-                                </p>
-                            </form>
-                        )}
+                        </p>
 
                         {/* Terms and Privacy */}
                         <p className="text-xs text-center text-gray-500 mt-6">
