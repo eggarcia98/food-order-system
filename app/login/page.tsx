@@ -8,6 +8,8 @@ export default function LoginPage() {
     const [showGuestForm, setShowGuestForm] = useState(false);
     const [guestName, setGuestName] = useState("");
     const [guestEmail, setGuestEmail] = useState("");
+    const [guestNewPassword, setGuestNewPassword] = useState("");
+    const [guestConfirmPassword, setGuestConfirmPassword] = useState("");
 
     const handleGoogleLogin = () => {
         // TODO: Implement Google OAuth login
@@ -142,7 +144,10 @@ export default function LoginPage() {
                                             htmlFor="guestEmail"
                                             className="block text-sm font-medium text-gray-700 mb-1"
                                         >
-                                            Email (optional)
+                                            Email{" "}
+                                            <span className="text-brand-red">
+                                                *
+                                            </span>
                                         </label>
                                         <input
                                             type="email"
@@ -154,7 +159,51 @@ export default function LoginPage() {
                                             className="w-full px-4 py-2 input-brand rounded-lg focus:ring-brand-blue transition"
                                             placeholder="Enter your email"
                                         />
-                                    </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <label
+                                                htmlFor="guestNewPassword"
+                                            >
+                                                New Password{" "}
+                                                <span className="text-brand-red">
+                                                    *
+                                                </span>
+                                            </label>
+                                            <input
+                                                type="password"
+                                                id="guestNewPassword"
+                                                value={guestNewPassword}
+                                                onChange={(e) =>
+                                                    setGuestNewPassword(e.target.value)
+                                                }
+                                                required
+                                                className="w-full px-4 py-2 input-brand rounded-lg focus:ring-brand-blue transition"
+                                                placeholder="Enter your new password"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label
+                                                htmlFor="guestConfirmPassword"
+                                            >
+                                                Confirm Password{" "}
+                                                <span className="text-brand-red">
+                                                    *
+                                                </span>
+                                            </label>
+                                            <input
+                                                type="password"
+                                                id="guestConfirmPassword"
+                                                value={guestConfirmPassword}
+                                                onChange={(e) =>
+                                                    setGuestConfirmPassword(e.target.value)
+                                                }
+                                                required
+                                                className="w-full px-4 py-2 input-brand rounded-lg focus:ring-brand-blue transition"
+                                                placeholder="Confirm your password"
+                                            />
+                                        </div>
 
                                     <div className="flex gap-3">
                                         <button
