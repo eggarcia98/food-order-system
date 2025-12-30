@@ -149,7 +149,7 @@ export default function MenuPage() {
                         </li>
 
                         <li className="flex items-center gap-4">
-                            <span className="flex-none w-52 md:w-60 text-lg font-medium">
+                            <span className="flex-none w-52 md:w-60 text-lg ">
                                 Coca Cola
                             </span>
                             <span className="flex-1 border-b border-dashed border-gray-400"></span>
