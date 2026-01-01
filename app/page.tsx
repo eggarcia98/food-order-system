@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function Page() {
     return (
-        <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-cream/50 via-background to-cream/30 flex flex-col items-center justify-center px-6 sm:px-8\">
+        <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-cream/50 via-background to-cream/30 flex flex-col items-center justify-center px-6 sm:px-8">
             {/* Main Content */}
             <div className="max-w-md w-full text-center space-y-8">
                 {/* Logo/Title Section */}
@@ -15,7 +15,11 @@ export default function Page() {
                     </h1>
                     <div className="h-1 w-12 bg-brand-red mx-auto rounded-full"></div>
                     <p className="text-sm font-light text-text-light uppercase tracking-widest">
-                        Authentic Ecuadorian Cuisine
+                        Authentic
+                        <span className="mx-1 bg-gradient-to-r from-[#FAD201] via-[#0050A0] to-[#EF3340] bg-clip-text text-transparent font-semibold">
+                            Ecuadorian
+                        </span>
+                        Cuisine
                     </p>
                 </div>
 
