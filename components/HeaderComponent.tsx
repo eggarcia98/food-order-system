@@ -22,7 +22,10 @@ export default function HeaderComponent() {
                 </Link>
 
                 {/* Desktop Navigation */}
-                <nav aria-label="Main Navigation" className="hidden md:flex items-center gap-8">
+                <nav
+                    aria-label="Main Navigation"
+                    className="hidden md:flex items-center gap-8"
+                >
                     <ul className="flex items-center gap-8">
                         <li>
                             <Link
@@ -49,10 +52,22 @@ export default function HeaderComponent() {
                     >
                         Order Now
                     </Link>
+                    <Link
+                        className="px-5 py-2.5 rounded-lg font-light text-sm transition-all duration-200 border border-brand-blue text-brand-blue hover:bg-soft-blue/10"
+                        href="/login"
+                    >
+                        Sign In
+                    </Link>
                 </nav>
 
                 {/* Mobile menu button */}
                 <div className="flex md:hidden items-center gap-3">
+                    <Link
+                        className="px-3 py-2 rounded-lg border border-brand-blue text-brand-blue text-sm font-light"
+                        href="/login"
+                    >
+                        Sign In
+                    </Link>
                     <Link
                         className="btn-brand-blue p-2 rounded-lg transition-all duration-200"
                         href="/new_order"
@@ -79,6 +94,13 @@ export default function HeaderComponent() {
                 }`}
             >
                 <nav className="bg-white/95 backdrop-blur-sm border-t border-soft-pink/20 px-4 py-4 space-y-2">
+                    <Link
+                        href="/new_order"
+                        onClick={() => setMenuOpen(false)}
+                        className="block px-4 py-2.5 text-white font-light bg-brand-blue rounded-sm transition-colors duration-200"
+                    >
+                        Order Now
+                    </Link>
                     <Link
                         href="/menu"
                         onClick={() => setMenuOpen(false)}
