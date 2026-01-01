@@ -68,12 +68,12 @@ export default function HeaderComponent() {
                     >
                         Sign In
                     </Link>
-                    <Link
+                    {/* <Link
                         className="btn-brand-blue p-2 rounded-lg transition-all duration-200"
                         href="/new_order"
                     >
                         <UtensilsCrossed size={20} />
-                    </Link>
+                    </Link> */}
                     <button
                         aria-label={menuOpen ? "Close menu" : "Open menu"}
                         aria-expanded={menuOpen}
