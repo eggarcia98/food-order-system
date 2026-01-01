@@ -220,12 +220,10 @@ export default function OrdersList() {
     }
 
     return (
-    <div className="min-h-screen py-12 px-4 bg-gradient-to-b from-background via-cream/30 to-background">
-            <div className="max-w-6xl mx-auto">
+        <div className="min-h-screen py-12 px-4 bg-gradient-to-b from-background via-cream/30 to-background">
+            <div className="max-w-6xl mx-auto ">
                 {/* Header */}
-                <div 
-                    className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-8 mb-6"
-                >
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-7 mb-6">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
                             <h1 className="text-4xl font-light text-foreground mb-2">
@@ -250,7 +248,7 @@ export default function OrdersList() {
                             placeholder="Search by name, phone, or dish..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
+                            className="w-full box-border px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
                         />
                     </div>
 
@@ -261,7 +259,7 @@ export default function OrdersList() {
                         </h3>
 
                         {/* Quick Filters */}
-                        <div className="flex flex-wrap gap-3">
+                        <div className="flex flex-wrap gap-3 justify-center md:justify-start">
                             <button
                                 onClick={setToday}
                                 className="px-5 py-2.5 rounded-full transition text-sm font-light border-2 border-brand-red text-brand-red bg-white hover:bg-rose/10 cursor-pointer"
@@ -294,7 +292,7 @@ export default function OrdersList() {
                                     onChange={(e) =>
                                         setStartDate(e.target.value)
                                     }
-                                    className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
+                                    className="w-full box-border px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition appearance-none"
                                 />
                             </div>
                             <div>
@@ -305,7 +303,7 @@ export default function OrdersList() {
                                     type="date"
                                     value={endDate}
                                     onChange={(e) => setEndDate(e.target.value)}
-                                    className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
+                                    className="w-full box-border px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition appearance-none"
                                 />
                             </div>
                         </div>
@@ -497,7 +495,9 @@ export default function OrdersList() {
                                 {filteredOrders.length}
                             </span>{" "}
                             of{" "}
-                            <span className="font-light text-foreground">{orders.length}</span>{" "}
+                            <span className="font-light text-foreground">
+                                {orders.length}
+                            </span>{" "}
                             total orders
                         </p>
                     </div>
