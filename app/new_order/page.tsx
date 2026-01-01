@@ -189,50 +189,53 @@ export default function NewOrderPage() {
     };
 
     return (
-        <div className={`flex flex-col min-h-screen`}>
-            <div className="w-full max-w-6xl mx-auto p-6 flex-grow">
-                {/* <div className=" border-b flex justify-between items-center border-brand">
-                    <h1 className="text-3xl font-bold mb-2 text-foreground">
-                        Food Order Registration
+        <div className={`flex flex-col min-h-screen bg-gradient-to-b from-background via-cream/30 to-background`}>
+            <div className="w-full max-w-5xl mx-auto p-6 flex-grow">
+                {/* Header */}
+                <div className="mb-8">
+                    <h1 className="text-4xl font-light text-foreground mb-2">
+                        New Order
                     </h1>
-                </div> */}
+                    <p className="text-sm text-text-light font-light">
+                        Register customer orders quickly and easily
+                    </p>
+                </div>
 
-                <p className="mb-4 text-secondary text-lg">
-                    Register customer orders quickly and easily
-                </p>
-                <div className="flex justify-end">
+                {/* View Orders Link */}
+                <div className="flex justify-end mb-6">
                     <Link
                         href="/orders"
-                        className="px-4 py-2 rounded-lg transition text-sm font-medium btn-brand-blue"
+                        className="px-6 py-2.5 rounded-lg transition text-sm font-light btn-brand-blue"
                     >
                         View Orders
                     </Link>
                 </div>
+
+                {/* Success/Error Message */}
                 {message && (
                     <div
-                        className={`p-2 m-3 rounded-md ${
+                        className={`p-4 mb-6 rounded-2xl backdrop-blur-sm font-light text-sm ${
                             message.type === "success"
-                                ? "bg-blue-50 text-accent-secondary border-accent-secondary"
-                                : "bg-red-50 text-accent border border-accent"
+                                ? "bg-soft-blue/20 text-brand-blue border border-brand-blue/30"
+                                : "bg-rose/20 text-brand-red border border-rose/30"
                         }`}
                     >
                         {message.text}
                     </div>
                 )}
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Customer Info */}
-                    <div className="space-y-4 mt-4">
-                        <div className="flex items-center gap-3 mb-2">
-                            <div className="w-1 h-6 rounded-full bg-brand-blue"></div>
-                            <h2 className="text-xl font-semibold text-foreground">
-                                Customer Information
-                            </h2>
-                        </div>
-                        <div className="flex flex-row gap-4">
-                            <div className="w-full">
-                                <label className="block text-sm font-medium mb-2 text-secondary">
-                                    Phone Number{" "}
-                                    <span className="text-brand-blue">*</span>
+
+                <form onSubmit={handleSubmit} className="space-y-8">
+                    {/* Customer Information Card */}
+                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-8 space-y-6">
+                        <h2 className="text-xl font-light text-foreground uppercase tracking-wide">
+                            Customer Information
+                        </h2>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="relative">
+                                <label className="block text-sm font-light mb-2 text-text-light">
+                                    Phone Number
+                                    <span className="text-brand-red ml-1">*</span>
                                 </label>
                                 <div className="relative" ref={suggestionsRef}>
                                     <input
@@ -252,7 +255,7 @@ export default function NewOrderPage() {
                                                 setShowSuggestions(true);
                                             }
                                         }}
-                                        className="w-full px-4 py-3 border rounded-lg transition bg-white appearance-none input-brand"
+                                        className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
                                         placeholder="+1 234 567 8900"
                                         autoComplete="off"
                                     />
@@ -260,7 +263,7 @@ export default function NewOrderPage() {
                                     {/* Suggestions Dropdown */}
                                     {showSuggestions &&
                                         filteredSuggestions.length > 0 && (
-                                            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto">
+                                            <div className="absolute z-10 w-full mt-1 bg-white/95 backdrop-blur-sm border border-soft-pink/20 rounded-lg shadow-lg max-h-60 overflow-auto">
                                                 {filteredSuggestions.map(
                                                     (customer, index) => (
                                                         <button
@@ -271,22 +274,22 @@ export default function NewOrderPage() {
                                                                     customer
                                                                 )
                                                             }
-                                                            className="w-full px-4 py-3 text-left transition flex justify-between items-center border-b border-gray-100 last:border-b-0 suggestion"
+                                                            className="w-full px-4 py-3 text-left transition flex justify-between items-center border-b border-soft-pink/10 last:border-b-0 hover:bg-soft-pink/10"
                                                         >
                                                             <div>
-                                                                <p className="font-medium text-foreground">
+                                                                <p className="font-light text-foreground text-sm">
                                                                     {
                                                                         customer.phone_number
                                                                     }
                                                                 </p>
-                                                                <p className="text-sm text-brand-blue">
+                                                                <p className="text-xs text-text-light font-light">
                                                                     {customer.first_name +
                                                                         " " +
                                                                         customer.last_name}
                                                                 </p>
                                                             </div>
                                                             <svg
-                                                                className="w-5 h-5 text-brand-red"
+                                                                className="w-5 h-5 text-brand-red/50"
                                                                 fill="none"
                                                                 stroke="currentColor"
                                                                 viewBox="0 0 24 24"
@@ -308,8 +311,8 @@ export default function NewOrderPage() {
                                 </div>
                             </div>
 
-                            <div className="w-full">
-                                <label className="block text-sm font-medium mb-2 text-secondary">
+                            <div>
+                                <label className="block text-sm font-light mb-2 text-text-light">
                                     Nationality
                                 </label>
                                 <Selector
@@ -317,39 +320,41 @@ export default function NewOrderPage() {
                                     returnSelectedValue={true}
                                     onChangeParent={setNationality}
                                     selectorList={nationalityList}
-                                    className="appearance-none w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition center"
+                                    className="appearance-none w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
                                 />
                             </div>
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium mb-2 text-secondary">
-                                First Name{" "}
-                                <span className="text-brand-blue">*</span>
-                            </label>
-                            <input
-                                type="text"
-                                required
-                                value={firstname}
-                                onChange={(e) => setFirstname(e.target.value)}
-                                className="w-full px-4 py-3 border rounded-lg transition input-brand"
-                                placeholder="John"
-                            />
-                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label className="block text-sm font-light mb-2 text-text-light">
+                                    First Name
+                                    <span className="text-brand-red ml-1">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={firstname}
+                                    onChange={(e) => setFirstname(e.target.value)}
+                                    className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
+                                    placeholder="John"
+                                />
+                            </div>
 
-                        <div>
-                            <label className="block text-sm font-medium mb-2 text-secondary">
-                                Last Name{" "}
-                                <span className="text-brand-blue">*</span>
-                            </label>
-                            <input
-                                type="text"
-                                required
-                                value={lastname}
-                                onChange={(e) => setLastname(e.target.value)}
-                                className="w-full px-4 py-3 border rounded-lg transition input-brand"
-                                placeholder="Doe"
-                            />
+                            <div>
+                                <label className="block text-sm font-light mb-2 text-text-light">
+                                    Last Name
+                                    <span className="text-brand-red ml-1">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={lastname}
+                                    onChange={(e) => setLastname(e.target.value)}
+                                    className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
+                                    placeholder="Doe"
+                                />
+                            </div>
                         </div>
                     </div>
 
@@ -371,82 +376,78 @@ export default function NewOrderPage() {
                         setConfirmedOrderList={setConfirmedOrderList}
                     />
 
-                    {/* Dishes */}
-                    <div className="space-y-4">
-                        <div className="flex  justify-between items-center">
-                            <div className="flex items-center gap-3">
-                                <div className="w-1 h-6 rounded-full bg-brand-blue"></div>
-                                <h2 className="text-xl font-semibold text-foreground">
-                                    Order List
-                                </h2>
-                            </div>
-                            <div
+                    {/* Order List Card */}
+                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-8 space-y-6">
+                        <div className="flex justify-between items-center">
+                            <h2 className="text-xl font-light text-foreground uppercase tracking-wide">
+                                Order Items
+                            </h2>
+                            <button
+                                type="button"
                                 onClick={() => setOpenAddItemModal(true)}
-                                className="px-4 py-2 rounded-xl cursor-pointer transition btn-brand-blue"
+                                className="px-6 py-2.5 rounded-lg cursor-pointer transition btn-brand-blue text-sm font-light"
                             >
                                 + Add Item
+                            </button>
+                        </div>
+
+                        {confirmedOrderList.length === 0 ? (
+                            <div className="flex items-center gap-4 p-6 rounded-lg bg-soft-pink/10 border border-soft-pink/20">
+                                <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-soft-pink/20">
+                                    <svg
+                                        className="w-5 h-5 text-brand-red"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                                        />
+                                    </svg>
+                                </div>
+                                <p className="text-text-light font-light text-sm">
+                                    No items added yet. Click "Add Item" to
+                                    start your order.
+                                </p>
                             </div>
-                        </div>
-                        <div className="flex items-center gap-2 p-5 rounded-lg bg-bg-light">
-                            {confirmedOrderList.length === 0 ? (
-                                <div className="flex items-center gap-3 w-full">
-                                    <div className="w-8 h-8 rounded-full flex items-center justify-center badge-blue">
-                                        <svg
-                                            className="w-4 h-4 text-brand-blue"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <p className="text-secondary">
-                                        No items added yet. Click "Add Item" to
-                                        start your order.
-                                    </p>
-                                </div>
-                            ) : (
-                                <div className="w-full space-y-4">
-                                    <DishToOrderItem
-                                        orderList={confirmedOrderList}
-                                        removeItemFromOrder={removeDish}
-                                    />
-                                </div>
-                            )}
-                        </div>
+                        ) : (
+                            <div className="space-y-4">
+                                <DishToOrderItem
+                                    orderList={confirmedOrderList}
+                                    removeItemFromOrder={removeDish}
+                                />
+                            </div>
+                        )}
                     </div>
 
-                    {/* Comments */}
-                    <div>
-                        <div className="flex items-center gap-2 mb-2">
-                            <div className="w-1 h-4 rounded-full bg-brand-blue"></div>
-                            <label className="block text-sm font-medium text-secondary">
-                                Comments
-                            </label>
-                        </div>
+                    {/* Comments Card */}
+                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-8 space-y-4">
+                        <label className="block text-sm font-light text-foreground uppercase tracking-wide">
+                            Special Notes
+                        </label>
                         <textarea
                             value={comments}
                             onChange={(e) => setComments(e.target.value)}
-                            rows={3}
-                            className="w-full px-4 py-3 border rounded-lg transition resize-none input-brand"
+                            rows={4}
+                            className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light resize-none transition"
                             placeholder="Additional notes or special instructions..."
                         />
                     </div>
 
-                    {/* Submit */}
+                    {/* Submit Button */}
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className={`w-full py-4 font-semibold rounded-lg disabled:cursor-not-allowed transition shadow-lg hover:shadow-xl ${
-                            isSubmitting ? "bg-gray-400" : "btn-brand-blue"
+                        className={`w-full py-4 font-light rounded-lg disabled:cursor-not-allowed transition shadow-lg hover:shadow-xl text-base ${
+                            isSubmitting 
+                                ? "bg-gray-400 text-gray-600" 
+                                : "btn-brand-blue"
                         }`}
                     >
-                        {isSubmitting ? "Submitting..." : "Register Order"}
+                        {isSubmitting ? "Submitting Order..." : "Register Order"}
                     </button>
                 </form>
             </div>
