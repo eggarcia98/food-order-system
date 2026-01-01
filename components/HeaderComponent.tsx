@@ -11,7 +11,7 @@ export default function HeaderComponent() {
         <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-gradient-to-b from-cream/95 to-cream/90 shadow-sm shadow-foreground/5 transition-all duration-300">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
                 {/* Logo */}
-                <Link href="/" className="flex-shrink-0 transition-transform hover:scale-105 duration-200">
+                <Link href="/" className="logo-container flex-shrink-0">
                     <Image
                         src="/media/logo.png"
                         alt="Los Guayacos Restaurant"
@@ -27,7 +27,7 @@ export default function HeaderComponent() {
                         <li>
                             <Link
                                 href="/menu"
-                                className="text-sm font-light text-foreground hover:text-brand-blue transition-colors duration-200 relative group"
+                                className="text-sm font-light text-foreground hover:text-brand-red transition-colors duration-200 relative group"
                             >
                                 Menu
                                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-red group-hover:w-full transition-all duration-300"></span>
@@ -36,7 +36,7 @@ export default function HeaderComponent() {
                         <li>
                             <Link
                                 href="/orders"
-                                className="text-sm font-light text-foreground hover:text-brand-blue transition-colors duration-200 relative group"
+                                className="text-sm font-light text-foreground hover:text-brand-red transition-colors duration-200 relative group"
                             >
                                 Orders
                                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-red group-hover:w-full transition-all duration-300"></span>
@@ -44,7 +44,7 @@ export default function HeaderComponent() {
                         </li>
                     </ul>
                     <Link
-                        className="btn-brand-blue px-6 py-2.5 rounded-lg font-medium text-sm transition-all duration-200"
+                        className="btn-brand-blue px-6 py-2.5 rounded-lg font-light text-sm transition-all duration-200"
                         href="/new_order"
                     >
                         Order Now

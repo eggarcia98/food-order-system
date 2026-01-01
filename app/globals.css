@@ -61,14 +61,20 @@ body {
   letter-spacing: -0.01em;
 }
 
-/* Typography refinements */
+/* Typography refinements - consistent throughout */
 h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-guayacos);
   letter-spacing: -0.02em;
-  font-weight: 500;
+  font-weight: 400;
+}
+
+p, a, span, li {
+  font-family: var(--font-guayacos);
 }
 
 p {
   letter-spacing: -0.005em;
+  font-weight: 300;
 }
 
 /* Small app-specific utilities (keep these limited; use Tailwind where possible) */
@@ -95,6 +101,17 @@ p {
   }
   /* Utility to apply the Bungee display font via className */
   .font-bungee { font-family: var(--font-bungee); }
+  
+  /* Logo styling */
+  .logo-container {
+    filter: drop-shadow(0 4px 12px rgba(193, 122, 115, 0.15));
+    transition: filter 0.3s ease, transform 0.3s ease;
+  }
+  
+  .logo-container:hover {
+    filter: drop-shadow(0 8px 24px rgba(193, 122, 115, 0.25));
+    transform: translateY(-2px);
+  }
 }
 
 /* Text utilities */

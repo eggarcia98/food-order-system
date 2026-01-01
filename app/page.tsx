@@ -28,13 +28,13 @@ export default function Page() {
                 <div className="space-y-3 pt-6">
                     <Link
                         href="/new_order"
-                        className="block btn-brand-blue px-8 py-3.5 rounded-lg font-medium transition hover:shadow-lg"
+                        className="block btn-brand-blue px-8 py-3.5 rounded-lg font-light transition hover:shadow-lg"
                     >
                         Start Ordering
                     </Link>
                     <Link
                         href="/menu"
-                        className="block px-8 py-3.5 rounded-lg font-medium border border-brand-blue text-brand-blue bg-white hover:bg-soft-blue/10 transition"
+                        className="block px-8 py-3.5 rounded-lg font-light border border-brand-blue text-brand-blue bg-white hover:bg-soft-blue/10 transition"
                     >
                         Browse Menu
                     </Link>

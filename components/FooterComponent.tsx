@@ -14,15 +14,15 @@ export default function FooterComponent() {
 
                     {/* Quick Links */}
                     <div className="text-center">
-                        <h4 className="text-sm font-medium text-foreground mb-3">Quick Links</h4>
+                        <h4 className="text-sm font-light text-foreground mb-3">Quick Links</h4>
                         <ul className="space-y-2">
                             <li>
-                                <Link href="/menu" className="text-sm font-light text-text-light hover:text-brand-blue transition-colors duration-200">
+                                <Link href="/menu" className="text-sm font-light text-text-light hover:text-brand-red transition-colors duration-200">
                                     Menu
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/new_order" className="text-sm font-light text-text-light hover:text-brand-blue transition-colors duration-200">
+                                <Link href="/new_order" className="text-sm font-light text-text-light hover:text-brand-red transition-colors duration-200">
                                     Order Now
                                 </Link>
                             </li>
@@ -31,7 +31,7 @@ export default function FooterComponent() {
 
                     {/* Contact */}
                     <div className="text-center md:text-right">
-                        <h4 className="text-sm font-medium text-foreground mb-3">Get in Touch</h4>
+                        <h4 className="text-sm font-light text-foreground mb-3">Get in Touch</h4>
                         <p className="text-sm font-light text-text-light">Follow us for updates</p>
                     </div>
                 </div>
