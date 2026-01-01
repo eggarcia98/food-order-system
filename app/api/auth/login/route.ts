@@ -27,7 +27,11 @@ export async function POST(request: Request) {
         }
 
         const data = await response.json();
-        return NextResponse.json(data, { status: 200 });
+        const nextResponse = NextResponse.json(data, { status: 200 });
+        
+       
+        
+        return nextResponse;
     } catch (error) {
         console.error("Error during login:", error);
         return NextResponse.json({ error }, { status: 500 });

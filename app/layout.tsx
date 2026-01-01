@@ -36,17 +36,17 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body
-                className={`${fredoka.variable} ${bungee.variable} ${ibmPlexMono.variable} antialiased flex flex-col`}
+                className={`${fredoka.variable} ${bungee.variable} ${ibmPlexMono.variable} antialiased flex flex-col bg-background min-h-screen`}
             >
                 <HeaderComponent />
 
-                <div className="bg-pattern">
-                    <main className="flex-1 overflow-auto   backdrop-blur-xl bg-white/85">
+                {/* Main content with top padding for fixed navbar */}
+                <main className="flex-1 pt-16 transition-all duration-300 bg-gradient-to-b from-background via-cream/30 to-background">
+                    <div className="min-h-full">
                         {children}
-                    </main>
-                </div>
+                    </div>
+                </main>
 
-                {/* Infinite scrolling banner below header */}
                 <FooterComponent />
             </body>
         </html>
