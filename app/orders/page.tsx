@@ -292,7 +292,7 @@ export default function OrdersList() {
                                     onChange={(e) =>
                                         setStartDate(e.target.value)
                                     }
-                                    className="w-full box-border px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition appearance-none"
+                                    className="w-full box-border px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition "
                                 />
                             </div>
                             <div>

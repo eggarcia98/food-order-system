@@ -189,40 +189,31 @@ export default function NewOrderPage() {
     };
 
     return (
-        <div className={`flex flex-col min-h-screen bg-gradient-to-b from-background via-cream/30 to-background`}>
-            <div className="w-full max-w-5xl mx-auto p-6 flex-grow">
-                {/* Header */}
-                <div className="mb-8">
-                    <h1 className="text-4xl font-light text-foreground mb-2">
-                        New Order
-                    </h1>
-                    <p className="text-sm text-text-light font-light">
-                        Register customer orders quickly and easily
-                    </p>
-                </div>
-
-                {/* View Orders Link */}
-                <div className="flex justify-end mb-6">
-                    <Link
-                        href="/orders"
-                        className="px-6 py-2.5 rounded-lg transition text-sm font-light btn-brand-blue"
-                    >
-                        View Orders
-                    </Link>
-                </div>
-
-                {/* Success/Error Message */}
-                {message && (
-                    <div
-                        className={`p-4 mb-6 rounded-2xl backdrop-blur-sm font-light text-sm ${
-                            message.type === "success"
-                                ? "bg-soft-blue/20 text-brand-blue border border-brand-blue/30"
-                                : "bg-rose/20 text-brand-red border border-rose/30"
-                        }`}
-                    >
-                        {message.text}
+        <div
+            className={`flex flex-col m-8 min-h-screen bg-gradient-to-b from-background via-cream/30 to-background`}
+        >
+            <div className="w-full max-w-5xl mx-auto p-6 flex-grow ">
+                <div className="flex justify-between">
+                    {/* Header */}
+                    <div className="mb-8">
+                        <h1 className="text-4xl font-light text-foreground mb-2">
+                            New Order
+                        </h1>
+                        <p className="text-sm text-text-light font-light">
+                            Register customer orders quickly and easily
+                        </p>
                     </div>
-                )}
+
+                    {/* View Orders Link */}
+                    <div className="flex justify-end mb-6 h-fit">
+                        <Link
+                            href="/orders"
+                            className="px-6 py-2.5 rounded-lg transition text-sm font-light btn-brand-blue"
+                        >
+                            View Orders
+                        </Link>
+                    </div>
+                </div>
 
                 <form onSubmit={handleSubmit} className="space-y-8">
                     {/* Customer Information Card */}
@@ -235,7 +226,9 @@ export default function NewOrderPage() {
                             <div className="relative">
                                 <label className="block text-sm font-light mb-2 text-text-light">
                                     Phone Number
-                                    <span className="text-brand-red ml-1">*</span>
+                                    <span className="text-brand-red ml-1">
+                                        *
+                                    </span>
                                 </label>
                                 <div className="relative" ref={suggestionsRef}>
                                     <input
@@ -329,13 +322,17 @@ export default function NewOrderPage() {
                             <div>
                                 <label className="block text-sm font-light mb-2 text-text-light">
                                     First Name
-                                    <span className="text-brand-red ml-1">*</span>
+                                    <span className="text-brand-red ml-1">
+                                        *
+                                    </span>
                                 </label>
                                 <input
                                     type="text"
                                     required
                                     value={firstname}
-                                    onChange={(e) => setFirstname(e.target.value)}
+                                    onChange={(e) =>
+                                        setFirstname(e.target.value)
+                                    }
                                     className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
                                     placeholder="John"
                                 />
@@ -344,13 +341,17 @@ export default function NewOrderPage() {
                             <div>
                                 <label className="block text-sm font-light mb-2 text-text-light">
                                     Last Name
-                                    <span className="text-brand-red ml-1">*</span>
+                                    <span className="text-brand-red ml-1">
+                                        *
+                                    </span>
                                 </label>
                                 <input
                                     type="text"
                                     required
                                     value={lastname}
-                                    onChange={(e) => setLastname(e.target.value)}
+                                    onChange={(e) =>
+                                        setLastname(e.target.value)
+                                    }
                                     className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
                                     placeholder="Doe"
                                 />
@@ -442,13 +443,28 @@ export default function NewOrderPage() {
                         type="submit"
                         disabled={isSubmitting}
                         className={`w-full py-4 font-light rounded-lg disabled:cursor-not-allowed transition shadow-lg hover:shadow-xl text-base ${
-                            isSubmitting 
-                                ? "bg-gray-400 text-gray-600" 
+                            isSubmitting
+                                ? "bg-gray-400 text-gray-600"
                                 : "btn-brand-blue"
                         }`}
                     >
-                        {isSubmitting ? "Submitting Order..." : "Register Order"}
+                        {isSubmitting
+                            ? "Submitting Order..."
+                            : "Register Order"}
                     </button>
+
+                    {/* Success/Error Message */}
+                    {message && (
+                        <div
+                            className={`p-4 mb-6 rounded-2xl backdrop-blur-sm font-light text-sm ${
+                                message.type === "success"
+                                    ? "bg-soft-blue/20 text-brand-blue border border-brand-blue/30"
+                                    : "bg-rose/20 text-brand-red border border-rose/30"
+                            }`}
+                        >
+                            {message.text}
+                        </div>
+                    )}
                 </form>
             </div>
         </div>
