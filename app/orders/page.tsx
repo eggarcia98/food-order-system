@@ -208,36 +208,34 @@ export default function OrdersList() {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-bg-light">
+            <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
                     <div 
                         className="animate-spin rounded-full h-12 w-12 border-b-2 border-b-brand-red mx-auto"
                     ></div>
-                    <p className="mt-4 text-secondary">Loading orders...</p>
+                    <p className="mt-4 text-text-light font-light">Loading orders...</p>
                 </div>
             </div>
         );
     }
 
     return (
-    <div className="min-h-screen py-12 px-4 bg-bg-light">
-            <div className="max-w-6xl mx-auto">
+        <div className="min-h-screen py-12 px-4 bg-gradient-to-b from-background via-cream/30 to-background">
+            <div className="max-w-6xl mx-auto ">
                 {/* Header */}
-                <div 
-                    className="bg-white rounded-2xl shadow-xl p-8 mb-6 border-t-4 border-top-brand-blue" 
-                >
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-7 mb-6">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
-                            <h1 className="text-3xl font-bold mb-2 text-foreground">
+                            <h1 className="text-4xl font-light text-foreground mb-2">
                                 Orders History
                             </h1>
-                            <p className="text-secondary">
-                                View and search past orders
+                            <p className="text-sm text-text-light font-light">
+                                View and manage your orders
                             </p>
                         </div>
                         <Link
                             href="/"
-                            className="px-6 py-3 font-semibold rounded-lg transition shadow-lg hover:shadow-xl btn-brand-blue"
+                            className="px-6 py-3 font-light rounded-lg transition shadow-lg hover:shadow-xl btn-brand-blue whitespace-nowrap"
                         >
                             + New Order
                         </Link>
@@ -250,36 +248,33 @@ export default function OrdersList() {
                             placeholder="Search by name, phone, or dish..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent bg-white appearance-none transition input-brand"
+                            className="w-full box-border px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
                         />
                     </div>
 
                     {/* Date Filter */}
                     <div className="mt-6 space-y-4">
-                        <div className="flex items-center gap-2">
-                            <div className="w-1 h-4 rounded-full bg-brand-blue"></div>
-                            <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground">
-                                Date Range
-                            </h3>
-                        </div>
+                        <h3 className="text-sm font-light uppercase tracking-wide text-foreground">
+                            Filter by Date
+                        </h3>
 
                         {/* Quick Filters */}
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-3 justify-center md:justify-start">
                             <button
                                 onClick={setToday}
-                                className="px-4 py-2 rounded-lg transition text-sm font-medium bg-bg-light text-secondary hover:bg-brand-blue-10"
+                                className="px-5 py-2.5 rounded-full transition text-sm font-light border-2 border-brand-red text-brand-red bg-white hover:bg-rose/10 cursor-pointer"
                             >
                                 Today
                             </button>
                             <button
                                 onClick={setThisWeek}
-                                className="px-4 py-2 rounded-lg transition text-sm font-medium bg-brand-blue-10 text-brand-blue hover:bg-brand-blue-15"
+                                className="px-5 py-2.5 rounded-full transition text-sm font-light border-2 border-brand-blue text-brand-blue bg-white hover:bg-soft-blue/10 cursor-pointer"
                             >
                                 This Week
                             </button>
                             <button
                                 onClick={setThisMonth}
-                                className="px-4 py-2 rounded-lg transition text-sm font-medium bg-bg-light text-secondary hover:bg-brand-blue-10"
+                                className="px-5 py-2.5 rounded-full transition text-sm font-light border-2 border-accent-blue text-accent-blue bg-white hover:bg-soft-purple/10 cursor-pointer"
                             >
                                 This Month
                             </button>
@@ -288,7 +283,7 @@ export default function OrdersList() {
                         {/* Date Inputs */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium mb-2 text-secondary">
+                                <label className="block text-sm font-light mb-2 text-text-light">
                                     Start Date
                                 </label>
                                 <input
@@ -297,18 +292,18 @@ export default function OrdersList() {
                                     onChange={(e) =>
                                         setStartDate(e.target.value)
                                     }
-                                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent bg-white appearance-none transition input-brand"
+                                    className="w-full box-border px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition "
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium mb-2 text-secondary">
+                                <label className="block text-sm font-light mb-2 text-text-light">
                                     End Date
                                 </label>
                                 <input
                                     type="date"
                                     value={endDate}
                                     onChange={(e) => setEndDate(e.target.value)}
-                                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent bg-white appearance-none transition input-brand"
+                                    className="w-full box-border px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition appearance-none"
                                 />
                             </div>
                         </div>
@@ -317,15 +312,15 @@ export default function OrdersList() {
 
                 {/* Error Message */}
                 {error && (
-                    <div className="rounded-lg p-4 mb-6 border bg-brand-red-10 text-brand-red border-brand-red">
+                    <div className="rounded-lg p-4 mb-6 bg-rose/20 text-brand-red border border-rose/40 font-light text-sm">
                         {error}
                     </div>
                 )}
 
                 {/* Orders List */}
                 {filteredOrders.length === 0 ? (
-                    <div className="bg-white rounded-2xl shadow-xl p-12 text-center">
-                        <div className="mb-4 text-brand-blue">
+                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-12 text-center">
+                        <div className="mb-4 text-brand-red/40">
                             <svg
                                 className="w-16 h-16 mx-auto"
                                 fill="none"
@@ -340,10 +335,10 @@ export default function OrdersList() {
                                 />
                             </svg>
                         </div>
-                        <h3 className="text-xl font-semibold mb-2 text-foreground">
+                        <h3 className="text-lg font-light mb-2 text-foreground">
                             {searchTerm ? "No orders found" : "No orders yet"}
                         </h3>
-                        <p className="text-secondary">
+                        <p className="text-sm text-text-light font-light">
                             {searchTerm
                                 ? "Try a different search term"
                                 : "Start by creating your first order"}
@@ -354,27 +349,27 @@ export default function OrdersList() {
                         {filteredOrders.map((order) => (
                             <div
                                 key={order.id}
-                                className="bg-white rounded-xl shadow-md hover:shadow-lg transition p-6"
+                                className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition p-6"
                             >
                                 {/* Order Header */}
-                                <div className="flex flex-row justify-between items-start md:items-center mb-4 pb-4 border-b border-brand">
+                                <div className="flex flex-row justify-between items-start md:items-center mb-4 pb-4 border-b border-soft-pink/20">
                                     <div>
-                                        <h3 className="text-base md:text-xl font-bold text-foreground">
+                                        <h3 className="text-lg md:text-xl font-light text-foreground">
                                             {order.customer.first_name}{" "}
                                             {order.customer.last_name}
                                         </h3>
-                                        <p className="text-xs md:text-md text-brand-red">
+                                        <p className="text-xs md:text-sm text-brand-red font-light">
                                             {order.customer.phone_number}
                                         </p>
                                     </div>
-                                    <div className="text-right mt-2 md:mt-0 text-xs md:text-sm">
-                                        <div className="text-brand-blue">
-                                            Status: {order.status.name}
+                                    <div className="text-right mt-2 md:mt-0 text-xs md:text-sm space-y-1">
+                                        <div className="text-brand-blue font-light">
+                                            {order.status.name}
                                         </div>
-                                        <p className="text-secondary">
+                                        <p className="text-text-light font-light text-xs">
                                             {formatDate(order.created_at)}
                                         </p>
-                                        <p className="font-medium text-brand-red">
+                                        <p className="font-light text-brand-red">
                                             {getTotalItems(order.order_item)}{" "}
                                             item(s)
                                         </p>
@@ -383,25 +378,22 @@ export default function OrdersList() {
 
                                 {/* Dishes */}
                                 <div className="space-y-3 text-sm md:text-md">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-1 h-4 rounded-full bg-brand-blue"></div>
-                                        <h4 className="font-semibold uppercase tracking-wide text-foreground">
-                                            Dishes:
-                                        </h4>
-                                    </div>
-                                    <div className="grid gap-3">
+                                    <h4 className="font-light uppercase tracking-wide text-foreground text-xs">
+                                        Dishes
+                                    </h4>
+                                    <div className="grid gap-2">
                                         {order.order_item.map((orderItem) => (
                                             <div
                                                 key={orderItem.id}
-                                                className="flex justify-between items-start p-3 rounded-lg bg-bg-light"
+                                                className="flex justify-between items-start p-3 rounded-lg bg-soft-pink/10"
                                             >
                                                 <div className="flex-1">
-                                                    <p className="font-medium text-foreground">
+                                                    <p className="font-light text-foreground text-sm">
                                                         {orderItem.dish.name}
                                                     </p>
                                                 </div>
-                                                <div className="ml-4 flex items-center justify-center font-semibold px-3 rounded-full badge-red">
-                                                    x{orderItem.quantity}
+                                                <div className="ml-4 flex items-center justify-center font-light px-3 rounded-lg text-xs bg-rose/20 text-brand-red">
+                                                    ×{orderItem.quantity}
                                                 </div>
                                             </div>
                                         ))}
@@ -411,27 +403,24 @@ export default function OrdersList() {
                                 {/* Sides */}
                                 <div className="space-y-3 text-sm md:text-md">
                                     {getSidesForOrder(order).length > 0 && (
-                                        <div className="mt-1">
-                                            <div className="flex items-center gap-2 mb-3">
-                                                <div className="w-1 h-4 rounded-full bg-brand-blue"></div>
-                                                <h4 className="font-semibold uppercase tracking-wide text-foreground">
-                                                    Sides:
-                                                </h4>
-                                            </div>
-                                            <div className="grid gap-3">
+                                        <div className="mt-4">
+                                            <h4 className="font-light uppercase tracking-wide text-foreground text-xs mb-3">
+                                                Sides
+                                            </h4>
+                                            <div className="grid gap-2">
                                                 {getSidesForOrder(order).map(
                                                     (side) => (
                                                         <div
                                                             key={side.id}
-                                                            className="flex justify-between items-start p-3 rounded-lg bg-bg-light"
+                                                            className="flex justify-between items-start p-3 rounded-lg bg-soft-blue/10"
                                                         >
                                                             <div className="flex-1">
-                                                                <p className="font-medium text-foreground">
+                                                                <p className="font-light text-foreground text-sm">
                                                                     {side.name}
                                                                 </p>
                                                             </div>
-                                                            <div className="ml-4 flex items-center justify-center font-semibold px-3 rounded-full badge-red">
-                                                                x{side.quantity}
+                                                            <div className="ml-4 flex items-center justify-center font-light px-3 rounded-lg text-xs bg-accent-blue/20 text-brand-blue">
+                                                                ×{side.quantity}
                                                             </div>
                                                         </div>
                                                     )
@@ -443,33 +432,30 @@ export default function OrdersList() {
 
                                 {/* Comments */}
                                 {order.comments && (
-                                    <div className="mt-4 pt-4 border-t md:text-md text-sm border-brand">
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <div className="w-1 h-4 rounded-full bg-brand-blue"></div>
-                                            <h4 className="font-semibold uppercase tracking-wide text-foreground">
-                                                Comments:
-                                            </h4>
-                                        </div>
-                                        <p className="italic text-secondary">
+                                    <div className="mt-4 pt-4 border-t border-soft-pink/20">
+                                        <h4 className="font-light uppercase tracking-wide text-foreground text-xs mb-2">
+                                            Notes
+                                        </h4>
+                                        <p className="italic text-text-light font-light text-sm">
                                             {order.comments}
                                         </p>
                                     </div>
                                 )}
 
-                                <div className="mt-4 pt-4 border-t md:text-md text-sm flex justify-between items-center border-brand">
-                                    <h4 className="font-semibold uppercase tracking-wide mb-2 text-foreground">
-                                        Total:
+                                <div className="mt-4 pt-4 border-t border-soft-pink/20 flex justify-between items-center">
+                                    <h4 className="font-light uppercase tracking-wide text-foreground text-xs">
+                                        Total
                                     </h4>
-                                    <p className="font-bold text-lg text-brand-blue">
+                                    <p className="font-light text-xl text-brand-blue">
                                         ${getTotal(order).toFixed(2)}
                                     </p>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4 ">
+                                <div className="grid grid-cols-2 gap-4 mt-6">
                                     {order.status.id !== 5 &&
                                         order.status.id === 1 && (
                                             <div
-                                                className="mt-6 px-4 py-2 font-semibold rounded-lg transition text-center cursor-pointer btn-brand-blue"
+                                                className="px-4 py-2.5 font-light rounded-lg transition text-center cursor-pointer btn-brand-blue text-sm"
                                                 onClick={() =>
                                                     updateOrderStatus(
                                                         order.id,
@@ -483,7 +469,7 @@ export default function OrdersList() {
                                     {order.status.id !== 6 &&
                                         order.status.id === 1 && (
                                             <div
-                                                className="mt-6 px-4 py-2 font-semibold rounded-lg transition text-center cursor-pointer btn-brand-red"
+                                                className="px-4 py-2.5 font-light rounded-lg transition text-center cursor-pointer btn-brand-red text-sm"
                                                 onClick={() =>
                                                     updateOrderStatus(
                                                         order.id,
@@ -502,14 +488,16 @@ export default function OrdersList() {
 
                 {/* Summary */}
                 {filteredOrders.length > 0 && (
-                    <div className="mt-6 bg-white rounded-xl shadow-md p-6 text-center">
-                        <p className="text-secondary">
+                    <div className="mt-6 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-6 text-center">
+                        <p className="text-text-light font-light text-sm">
                             Showing{" "}
-                            <span className="font-bold text-brand-red">
+                            <span className="font-light text-brand-red">
                                 {filteredOrders.length}
                             </span>{" "}
                             of{" "}
-                            <span className="font-bold text-foreground">{orders.length}</span>{" "}
+                            <span className="font-light text-foreground">
+                                {orders.length}
+                            </span>{" "}
                             total orders
                         </p>
                     </div>

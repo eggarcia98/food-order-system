@@ -14,23 +14,36 @@
   --font-ibm-plex-mono: 'IBM Plex Mono', "Helvetica Neue", monospace;
   
 
-  /* Colors */
-  --color-background: #F5F5F5;
-  --color-brand-blue: #23A0E5;
-  --color-brand-dark-red: #99171C;
-  --color-brand-red: #D82229;
-  --color-foreground: #1A1A1A;
-  --color-hover-overlay: rgba(35, 160, 229, 0.7);
+  /* Pastel Color Palette */
+  --color-background: #F9F7F4;
+  --color-cream: #FFFBF7;
+  --color-soft-pink: #F5DEDD;
+  --color-light-pink: #FCE8E7;
+  --color-rose: #D8A5A1;
+  --color-soft-purple: #E8D5F2;
+  --color-light-purple: #D4C5E8;
+  --color-accent-blue: #7BA8D1;
+  --color-soft-blue: #B8D4E8;
+  --color-foreground: #3D3935;
+  --color-text-light: #6B6A68;
+  --color-hover-overlay: rgba(216, 165, 161, 0.4);
 
+  /* Brand accent colors */
+  --color-brand-blue: #7BA8D1;
+  --color-brand-dark-red: #8B6B66;
+  --color-brand-red: #C17A73;
+  
   /* Small helpers */
-  --color-border: var(--color-brand-dark-red);
+  --color-border: #E8D5D0;
 }
 
 /* Respect user's color-scheme with minimal overrides */
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-background: #0a0a0a;
-    --color-foreground: #ededed;
+    --color-background: #F9F7F4;
+    --color-cream: #2a2520;
+    --color-foreground: #f5f1ee;
+    --color-text-light: #c9c6c2;
   }
 }
 
@@ -45,16 +58,38 @@ body {
   color: var(--color-foreground);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
+}
+
+/* Typography refinements - consistent throughout */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-guayacos);
+  letter-spacing: -0.02em;
+  font-weight: 400;
+}
+
+p, a, span, li {
+  font-family: var(--font-guayacos);
+}
+
+p {
+  letter-spacing: -0.005em;
+  font-weight: 300;
 }
 
 /* Small app-specific utilities (keep these limited; use Tailwind where possible) */
 
 /* Background utilities */
+.bg-background { background-color: var(--color-background); }
 .bg-brand-blue { background-color: var(--color-brand-blue); }
-.bg-brand-blue-10 { background-color: rgba(35, 160, 229, 0.1); }
+.bg-brand-blue-10 { background-color: rgba(123, 168, 209, 0.1); }
 .bg-brand-red { background-color: var(--color-brand-red); }
-.bg-brand-red-10 { background-color: rgba(216, 34, 41, 0.1); }
+.bg-brand-red-10 { background-color: rgba(193, 122, 115, 0.1); }
 .bg-bg-light { background-color: var(--color-background); }
+.bg-cream { background-color: var(--color-cream); }
+.bg-soft-pink { background-color: var(--color-soft-pink); }
+.bg-light-pink { background-color: var(--color-light-pink); }
+.bg-soft-purple { background-color: var(--color-soft-purple); }
 
 /* Patterned background (kept as a utility layer to be opt-in) */
 @layer utilities {
@@ -67,36 +102,89 @@ body {
   }
   /* Utility to apply the Bungee display font via className */
   .font-bungee { font-family: var(--font-bungee); }
+  
+  /* Logo styling */
+  .logo-container {
+    filter: drop-shadow(0 4px 12px rgba(193, 122, 115, 0.15));
+    transition: filter 0.3s ease, transform 0.3s ease;
+  }
+  
+  .logo-container:hover {
+    filter: drop-shadow(0 8px 24px rgba(193, 122, 115, 0.25));
+    transform: translateY(-2px);
+  }
 }
 
 /* Text utilities */
 .text-brand-blue { color: var(--color-brand-blue); }
 .text-brand-red { color: var(--color-brand-red); }
 .text-foreground { color: var(--color-foreground); }
+.text-light { color: var(--color-text-light); }
 
 /* Buttons (minimal helpers; prefer component styles) */
-.btn-brand-blue { background-color: var(--color-brand-blue); color: var(--color-background); }
-.btn-brand-blue:hover { background-color: rgba(35, 160, 229, 0.85); }
-.btn-brand-red { background-color: var(--color-brand-red); color: var(--color-background); }
-.btn-brand-red:hover { background-color: var(--color-brand-dark-red); }
+.btn-brand-blue { 
+  background-color: var(--color-brand-blue); 
+  color: var(--color-cream); 
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+  border: none;
+  cursor: pointer;
+}
+.btn-brand-blue:hover { 
+  background-color: var(--color-accent-blue);
+  box-shadow: 0 8px 24px rgba(123, 168, 209, 0.2);
+  transform: translateY(-1px);
+}
+.btn-brand-red { 
+  background-color: var(--color-brand-red); 
+  color: var(--color-cream);
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+  border: none;
+  cursor: pointer;
+}
+.btn-brand-red:hover { 
+  background-color: var(--color-rose);
+  box-shadow: 0 8px 24px rgba(216, 165, 161, 0.2);
+  transform: translateY(-1px);
+}
 
 /* Form inputs */
-.input-brand { border: 1px solid var(--color-border); }
-.input-brand:focus { border-color: var(--color-brand-blue); box-shadow: 0 0 0 3px rgba(35,160,229,0.12); outline: none; }
+.input-brand { 
+  border: 1px solid var(--color-border); 
+  background-color: var(--color-cream);
+  color: var(--color-foreground);
+  transition: all 0.3s ease;
+}
+.input-brand:focus { 
+  border-color: var(--color-brand-blue); 
+  box-shadow: 0 0 0 3px rgba(123, 168, 209, 0.12); 
+  outline: none; 
+}
 
 /* Badges */
-.badge-blue { background-color: rgba(35, 160, 229, 0.08); color: var(--color-brand-blue); }
-.badge-red { background-color: rgba(216, 34, 41, 0.08); color: var(--color-brand-red); }
+.badge-blue { 
+  background-color: rgba(123, 168, 209, 0.12); 
+  color: var(--color-accent-blue); 
+  font-weight: 500;
+}
+.badge-red { 
+  background-color: rgba(216, 165, 161, 0.12); 
+  color: var(--color-brand-red); 
+  font-weight: 500;
+}
 
 /* Borders & rings */
 .border-brand { border-color: var(--color-border); }
 .border-brand-blue { border-color: var(--color-brand-blue); }
 .border-b-brand-red { border-bottom-color: var(--color-brand-red); }
-.ring-brand-blue { box-shadow: 0 0 0 3px rgba(35,160,229,0.12); }
+.ring-brand-blue { box-shadow: 0 0 0 3px rgba(123, 168, 209, 0.12); }
 
 /* Misc UI helpers */
 .suggestion { background-color: transparent; }
-.suggestion:hover { background-color: rgba(35,160,229,0.04); }
+.suggestion:hover { background-color: rgba(123, 168, 209, 0.04); }
 
 /* Marquee / infinite scrolling banner (kept small) */
 .marquee { width: 100%; overflow: hidden; }
