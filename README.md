@@ -1,32 +1,56 @@
-# Food Order Registration System - Setup Guide
+# Food Order Registration System
+
+A modern food ordering system built with Next.js, TypeScript, Prisma, and PostgreSQL. This application allows customers to register orders, manage dishes, and track order details.
+
+## 🚀 Demo
+
+🔗 **[Live Demo](https://food-order-system.pages.dev/)** 
+
+Try out the application with the following features:
+- Browse available dishes by nationality
+- Create and manage customer orders
+- Add sides and extras to orders
+- Track order history and status
+
+## ✨ Features
+
+- 🍽️ **Menu Management** - Browse dishes categorized by nationality
+- 📝 **Order Creation** - Easy-to-use interface for creating new orders
+- 👥 **Customer Management** - Track customer information and order history
+- 🎯 **Order Tracking** - Monitor order status and dispatch orders
+- 🔐 **Authentication** - Secure login and signup functionality
+- 📱 **Responsive Design** - Works seamlessly on desktop and mobile devices
+
+## 🛠️ Tech Stack
+
+- **Framework**: [Next.js 14+](https://nextjs.org/) with App Router
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Database**: [PostgreSQL](https://www.postgresql.org/) with [Prisma ORM](https://www.prisma.io/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Package Manager**: pnpm
 
 ## Prerequisites
+
 - Node.js 18+ installed
 - PostgreSQL database (local or cloud like Supabase, Neon, Railway)
+- pnpm (or npm/yarn)
 
-## Installation Steps
+## 📦 Installation Steps
 
-### 1. Create Next.js Project
+### 1. Clone the Repository
 ```bash
-npx create-next-app@latest food-order-system --typescript --tailwind --app --no-src-dir
+git clone <your-repository-url>
 cd food-order-system
 ```
 
 ### 2. Install Dependencies
 ```bash
-npm install prisma @prisma/client
-npm install -D prisma
+pnpm install
+# or
+npm install
 ```
 
-### 3. Setup Project Structure
-Create the following files with the provided code:
-
-- `app/page.tsx` - Main order registration page
-- `app/api/orders/route.ts` - API endpoints
-- `prisma/schema.prisma` - Database schema
-- `lib/prisma.ts` - Prisma client singleton
-
-### 4. Configure Database
+### 3. Configure Environment Variables
 
 Create a `.env` file in the root directory:
 
@@ -40,104 +64,62 @@ Replace with your PostgreSQL connection string:
 - **Neon**: Copy from your Neon dashboard
 - **Railway**: Copy from your Railway PostgreSQL plugin
 
-### 5. Initialize Prisma and Create Database
+### 4. Initialize Database
 
 ```bash
-# Initialize Prisma (if not already done)
-npx prisma init
-
 # Generate Prisma Client
 npx prisma generate
 
 # Create database tables
 npx prisma db push
 
+# (Optional) Seed the database with sample data
+# npx prisma db seed
+
 # (Optional) Open Prisma Studio to view data
 npx prisma studio
 ```
 
-### 6. Update TypeScript Config
-
-Add to `tsconfig.json` if needed:
-```json
-{
-  "compilerOptions": {
-    "paths": {
-      "@/*": ["./*"]
-    }
-  }
-}
-```
-
-### 7. Run Development Server
+### 5. Run Development Server
 
 ```bash
+pnpm dev
+# or
 npm run dev
 ```
 
 Visit `http://localhost:3000` to see your application!
 
-## Database Schema
+## 🔌 API Endpoints
 
-The system creates two tables:
+### Authentication
+- `POST /api/auth/login` - User login
+- `POST /api/auth/signUp` - User registration
 
-### Orders Table
-- `id` - Unique identifier
-- `phone_number` - Customer phone
-- `name` - Customer name
-- `comments` - Order comments
-- `created_at` - Timestamp
-- `updated_at` - Timestamp
-
-### Dishes Table
-- `id` - Unique identifier
-- `dish` - Dish name
-- `quantity` - Number of items
-- `extras` - Special requests
-- `order_id` - Foreign key to orders
-
-## API Endpoints
-
+### Orders
 - `POST /api/orders` - Create new order
 - `GET /api/orders` - Retrieve all orders
+- `POST /api/orders/[orderId]/dispatch` - Dispatch an order
 
-## Production Deployment
+### Resources
+- `GET /api/customers` - Get all customers
+- `GET /api/dishes` - Get all dishes
+- `GET /api/nationalities` - Get all nationalities
+- `GET /api/sides` - Get all sides
 
-### Vercel (Recommended)
-1. Push code to GitHub
-2. Import project to Vercel
-3. Add `DATABASE_URL` environment variable
-4. Deploy
+## 🤝 Contributing
 
-### Before deploying:
-```bash
-# Run migrations
-npx prisma migrate dev --name init
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-# Generate Prisma Client
-npx prisma generate
-```
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-## Troubleshooting
 
-**Error: Can't reach database server**
-- Check your DATABASE_URL is correct
-- Ensure PostgreSQL is running
-- Check firewall/network settings
+## 👏 Acknowledgments
 
-**Error: PrismaClient is not configured**
-- Run `npx prisma generate`
-- Restart your dev server
-
-**Error: relation "orders" does not exist**
-- Run `npx prisma db push` or `npx prisma migrate dev`
-
-## Optional Enhancements
-
-Consider adding:
-- Form validation with Zod
-- Toast notifications with Sonner
-- Order list/history page
-- Search and filter functionality
-- Export orders to CSV
-- Authentication with NextAuth.js
+- Next.js team for the amazing framework
+- Prisma team for the excellent ORM
+- All contributors who help improve this project
