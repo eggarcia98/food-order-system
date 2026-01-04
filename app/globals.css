@@ -40,7 +40,7 @@
 /* Respect user's color-scheme with minimal overrides */
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-background: #1a1815;
+    --color-background: #F9F7F4;
     --color-cream: #2a2520;
     --color-foreground: #f5f1ee;
     --color-text-light: #c9c6c2;
@@ -80,6 +80,7 @@ p {
 /* Small app-specific utilities (keep these limited; use Tailwind where possible) */
 
 /* Background utilities */
+.bg-background { background-color: var(--color-background); }
 .bg-brand-blue { background-color: var(--color-brand-blue); }
 .bg-brand-blue-10 { background-color: rgba(123, 168, 209, 0.1); }
 .bg-brand-red { background-color: var(--color-brand-red); }

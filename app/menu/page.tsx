@@ -1,11 +1,11 @@
 export default function MenuPage() {
     return (
-        <div className=" mx-auto relative w-auto max-w-6xl p-6 m-5 ">
+        <div className=" mx-auto relative w-auto max-w-6xl p-6 m-8 ">
             <div className="grid grid-col-1 md:grid-cols-3 md:grid-rows-2  gap-6 space-y-4">
                 <div className="relative border-3 border-brand rounded-md px-6 pb-6 pt-8 col-span-3 w-full bg-background">
                     {/* Section heading overlaying the border */}
                     <h2
-                        className="absolute -top-3 left-4 px-2 text-2xl font-black tracking-tight font-bungee leading-none drop-shadow-sm bg-background"
+                        className="absolute -top-3 left-4 px-2 text-2xl font-black tracking-tight font-bungee leading-none  bg-background"
                         style={{ WebkitTextStroke: "0.5px #3D3935" }}
                     >
                         THE MAINS
@@ -116,7 +116,7 @@ export default function MenuPage() {
                 <div className="relative border-3 h-fit border-brand rounded-lg px-6 pb-6 pt-8 col-span-3 md:col-span-2 bg-background">
                     {/* Section heading overlaying the border */}
                     <h2
-                        className="absolute -top-3 left-4 px-2 text-2xl font-black tracking-tight font-bungee leading-none drop-shadow-sm bg-background"
+                        className="absolute -top-3 left-4 px-2 text-2xl font-black tracking-tight font-bungee leading-none bg-background"
                         style={{ WebkitTextStroke: "0.5px #3D3935" }}
                     >
                         EXTRAS
@@ -169,7 +169,7 @@ export default function MenuPage() {
                 <div className="relative border-3 h-fit border-brand-blue rounded-md px-6 pb-6 pt-8 col-span-3 md:col-span-1 bg-background">
                     {/* Section heading overlaying the border */}
                     <h2
-                        className="absolute -top-3 left-4 px-2 text-2xl font-black tracking-tight font-bungee leading-none drop-shadow-sm bg-background"
+                        className="absolute -top-3 left-4 px-2 text-2xl font-black tracking-tight font-bungee leading-none bg-background"
                         style={{ WebkitTextStroke: "0.5px #3D3935" }}
                     >
                         INFO
