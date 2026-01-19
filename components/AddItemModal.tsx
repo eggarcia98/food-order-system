@@ -42,14 +42,15 @@ export default function AddItemModal({
     menuItems,
     setConfirmedOrderList,
 }: any) {
-    const [selectedVariant, setSelectedVariant] = React.useState<SelectedVariant | null>(null);
+    const [selectedVariant, setSelectedVariant] =
+        React.useState<SelectedVariant | null>(null);
     const [sidesSelected, setSidesSelected] = React.useState<any>([]);
     const [quantity, setQuantity] = React.useState<number>(1);
-    const [expandedCategories, setExpandedCategories] = React.useState<Set<number>>(new Set());
+    const [expandedCategory, setExpandedCategory] = React.useState<number | null>(null);
 
     useEffect(() => {
         setSideQuantities(() =>
-            sides.reduce((acc, s) => ({ ...acc, [s.id]: 0 }), {})
+            sides.reduce((acc, s) => ({ ...acc, [s.id]: 0 }), {}),
         );
     }, [sides]);
 
@@ -64,7 +65,6 @@ export default function AddItemModal({
     };
 
     const handleDecrement = async (id: number) => {
-
         if (sideQuantities[id] <= 0) return;
         const updatedSideQuantities = {
             ...sideQuantities,
@@ -90,7 +90,7 @@ export default function AddItemModal({
     const resetOrderForm = () => {
         setSelectedVariant(null);
         setSidesSelected([]);
-        setSideQuantities({})
+        setSideQuantities({});
         setQuantity(1);
     };
 
@@ -110,22 +110,23 @@ export default function AddItemModal({
     };
 
     const toggleCategory = (categoryId: number) => {
-        const newExpandedCategories = new Set(expandedCategories);
-        if (newExpandedCategories.has(categoryId)) {
-            newExpandedCategories.delete(categoryId);
+        if (expandedCategory === categoryId) {
+            setExpandedCategory(null);
         } else {
-            newExpandedCategories.add(categoryId);
+            setExpandedCategory(categoryId);
         }
-        setExpandedCategories(newExpandedCategories);
     };
 
     const confirmOrderItem = () => {
         if (!selectedVariant) return;
-        setConfirmedOrderList((prev: any) => [...prev, {
-            variant: selectedVariant,
-            quantity,
-            sides: sidesSelected,
-        }]);
+        setConfirmedOrderList((prev: any) => [
+            ...prev,
+            {
+                variant: selectedVariant,
+                quantity,
+                sides: sidesSelected,
+            },
+        ]);
         resetOrderForm();
         setOpen(false);
     };
@@ -133,7 +134,7 @@ export default function AddItemModal({
     useEffect(() => {
         updateSidesList();
     }, [sideQuantities]);
-    
+
     // useEffect(() => {
     //     console.log("Current Order Item: ", orderItem);
     // }, [orderItem]);
@@ -150,7 +151,9 @@ export default function AddItemModal({
   `}
         >
             <div className="p-4 border-b flex justify-between items-center border-brand">
-                <h2 className="text-lg font-semibold text-foreground">Add Item</h2>
+                <h2 className="text-lg font-semibold text-foreground">
+                    Add Item
+                </h2>
                 <button
                     onClick={() => setOpen(false)}
                     className="transition text-secondary"
@@ -164,43 +167,61 @@ export default function AddItemModal({
                 <div>
                     <div className="flex items-center gap-2 mb-4">
                         <div className="w-1 h-4 rounded-full bg-brand-blue"></div>
-                        <h3 className="text-lg font-semibold text-foreground">Menu Items</h3>
+                        <h3 className="text-lg font-semibold text-foreground">
+                            Menu Items
+                        </h3>
                     </div>
                     <div className="space-y-6">
                         {menuItems.map((menuItem: MenuItem) => (
                             <div key={menuItem.id}>
-                                <div 
+                                <div
                                     onClick={() => toggleCategory(menuItem.id)}
                                     className="flex items-center justify-between cursor-pointer mb-3 p-2 rounded-lg hover:bg-gray-50 transition"
                                 >
-                                    <h4 className="font-semibold text-foreground">{menuItem.name}</h4>
-                                    <span className={`text-lg transition-transform ${expandedCategories.has(menuItem.id) ? 'rotate-180' : ''}`}>
+                                    <h4 className="font-semibold text-foreground">
+                                        {menuItem.name}
+                                    </h4>
+                                    <span
+                                        className={`text-lg transition-transform ${expandedCategory === menuItem.id ? "rotate-180" : ""}`}
+                                    >
                                         ▼
                                     </span>
                                 </div>
-                                {expandedCategories.has(menuItem.id) && (
+                                {expandedCategory === menuItem.id && (
                                     <div className="grid grid-cols-2 gap-3">
                                         {menuItem.item_variants
-                                            .filter((variant) => variant.is_active)
+                                            .filter(
+                                                (variant) => variant.is_active,
+                                            )
                                             .map((variant) => (
                                                 <div
                                                     key={variant.id}
-                                                    onClick={() => handleVariantSelect(menuItem, variant)}
+                                                    onClick={() =>
+                                                        handleVariantSelect(
+                                                            menuItem,
+                                                            variant,
+                                                        )
+                                                    }
                                                     className={`border rounded-xl p-3 flex flex-col items-center cursor-pointer transition ${
-                                                        selectedVariant?.variant_id === variant.id
-                                                            ? 'border-brand-blue bg-brand-blue-15'
-                                                            : 'border-brand'
+                                                        selectedVariant?.variant_id ===
+                                                        variant.id
+                                                            ? "border-brand-blue bg-brand-blue-15"
+                                                            : "border-brand"
                                                     }`}
                                                 >
-                                                    {variant.image_url && (
-                                                        <img
-                                                            src={variant.image_url}
-                                                            alt={variant.variant_name}
-                                                            className="w-20 h-20 object-cover rounded-lg mb-2"
-                                                        />
-                                                    )}
-                                                    <p className="font-medium text-foreground text-sm text-center">{variant.variant_name}</p>
-                                                    <p className="text-sm text-brand-red">${variant.price}</p>
+                                                    <img
+                                                        src={variant.image_url}
+                                                        alt={
+                                                            variant.variant_name
+                                                        }
+                                                        className="w-20 h-20 object-cover rounded-lg mb-2"
+                                                    />
+                                                    <p className="font-medium text-foreground text-sm text-center">
+                                                        {variant.variant_name}
+                                                    </p>
+                                                    <p className="text-sm text-brand-red">
+                                                        ${variant.price}
+                                                    </p>
                                                 </div>
                                             ))}
                                     </div>
@@ -212,7 +233,9 @@ export default function AddItemModal({
 
                 {/* Quantity */}
                 <div className="mt-6 flex items-center justify-between">
-                    <label className="text-lg font-semibold text-foreground">Quantity</label>
+                    <label className="text-lg font-semibold text-foreground">
+                        Quantity
+                    </label>
                     <input
                         type="number"
                         value={quantity}
@@ -226,7 +249,9 @@ export default function AddItemModal({
                 <div className="mt-6">
                     <div className="flex items-center gap-2 mb-2">
                         <div className="w-1 h-4 rounded-full bg-brand-blue"></div>
-                        <h3 className="text-lg font-semibold text-foreground">Sides</h3>
+                        <h3 className="text-lg font-semibold text-foreground">
+                            Sides
+                        </h3>
                     </div>
                     <div className="flex flex-col gap-2">
                         {sides.map((side) => (
@@ -234,7 +259,9 @@ export default function AddItemModal({
                                 key={side.id}
                                 className="flex justify-between items-center border-b p-2 px-3 text-sm border-brand"
                             >
-                                <span className="text-secondary">{side.name}</span>
+                                <span className="text-secondary">
+                                    {side.name}
+                                </span>
                                 <div className="flex items-center gap-2">
                                     <div
                                         className="px-2 rounded font-bold cursor-pointer transition bg-bg-light"
