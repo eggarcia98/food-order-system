@@ -30,6 +30,7 @@ export default function NewOrderPage() {
 
     const [lastname, setLastname] = useState("");
     const [firstname, setFirstname] = useState("");
+    const [menuItems, setMenuItems] = useState<any[]>([]);
 
     const [confirmedOrderList, setConfirmedOrderList] = useState<OrderItem[]>(
         []
@@ -98,11 +99,25 @@ export default function NewOrderPage() {
         }
     };
 
+
+    const fetchMenuItems = async () => {
+        try {
+            const response = await fetch("/api/menu_items");
+            if (!response.ok) throw new Error("Failed to fetch");
+            const data = await response.json();
+            console.log("Menu Items:", data);
+            setMenuItems(data);
+        } catch (error) {
+            console.error("Error fetching previous customers:", error);
+        }
+    };
+
     useEffect(() => {
         fetchNationalities();
         fetchDishes();
         fetchSides();
         fetchPreviousCustomers();
+        fetchMenuItems();
     }, []);
 
     const removeDish = (index: number) => {
@@ -373,6 +388,7 @@ export default function NewOrderPage() {
                         dishes={dishes}
                         sides={sides}
                         open={openAddItemModal}
+                        menuItems={menuItems}
                         setOpen={setOpenAddItemModal}
                         setConfirmedOrderList={setConfirmedOrderList}
                     />

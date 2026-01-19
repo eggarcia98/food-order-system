@@ -101,6 +101,7 @@ export default function NewOrderModal({
         }
     };
 
+
     useEffect(() => {
         fetchNationalities();
         fetchDishes();

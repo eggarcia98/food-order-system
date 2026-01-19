@@ -74,6 +74,26 @@ model Dish {
   @@map("dish")
 }
 
+model MenuItems { 
+  id       Int    @id @default(autoincrement())
+  category_id Int
+  name     String
+  description String
+  item_variants ItemVariant[]
+
+  @@map("menu_items")
+}
+model ItemVariant {
+  id          Int      @id @default(autoincrement())
+  item_id Int
+  variant_name     String
+  price Float
+  is_active Boolean @default(true)
+
+  MenuItem MenuItems @relation(fields: [item_id], references: [id], onDelete: Cascade)
+  @@map("item_variants")
+}
+
 model Nationality {
   id   Int    @id @default(autoincrement())
   name String @unique

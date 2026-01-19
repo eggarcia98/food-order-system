@@ -2,11 +2,30 @@
 
 import React, { use, useEffect } from "react";
 
-interface DishItem {
+interface ItemVariant {
     id: number;
-    name: string;
+    item_id: number;
+    variant_name: string;
     price: number;
-    quantity?: number;
+    is_active: boolean;
+    image_url?: string;
+}
+
+interface MenuItem {
+    id: number;
+    category_id: number;
+    name: string;
+    description: string;
+    item_variants: ItemVariant[];
+}
+
+interface SelectedVariant {
+    item_id: number;
+    item_name: string;
+    variant_id: number;
+    variant_name: string;
+    price: number;
+    quantity: number;
 }
 
 interface SideItem {
@@ -15,25 +34,15 @@ interface SideItem {
     price?: number;
     quantity?: number;
 }
-interface OrderItem {
-    dish: DishItem | null;
-    sides: SideItem[];
-}
 
 export default function AddItemModal({
     open,
     setOpen,
-    dishes,
     sides,
+    menuItems,
     setConfirmedOrderList,
 }: any) {
-    const [orderItem, setOrderItem] = React.useState<OrderItem>({
-        dish: null,
-        sides: [],
-    });
-
-    const [mainDishSelected, setMainDishSelected] = React.useState<any>(null);
-
+    const [selectedVariant, setSelectedVariant] = React.useState<SelectedVariant | null>(null);
     const [sidesSelected, setSidesSelected] = React.useState<any>([]);
     const [quantity, setQuantity] = React.useState<number>(1);
 
@@ -78,38 +87,37 @@ export default function AddItemModal({
     };
 
     const resetOrderForm = () => {
-        setOrderItem({
-            dish: null,
-            sides: [],
-        });
+        setSelectedVariant(null);
         setSidesSelected([]);
-        setMainDishSelected(null);
         setSideQuantities({})
         setQuantity(1);
     };
 
-    const handleDishSelect = (dish: any) => {
-        setMainDishSelected(dish);
+    const handleVariantSelect = (menuItem: MenuItem, variant: ItemVariant) => {
+        setSelectedVariant({
+            item_id: menuItem.id,
+            item_name: menuItem.name,
+            variant_id: variant.id,
+            variant_name: variant.variant_name,
+            price: variant.price,
+            quantity: 1,
+        });
     };
 
     const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setQuantity(Number(e.target.value));
     };
 
-    const toggleDishSelection = (dishId: any) => orderItem?.dish?.id === dishId;
-
     const confirmOrderItem = () => {
-        setConfirmedOrderList((prev: any) => [...prev, orderItem]);
+        if (!selectedVariant) return;
+        setConfirmedOrderList((prev: any) => [...prev, {
+            variant: selectedVariant,
+            quantity,
+            sides: sidesSelected,
+        }]);
         resetOrderForm();
         setOpen(false);
     };
-
-    useEffect(() => {
-        setOrderItem({
-            dish: { ...mainDishSelected, quantity },
-            sides: sidesSelected,
-        });
-    }, [quantity, sidesSelected, mainDishSelected]);
 
     useEffect(() => {
         updateSidesList();
@@ -141,30 +149,41 @@ export default function AddItemModal({
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 smooth-scroll">
-                {/* Dishes */}
+                {/* Menu Items */}
                 <div>
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center gap-2 mb-4">
                         <div className="w-1 h-4 rounded-full bg-brand-blue"></div>
-                        <h3 className="text-lg font-semibold text-foreground">Dishes</h3>
+                        <h3 className="text-lg font-semibold text-foreground">Menu Items</h3>
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
-                        {dishes.map((dish) => (
-                            <div
-                                key={dish.id}
-                                onClick={() => handleDishSelect(dish)}
-                                className={`border rounded-xl p-3 flex flex-col items-center cursor-pointer transition ${
-                                    toggleDishSelection(dish.id)
-                                        ? 'border-brand-blue bg-brand-blue-15'
-                                        : 'border-brand'
-                                }`}
-                            >
-                                <img
-                                    src={dish.img}
-                                    alt={dish.name}
-                                    className="w-20 h-20 object-cover rounded-lg mb-2"
-                                />
-                                <p className="font-medium text-foreground">{dish.name}</p>
-                                <p className="text-sm text-brand-red">${dish.price}</p>
+                    <div className="space-y-6">
+                        {menuItems.map((menuItem: MenuItem) => (
+                            <div key={menuItem.id}>
+                                <h4 className="font-semibold text-foreground mb-3">{menuItem.name}</h4>
+                                <div className="grid grid-cols-2 gap-3">
+                                    {menuItem.item_variants
+                                        .filter((variant) => variant.is_active)
+                                        .map((variant) => (
+                                            <div
+                                                key={variant.id}
+                                                onClick={() => handleVariantSelect(menuItem, variant)}
+                                                className={`border rounded-xl p-3 flex flex-col items-center cursor-pointer transition ${
+                                                    selectedVariant?.variant_id === variant.id
+                                                        ? 'border-brand-blue bg-brand-blue-15'
+                                                        : 'border-brand'
+                                                }`}
+                                            >
+                                                {variant.image_url && (
+                                                    <img
+                                                        src={variant.image_url}
+                                                        alt={variant.variant_name}
+                                                        className="w-20 h-20 object-cover rounded-lg mb-2"
+                                                    />
+                                                )}
+                                                <p className="font-medium text-foreground text-sm text-center">{variant.variant_name}</p>
+                                                <p className="text-sm text-brand-red">${variant.price}</p>
+                                            </div>
+                                        ))}
+                                </div>
                             </div>
                         ))}
                     </div>

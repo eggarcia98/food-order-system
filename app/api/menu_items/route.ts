@@ -3,9 +3,9 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
     try {
-        const orders = await prisma.menu_item.findMany({
+        const orders = await prisma.menuItems.findMany({
             include: {
-                item_variant: true,
+                item_variants: true,
             },
         });
 
