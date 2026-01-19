@@ -45,6 +45,7 @@ export default function AddItemModal({
     const [selectedVariant, setSelectedVariant] = React.useState<SelectedVariant | null>(null);
     const [sidesSelected, setSidesSelected] = React.useState<any>([]);
     const [quantity, setQuantity] = React.useState<number>(1);
+    const [expandedCategories, setExpandedCategories] = React.useState<Set<number>>(new Set());
 
     useEffect(() => {
         setSideQuantities(() =>
@@ -108,6 +109,16 @@ export default function AddItemModal({
         setQuantity(Number(e.target.value));
     };
 
+    const toggleCategory = (categoryId: number) => {
+        const newExpandedCategories = new Set(expandedCategories);
+        if (newExpandedCategories.has(categoryId)) {
+            newExpandedCategories.delete(categoryId);
+        } else {
+            newExpandedCategories.add(categoryId);
+        }
+        setExpandedCategories(newExpandedCategories);
+    };
+
     const confirmOrderItem = () => {
         if (!selectedVariant) return;
         setConfirmedOrderList((prev: any) => [...prev, {
@@ -158,32 +169,42 @@ export default function AddItemModal({
                     <div className="space-y-6">
                         {menuItems.map((menuItem: MenuItem) => (
                             <div key={menuItem.id}>
-                                <h4 className="font-semibold text-foreground mb-3">{menuItem.name}</h4>
-                                <div className="grid grid-cols-2 gap-3">
-                                    {menuItem.item_variants
-                                        .filter((variant) => variant.is_active)
-                                        .map((variant) => (
-                                            <div
-                                                key={variant.id}
-                                                onClick={() => handleVariantSelect(menuItem, variant)}
-                                                className={`border rounded-xl p-3 flex flex-col items-center cursor-pointer transition ${
-                                                    selectedVariant?.variant_id === variant.id
-                                                        ? 'border-brand-blue bg-brand-blue-15'
-                                                        : 'border-brand'
-                                                }`}
-                                            >
-                                                {variant.image_url && (
-                                                    <img
-                                                        src={variant.image_url}
-                                                        alt={variant.variant_name}
-                                                        className="w-20 h-20 object-cover rounded-lg mb-2"
-                                                    />
-                                                )}
-                                                <p className="font-medium text-foreground text-sm text-center">{variant.variant_name}</p>
-                                                <p className="text-sm text-brand-red">${variant.price}</p>
-                                            </div>
-                                        ))}
+                                <div 
+                                    onClick={() => toggleCategory(menuItem.id)}
+                                    className="flex items-center justify-between cursor-pointer mb-3 p-2 rounded-lg hover:bg-gray-50 transition"
+                                >
+                                    <h4 className="font-semibold text-foreground">{menuItem.name}</h4>
+                                    <span className={`text-lg transition-transform ${expandedCategories.has(menuItem.id) ? 'rotate-180' : ''}`}>
+                                        ▼
+                                    </span>
                                 </div>
+                                {expandedCategories.has(menuItem.id) && (
+                                    <div className="grid grid-cols-2 gap-3">
+                                        {menuItem.item_variants
+                                            .filter((variant) => variant.is_active)
+                                            .map((variant) => (
+                                                <div
+                                                    key={variant.id}
+                                                    onClick={() => handleVariantSelect(menuItem, variant)}
+                                                    className={`border rounded-xl p-3 flex flex-col items-center cursor-pointer transition ${
+                                                        selectedVariant?.variant_id === variant.id
+                                                            ? 'border-brand-blue bg-brand-blue-15'
+                                                            : 'border-brand'
+                                                    }`}
+                                                >
+                                                    {variant.image_url && (
+                                                        <img
+                                                            src={variant.image_url}
+                                                            alt={variant.variant_name}
+                                                            className="w-20 h-20 object-cover rounded-lg mb-2"
+                                                        />
+                                                    )}
+                                                    <p className="font-medium text-foreground text-sm text-center">{variant.variant_name}</p>
+                                                    <p className="text-sm text-brand-red">${variant.price}</p>
+                                                </div>
+                                            ))}
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>
