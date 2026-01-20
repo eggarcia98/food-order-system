@@ -24,56 +24,42 @@ model Order {
   customer_id Int?
   comments    String?
   created_at  DateTime    @default(now())
-  order_side_item OrderSideItem[]
+  order_item_extras OrderItemExtras[]
+  order_item OrderItems[]
   status_id Int     @default(1)
 
   // Relations
   customer    Customer?   @relation(fields: [customer_id], references: [id], onDelete: Cascade)
   status      Status      @relation(fields: [status_id], references: [id])    
-  order_item OrderItem[]
 
   @@map("order")  
 }
 
-model OrderItem {
-  id        Int      @id @default(autoincrement())
-  order_id  Int
-  quantity  Int
-  dish_id   Int
+model OrderItems {
+  id          Int      @id @default(autoincrement())
+  order_id    Int
+  variant_id Int
+  quantity    Int
+  unit_price Float
 
-  // Relations
-  order     Order    @relation(fields: [order_id], references: [id], onDelete: Cascade)
-  dish      Dish     @relation(fields: [dish_id], references: [id])
-  order_side_item OrderSideItem[]
+  Order Order @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  ItemVariant ItemVariant @relation(fields: [variant_id], references: [id])
 
-
-  @@map("order_item")
+  @@map("order_items")
 }
 
-model OrderSideItem {
-  id        Int      @id @default(autoincrement())
-  order_id Int
-  side_id   Int
-  quantity  Int
-  order_item_id Int?
+model OrderItemExtras {
+  id          Int      @id @default(autoincrement())
+  order_id    Int
+  extra_id   Int
+  quantity    Int
+  unit_price Float
 
+  Order Order @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  MenuExtras MenuExtras @relation(fields: [extra_id], references: [extra_id])
 
-  // Relations
-  order     Order    @relation(fields: [order_id], references: [id], onDelete: Cascade)
-  side      Side     @relation(fields: [side_id], references: [id])
-  order_item OrderItem? @relation(fields: [order_item_id], references: [id], onDelete: Cascade)
-  @@map("order_side_item")
+  @@map("order_item_extras")
 }
-
-model Dish {
-  id       Int    @id @default(autoincrement())
-  name     String
-  price    Float
-
-  OrderItem OrderItem[]
-  @@map("dish")
-}
-
 model MenuItems { 
   id       Int    @id @default(autoincrement())
   category_id Int
@@ -94,22 +80,21 @@ model ItemVariant {
   @@map("item_variants")
 }
 
+model MenuExtras {
+  extra_id       Int    @id @default(autoincrement())
+  name     String
+  // cost Float
+  price Float
+  is_active Boolean @default(true)
+
+  @@map("menu_extras")
+}
+
 model Nationality {
   id   Int    @id @default(autoincrement())
   name String @unique
 
   @@map("nationality")
-}
-
-model Side {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-  cost Float
-  price Float
-  description String?
-
-  SideOrderItem OrderSideItem[]
-  @@map("side")
 }
 
 model Status {
