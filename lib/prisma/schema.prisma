@@ -1,5 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -8,84 +8,89 @@ datasource db {
 }
 
 model Customer {
-  id        Int      @id @default(autoincrement())
-  first_name String?
-  last_name  String?
-  orders    Order[]
-  phone_number String @unique
+  id             Int     @id @default(autoincrement())
+  first_name     String?
+  last_name      String?
+  orders         Order[]
+  phone_number   String  @unique
   nationality_id Int?
 
   @@map("customer")
 }
 
 model Order {
-  id          Int         @id @default(autoincrement())
-  order_code  String      @unique
-  customer_id Int?
-  comments    String?
-  created_at  DateTime    @default(now())
+  id                Int               @id @default(autoincrement())
+  order_code        String            @unique
+  customer_id       Int?
+  comments          String?
+  created_at        DateTime          @default(now())
   order_item_extras OrderItemExtras[]
-  order_item OrderItems[]
-  status_id Int     @default(1)
+  order_items       OrderItems[]
+  status_id         Int               @default(1)
 
   // Relations
-  customer    Customer?   @relation(fields: [customer_id], references: [id], onDelete: Cascade)
-  status      Status      @relation(fields: [status_id], references: [id])    
+  customer Customer? @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+  status   Status    @relation(fields: [status_id], references: [id])
 
-  @@map("order")  
+  @@map("order")
 }
 
 model OrderItems {
-  id          Int      @id @default(autoincrement())
-  order_id    Int
+  id         Int   @id @default(autoincrement())
+  order_id   Int
   variant_id Int
-  quantity    Int
+  quantity   Int
   unit_price Float
 
-  Order Order @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  Order       Order       @relation(fields: [order_id], references: [id], onDelete: Cascade)
   ItemVariant ItemVariant @relation(fields: [variant_id], references: [id])
 
   @@map("order_items")
 }
 
 model OrderItemExtras {
-  id          Int      @id @default(autoincrement())
-  order_id    Int
+  id         Int   @id @default(autoincrement())
+  order_id   Int
   extra_id   Int
-  quantity    Int
+  quantity   Int
   unit_price Float
 
-  Order Order @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  Order      Order      @relation(fields: [order_id], references: [id], onDelete: Cascade)
   MenuExtras MenuExtras @relation(fields: [extra_id], references: [extra_id])
 
   @@map("order_item_extras")
 }
-model MenuItems { 
-  id       Int    @id @default(autoincrement())
-  category_id Int
-  name     String
-  description String
+
+model MenuItems {
+  id            Int           @id @default(autoincrement())
+  category_id   Int
+  name          String
+  description   String
   item_variants ItemVariant[]
 
   @@map("menu_items")
 }
-model ItemVariant {
-  id          Int      @id @default(autoincrement())
-  item_id Int
-  variant_name     String
-  price Float
-  is_active Boolean @default(true)
 
-  MenuItem MenuItems @relation(fields: [item_id], references: [id], onDelete: Cascade)
+model ItemVariant {
+  id           Int     @id @default(autoincrement())
+  item_id      Int
+  variant_name String
+  price        Float
+  is_active    Boolean @default(true)
+
+  MenuItem   MenuItems    @relation(fields: [item_id], references: [id], onDelete: Cascade)
+  OrderItems OrderItems[]
+
   @@map("item_variants")
 }
 
 model MenuExtras {
-  extra_id       Int    @id @default(autoincrement())
-  name     String
+  extra_id        Int               @id @default(autoincrement())
+  name            String
   // cost Float
-  price Float
-  is_active Boolean @default(true)
+  price           Float
+  is_active       Boolean           @default(true)
+  OrderItemExtras OrderItemExtras[]
 
   @@map("menu_extras")
 }
@@ -102,5 +107,6 @@ model Status {
   name String @unique
 
   Order Order[]
+
   @@map("status")
 }
