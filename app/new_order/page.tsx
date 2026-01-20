@@ -115,9 +115,9 @@ export default function NewOrderPage() {
         setConfirmedOrderList(updatedDishes);
     };
 
-    // useEffect(() => {
-    //     console.log("Confirmed Order List: ", confirmedOrderList);
-    // }, [confirmedOrderList]);
+    useEffect(() => {
+        console.log("Confirmed Order List: ", confirmedOrderList, JSON.stringify(confirmedOrderList)    );
+    }, [confirmedOrderList]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -151,6 +151,8 @@ export default function NewOrderPage() {
             setLastname("");
             setFirstname("");
             setComments("");
+            setNationalitySearch("");
+            setNationality({});
             setConfirmedOrderList([]);
         } catch (error) {
             console.error("Error submitting order:", error);
@@ -164,10 +166,15 @@ export default function NewOrderPage() {
     };
 
     // Autocomplete states
-
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [filteredSuggestions, setFilteredSuggestions] = useState<any[]>([]);
     const suggestionsRef = useRef<HTMLDivElement>(null);
+
+    // Nationality autocomplete states
+    const [nationalitySearch, setNationalitySearch] = useState("");
+    const [showNationalitySuggestions, setShowNationalitySuggestions] = useState(false);
+    const [filteredNationalities, setFilteredNationalities] = useState<any[]>([]);
+    const nationalityRef = useRef<HTMLDivElement>(null);
 
     const handlePhoneNumberChange = (value: string) => {
         setPhoneNumber(value);
@@ -190,6 +197,34 @@ export default function NewOrderPage() {
         setFirstname(customer.first_name || "");
         setLastname(customer.last_name || "");
         setShowSuggestions(false);
+        
+        // Update nationality search display
+        const selectedNationality = nationalityList.find(n => n.id === customer.nationality_id);
+        if (selectedNationality) {
+            setNationalitySearch(selectedNationality.name);
+        }
+    };
+
+    const handleNationalitySearch = (value: string) => {
+        setNationalitySearch(value);
+
+        if (value.length > 0) {
+            const filtered = nationalityList.filter((nat) =>
+                nat.name.toLowerCase().includes(value.toLowerCase())
+            );
+            setFilteredNationalities(filtered);
+            setShowNationalitySuggestions(filtered.length > 0);
+        } else {
+            setFilteredNationalities(nationalityList);
+            setShowNationalitySuggestions(false);
+            setNationality({});
+        }
+    };
+
+    const selectNationality = (selectedNat) => {
+        setNationalitySearch(selectedNat.name);
+        setNationality({ id: selectedNat.id });
+        setShowNationalitySuggestions(false);
     };
 
     return (
@@ -312,13 +347,44 @@ export default function NewOrderPage() {
                                 <label className="block text-sm font-light mb-2 text-text-light">
                                     Nationality
                                 </label>
-                                <Selector
-                                    placeholder="Select Nationality"
-                                    returnSelectedValue={true}
-                                    onChangeParent={setNationality}
-                                    selectorList={nationalityList}
-                                    className="appearance-none w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
-                                />
+                                <div className="relative" ref={nationalityRef}>
+                                    <input
+                                        type="text"
+                                        value={nationalitySearch}
+                                        onChange={(e) =>
+                                            handleNationalitySearch(e.target.value)
+                                        }
+                                        onFocus={() => {
+                                            if (nationalitySearch.length === 0) {
+                                                setFilteredNationalities(nationalityList);
+                                                setShowNationalitySuggestions(true);
+                                            } else if (filteredNationalities.length > 0) {
+                                                setShowNationalitySuggestions(true);
+                                            }
+                                        }}
+                                        className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
+                                        placeholder="Type to search nationality..."
+                                        autoComplete="off"
+                                    />
+
+                                    {/* Nationality Suggestions Dropdown */}
+                                    {showNationalitySuggestions && filteredNationalities.length > 0 && (
+                                        <div className="absolute z-10 w-full mt-1 bg-white/95 backdrop-blur-sm border border-soft-pink/20 rounded-lg shadow-lg max-h-60 overflow-auto">
+                                            {filteredNationalities.slice(0, 3).map((nat) => (
+                                                <button
+                                                    key={nat.id}
+                                                    type="button"
+                                                    onClick={() => selectNationality(nat)}
+                                                    className="w-full px-4 py-3 text-left transition border-b border-soft-pink/10 last:border-b-0 hover:bg-soft-pink/10"
+                                                >
+                                                    <p className="font-light text-foreground text-sm">
+                                                        {nat.name}
+                                                    </p>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
 
