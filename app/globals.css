@@ -37,16 +37,6 @@
   --color-border: #E8D5D0;
 }
 
-/* Respect user's color-scheme with minimal overrides */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: #F9F7F4;
-    --color-cream: #2a2520;
-    --color-foreground: #f5f1ee;
-    --color-text-light: #c9c6c2;
-  }
-}
-
 /* Base element rules */
 html, body {
   height: 100%;
