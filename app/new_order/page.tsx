@@ -44,7 +44,6 @@ export default function NewOrderPage() {
     const [openAddItemModal, setOpenAddItemModal] = useState(false);
 
     const [sides, setSides] = useState<any[]>([]);
-    const [dishes, setDishes] = useState<any[]>([]);
 
     const [comments, setComments] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -66,16 +65,7 @@ export default function NewOrderPage() {
         }
     };
 
-    const fetchDishes = async () => {
-        try {
-            const response = await fetch("/api/dishes");
-            if (!response.ok) throw new Error("Failed to fetch");
-            const data = await response.json();
-            setDishes(data);
-        } catch (error) {
-            console.error("Error fetching dishes:", error);
-        }
-    };
+   
 
     const fetchSides = async () => {
         try {
@@ -114,7 +104,6 @@ export default function NewOrderPage() {
 
     useEffect(() => {
         fetchNationalities();
-        fetchDishes();
         fetchSides();
         fetchPreviousCustomers();
         fetchMenuItems();
@@ -385,7 +374,6 @@ export default function NewOrderPage() {
                     ></div>
 
                     <AddItemModal
-                        dishes={dishes}
                         sides={sides}
                         open={openAddItemModal}
                         menuItems={menuItems}
