@@ -1,6 +1,7 @@
 "use client";
 
-import AddItemModal from "@/components/AddItemModal";
+import AddMainItemModal from "@/components/AddMainItemModal";
+import AddExtraItemModal from "@/components/AddExtraItemModal";
 import { DishToOrderItem } from "@/components/DishToOrderItem";
 import { Selector } from "@/components/SelectorComponent";
 import Link from "next/link";
@@ -30,20 +31,20 @@ export default function NewOrderPage() {
 
     const [lastname, setLastname] = useState("");
     const [firstname, setFirstname] = useState("");
+    const [menuItems, setMenuItems] = useState<any[]>([]);
 
-    const [confirmedOrderList, setConfirmedOrderList] = useState<OrderItem[]>(
-        []
-    );
+    const [confirmedMainItems, setConfirmedMainItems] = useState<any[]>([]);
+    const [confirmedExtraItems, setConfirmedExtraItems] = useState<any[]>([]);
 
     const [nationality, setNationality] = useState({});
     const [nationalityList, setNationalityList] = useState([
         { id: 1, name: "Ecuadorian" },
     ]);
 
-    const [openAddItemModal, setOpenAddItemModal] = useState(false);
+    const [openAddMainItemModal, setOpenAddMainItemModal] = useState(false);
+    const [openAddExtraItemModal, setOpenAddExtraItemModal] = useState(false);
 
-    const [sides, setSides] = useState<any[]>([]);
-    const [dishes, setDishes] = useState<any[]>([]);
+    const [extraItems, setExtraItems] = useState<any[]>([]);
 
     const [comments, setComments] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -61,29 +62,20 @@ export default function NewOrderPage() {
             const data = await response.json();
             setNationalityList(data);
         } catch (error) {
-            console.error("Error fetching nationalities:", { error });
+
         }
     };
 
-    const fetchDishes = async () => {
-        try {
-            const response = await fetch("/api/dishes");
-            if (!response.ok) throw new Error("Failed to fetch");
-            const data = await response.json();
-            setDishes(data);
-        } catch (error) {
-            console.error("Error fetching dishes:", error);
-        }
-    };
+   
 
-    const fetchSides = async () => {
+    const fetchExtraItems = async () => {
         try {
-            const response = await fetch("/api/sides");
+            const response = await fetch("/api/menu_extras");
             if (!response.ok) throw new Error("Failed to fetch");
             const data = await response.json();
-            setSides(data);
+            setExtraItems(data);
         } catch (error) {
-            console.error("Error fetching sides:", error);
+
         }
     };
 
@@ -98,22 +90,38 @@ export default function NewOrderPage() {
         }
     };
 
-    useEffect(() => {
-        fetchNationalities();
-        fetchDishes();
-        fetchSides();
-        fetchPreviousCustomers();
-    }, []);
 
-    const removeDish = (index: number) => {
-        const updatedDishes = [...confirmedOrderList];
-        updatedDishes.splice(index, 1);
-        setConfirmedOrderList(updatedDishes);
+    const fetchMenuItems = async () => {
+        try {
+            const response = await fetch("/api/menu_items");
+            if (!response.ok) throw new Error("Failed to fetch");
+            const data = await response.json();
+            setMenuItems(data);
+        } catch (error) {
+            console.error("Error fetching previous customers:", error);
+        }
     };
 
-    // useEffect(() => {
-    //     console.log("Confirmed Order List: ", confirmedOrderList);
-    // }, [confirmedOrderList]);
+    useEffect(() => {
+        fetchNationalities();
+        fetchExtraItems();
+        fetchPreviousCustomers();
+        fetchMenuItems();
+    }, []);
+
+    const removeMainItem = (index: number) => {
+        const updatedItems = [...confirmedMainItems];
+        updatedItems.splice(index, 1);
+        setConfirmedMainItems(updatedItems);
+    };
+
+    const removeExtraItem = (index: number) => {
+        const updatedItems = [...confirmedExtraItems];
+        updatedItems.splice(index, 1);
+        setConfirmedExtraItems(updatedItems);
+    };
+
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -131,7 +139,8 @@ export default function NewOrderPage() {
                         nationality,
                         phoneNumber,
                     },
-                    itemsOrder: confirmedOrderList,
+                    mainItems: confirmedMainItems,
+                    extraItems: confirmedExtraItems,
                     comments,
                 }),
             });
@@ -147,9 +156,12 @@ export default function NewOrderPage() {
             setLastname("");
             setFirstname("");
             setComments("");
-            setConfirmedOrderList([]);
+            setNationalitySearch("");
+            setNationality({});
+            setConfirmedMainItems([]);
+            setConfirmedExtraItems([]);
         } catch (error) {
-            console.error("Error submitting order:", error);
+
             setMessage({
                 type: "error",
                 text: "Failed to register order. Please try again.",
@@ -160,10 +172,15 @@ export default function NewOrderPage() {
     };
 
     // Autocomplete states
-
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [filteredSuggestions, setFilteredSuggestions] = useState<any[]>([]);
     const suggestionsRef = useRef<HTMLDivElement>(null);
+
+    // Nationality autocomplete states
+    const [nationalitySearch, setNationalitySearch] = useState("");
+    const [showNationalitySuggestions, setShowNationalitySuggestions] = useState(false);
+    const [filteredNationalities, setFilteredNationalities] = useState<any[]>([]);
+    const nationalityRef = useRef<HTMLDivElement>(null);
 
     const handlePhoneNumberChange = (value: string) => {
         setPhoneNumber(value);
@@ -172,7 +189,7 @@ export default function NewOrderPage() {
             const filtered = previousCustomers.filter((customer) =>
                 customer.phone_number.includes(value)
             );
-            console.log("Filtered Suggestions:", filtered);
+
             setFilteredSuggestions(filtered);
             setShowSuggestions(filtered.length > 0);
         } else {
@@ -186,7 +203,69 @@ export default function NewOrderPage() {
         setFirstname(customer.first_name || "");
         setLastname(customer.last_name || "");
         setShowSuggestions(false);
+        
+        // Update nationality search display
+        const selectedNationality = nationalityList.find(n => n.id === customer.nationality_id);
+        if (selectedNationality) {
+            setNationalitySearch(selectedNationality.name);
+        }
     };
+
+    const handleNationalitySearch = (value: string) => {
+        setNationalitySearch(value);
+
+        if (value.length > 0) {
+            const filtered = nationalityList.filter((nat) =>
+                nat.name.toLowerCase().includes(value.toLowerCase())
+            );
+            setFilteredNationalities(filtered);
+            setShowNationalitySuggestions(filtered.length > 0);
+        } else {
+            setFilteredNationalities(nationalityList);
+            setShowNationalitySuggestions(false);
+            setNationality({});
+        }
+    };
+
+    const selectNationality = (selectedNat) => {
+        setNationalitySearch(selectedNat.name);
+        setNationality({ id: selectedNat.id });
+        setShowNationalitySuggestions(false);
+    };
+
+    // Click outside handler for phone suggestions
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                suggestionsRef.current &&
+                !suggestionsRef.current.contains(event.target as Node)
+            ) {
+                setShowSuggestions(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
+    // Click outside handler for nationality suggestions
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                nationalityRef.current &&
+                !nationalityRef.current.contains(event.target as Node)
+            ) {
+                setShowNationalitySuggestions(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
     return (
         <div
@@ -308,13 +387,44 @@ export default function NewOrderPage() {
                                 <label className="block text-sm font-light mb-2 text-text-light">
                                     Nationality
                                 </label>
-                                <Selector
-                                    placeholder="Select Nationality"
-                                    returnSelectedValue={true}
-                                    onChangeParent={setNationality}
-                                    selectorList={nationalityList}
-                                    className="appearance-none w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
-                                />
+                                <div className="relative" ref={nationalityRef}>
+                                    <input
+                                        type="text"
+                                        value={nationalitySearch}
+                                        onChange={(e) =>
+                                            handleNationalitySearch(e.target.value)
+                                        }
+                                        onFocus={() => {
+                                            if (nationalitySearch.length === 0) {
+                                                setFilteredNationalities(nationalityList);
+                                                setShowNationalitySuggestions(true);
+                                            } else if (filteredNationalities.length > 0) {
+                                                setShowNationalitySuggestions(true);
+                                            }
+                                        }}
+                                        className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
+                                        placeholder="Type to search nationality..."
+                                        autoComplete="off"
+                                    />
+
+                                    {/* Nationality Suggestions Dropdown */}
+                                    {showNationalitySuggestions && filteredNationalities.length > 0 && (
+                                        <div className="absolute z-10 w-full mt-1 bg-white/95 backdrop-blur-sm border border-soft-pink/20 rounded-lg shadow-lg max-h-60 overflow-auto">
+                                            {filteredNationalities.slice(0, 3).map((nat) => (
+                                                <button
+                                                    key={nat.id}
+                                                    type="button"
+                                                    onClick={() => selectNationality(nat)}
+                                                    className="w-full px-4 py-3 text-left transition border-b border-soft-pink/10 last:border-b-0 hover:bg-soft-pink/10"
+                                                >
+                                                    <p className="font-light text-foreground text-sm">
+                                                        {nat.name}
+                                                    </p>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
 
@@ -359,69 +469,191 @@ export default function NewOrderPage() {
                         </div>
                     </div>
 
-                    {/* Overlay */}
+                    {/* Overlay for Main Items Modal */}
                     <div
                         className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${
-                            openAddItemModal
+                            openAddMainItemModal
                                 ? "opacity-100 visible"
                                 : "opacity-0 invisible"
                         }`}
-                        onClick={() => setOpenAddItemModal(false)}
+                        onClick={() => setOpenAddMainItemModal(false)}
                     ></div>
 
-                    <AddItemModal
-                        dishes={dishes}
-                        sides={sides}
-                        open={openAddItemModal}
-                        setOpen={setOpenAddItemModal}
-                        setConfirmedOrderList={setConfirmedOrderList}
+                    <AddMainItemModal
+                        open={openAddMainItemModal}
+                        menuItems={menuItems}
+                        setOpen={setOpenAddMainItemModal}
+                        setConfirmedMainItems={setConfirmedMainItems}
                     />
 
-                    {/* Order List Card */}
+                    {/* Overlay for Extra Items Modal */}
+                    <div
+                        className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${
+                            openAddExtraItemModal
+                                ? "opacity-100 visible"
+                                : "opacity-0 invisible"
+                        }`}
+                        onClick={() => setOpenAddExtraItemModal(false)}
+                    ></div>
+
+                    <AddExtraItemModal
+                        open={openAddExtraItemModal}
+                        extraItems={extraItems}
+                        setOpen={setOpenAddExtraItemModal}
+                        setConfirmedExtraItems={setConfirmedExtraItems}
+                    />
+
+                    {/* Order Items Card */}
                     <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-8 space-y-6">
-                        <div className="flex justify-between items-center">
+                        <div className="flex justify-between items-center mb-6">
                             <h2 className="text-xl font-light text-foreground uppercase tracking-wide">
                                 Order Items
                             </h2>
-                            <button
-                                type="button"
-                                onClick={() => setOpenAddItemModal(true)}
-                                className="px-6 py-2.5 rounded-lg cursor-pointer transition btn-brand-blue text-sm font-light"
-                            >
-                                + Add Item
-                            </button>
                         </div>
 
-                        {confirmedOrderList.length === 0 ? (
-                            <div className="flex items-center gap-4 p-6 rounded-lg bg-soft-pink/10 border border-soft-pink/20">
-                                <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-soft-pink/20">
-                                    <svg
-                                        className="w-5 h-5 text-brand-red"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                                        />
-                                    </svg>
+                        {/* Main Items Section */}
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center">
+                                <h3 className="text-lg font-light text-foreground">
+                                    Main Items
+                                </h3>
+                                <button
+                                    type="button"
+                                    onClick={() => setOpenAddMainItemModal(true)}
+                                    className="px-4 py-2 rounded-lg cursor-pointer transition btn-brand-blue text-sm font-light"
+                                >
+                                    + Add Main Item
+                                </button>
+                            </div>
+
+                            {confirmedMainItems.length === 0 ? (
+                                <div className="flex items-center gap-4 p-4 rounded-lg bg-soft-pink/10 border border-soft-pink/20">
+                                    <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-soft-pink/20">
+                                        <svg
+                                            className="w-4 h-4 text-brand-red"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p className="text-text-light font-light text-sm">
+                                        No main items added yet.
+                                    </p>
                                 </div>
-                                <p className="text-text-light font-light text-sm">
-                                    No items added yet. Click "Add Item" to
-                                    start your order.
-                                </p>
+                            ) : (
+                                <div className="space-y-3">
+                                    {confirmedMainItems.map((item, index) => (
+                                        <div key={index} className="flex justify-between items-center border-b pb-3 border-brand/30">
+                                            <div className="flex-1">
+                                                <p className="font-medium text-foreground">
+                                                    {item.item_name} - {item.variant_name}
+                                                </p>
+                                                <p className="text-sm text-text-light">
+                                                    Quantity: {item.quantity} × ${item.price}
+                                                </p>
+                                            </div>
+                                            <div className="flex items-center gap-4">
+                                                <p className="font-semibold text-brand-red">
+                                                    ${(item.quantity * item.price).toFixed(2)}
+                                                </p>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeMainItem(index)}
+                                                    className="text-brand-red hover:text-red-700 transition"
+                                                >
+                                                    ✕
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Elegant Divider */}
+                        <div className="relative py-4">
+                            <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-gradient-to-r from-transparent via-brand-blue/30 to-transparent"></div>
                             </div>
-                        ) : (
-                            <div className="space-y-4">
-                                <DishToOrderItem
-                                    orderList={confirmedOrderList}
-                                    removeItemFromOrder={removeDish}
-                                />
+                            <div className="relative flex justify-center">
+                                <span className="bg-white px-4 text-sm text-text-light font-light">
+                                    •••
+                                </span>
                             </div>
-                        )}
+                        </div>
+
+                        {/* Extra Items Section */}
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center">
+                                <h3 className="text-lg font-light text-foreground">
+                                    Extra Items
+                                </h3>
+                                <button
+                                    type="button"
+                                    onClick={() => setOpenAddExtraItemModal(true)}
+                                    className="px-4 py-2 rounded-lg cursor-pointer transition btn-brand-blue text-sm font-light"
+                                >
+                                    + Add Extras
+                                </button>
+                            </div>
+
+                            {confirmedExtraItems.length === 0 ? (
+                                <div className="flex items-center gap-4 p-4 rounded-lg bg-soft-pink/10 border border-soft-pink/20">
+                                    <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-soft-pink/20">
+                                        <svg
+                                            className="w-4 h-4 text-brand-red"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p className="text-text-light font-light text-sm">
+                                        No extra items added yet.
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="space-y-3">
+                                    {confirmedExtraItems.map((item, index) => (
+                                        <div key={index} className="flex justify-between items-center border-b pb-3 border-brand/30">
+                                            <div className="flex-1">
+                                                <p className="font-medium text-foreground">
+                                                    {item.name}
+                                                </p>
+                                                <p className="text-sm text-text-light">
+                                                    Quantity: {item.quantity} × ${item.price}
+                                                </p>
+                                            </div>
+                                            <div className="flex items-center gap-4">
+                                                <p className="font-semibold text-brand-red">
+                                                    ${(item.quantity * item.price).toFixed(2)}
+                                                </p>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeExtraItem(index)}
+                                                    className="text-brand-red hover:text-red-700 transition"
+                                                >
+                                                    ✕
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     {/* Comments Card */}

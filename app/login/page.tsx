@@ -23,18 +23,18 @@ export default function LoginPage() {
 
     const handleGoogleLogin = () => {
         // TODO: Implement Google OAuth login
-        console.log("Google login clicked");
+
     };
 
     const handleAppleLogin = () => {
         // TODO: Implement Apple login
-        console.log("Apple login clicked");
+
     };
 
     const handleLoginSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         // TODO: Handle login authentication
-        console.log("Login:", { email: loginEmail, password: loginPassword });
+
         try {
             const response = await fetch("/api/auth/login", {
                 method: "POST",
@@ -49,10 +49,10 @@ export default function LoginPage() {
 
             if (!response.ok) throw new Error("Failed to fetch orders");
             const data = await response.json();
-            console.log("Fetched orders:", data);
+
             
         } catch (err) {
-            console.error(err);
+
         }
     };
 
@@ -66,12 +66,12 @@ export default function LoginPage() {
         }
 
         // TODO: Handle user registration
-        console.log("Signup:", {
+        // Handle signup
+        // console.log("Signup:", {
             name: signupName,
             email: signupEmail,
             password: signupPassword,
-        });
-        // Navigate to the app
+        // });
         router.push("/new_order");
     };
 

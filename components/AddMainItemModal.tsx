@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useEffect } from "react";
+import React, { useEffect } from "react";
 
 interface ItemVariant {
     id: number;
@@ -28,69 +28,19 @@ interface SelectedVariant {
     quantity: number;
 }
 
-interface SideItem {
-    id: number;
-    name: string;
-    price?: number;
-    quantity?: number;
-}
-
-export default function AddItemModal({
+export default function AddMainItemModal({
     open,
     setOpen,
-    sides,
     menuItems,
-    setConfirmedOrderList,
+    setConfirmedMainItems,
 }: any) {
     const [selectedVariant, setSelectedVariant] =
         React.useState<SelectedVariant | null>(null);
-    const [sidesSelected, setSidesSelected] = React.useState<any>([]);
     const [quantity, setQuantity] = React.useState<number>(1);
     const [expandedCategory, setExpandedCategory] = React.useState<number | null>(null);
 
-    useEffect(() => {
-        setSideQuantities(() =>
-            sides.reduce((acc, s) => ({ ...acc, [s.id]: 0 }), {}),
-        );
-    }, [sides]);
-
-    const [sideQuantities, setSideQuantities] = React.useState<any>({});
-
-    const handleIncrement = (id: number) => {
-        const updatedSideQuantities = {
-            ...sideQuantities,
-            [id]: sideQuantities[id] + 1,
-        };
-        setSideQuantities(updatedSideQuantities);
-    };
-
-    const handleDecrement = async (id: number) => {
-        if (sideQuantities[id] <= 0) return;
-        const updatedSideQuantities = {
-            ...sideQuantities,
-            [id]: sideQuantities[id] - 1,
-        };
-        setSideQuantities(updatedSideQuantities);
-    };
-
-    const updateSidesList = () => {
-        // Get the ids of sides with quantity > 0 and update sides Selected with an array of objects wiht { id, name, quantity }
-        const updatedSides = sides
-            .filter((side) => sideQuantities[side.id] > 0)
-            .map((side) => ({
-                id: side.id,
-                name: side.name,
-                quantity: sideQuantities[side.id],
-                price: side.price,
-            }));
-
-        setSidesSelected(updatedSides);
-    };
-
     const resetOrderForm = () => {
         setSelectedVariant(null);
-        setSidesSelected([]);
-        setSideQuantities({});
         setQuantity(1);
     };
 
@@ -119,23 +69,16 @@ export default function AddItemModal({
 
     const confirmOrderItem = () => {
         if (!selectedVariant) return;
-        setConfirmedOrderList((prev: any) => [
+        setConfirmedMainItems((prev: any) => [
             ...prev,
             {
-                variant: selectedVariant,
+                ...selectedVariant,
                 quantity,
-                sides: sidesSelected,
             },
         ]);
         resetOrderForm();
         setOpen(false);
     };
-
-    useEffect(() => {
-        updateSidesList();
-    }, [sideQuantities]);
-
-
 
     if (!open) return null;
 
@@ -150,7 +93,7 @@ export default function AddItemModal({
         >
             <div className="p-4 border-b flex justify-between items-center border-brand">
                 <h2 className="text-lg font-semibold text-foreground">
-                    Add Item
+                    Add Main Item
                 </h2>
                 <button
                     onClick={() => setOpen(false)}
@@ -241,61 +184,6 @@ export default function AddItemModal({
                         min={1}
                         className="border rounded-lg w-20 text-center transition input-brand"
                     />
-                </div>
-
-                {/* Sides */}
-                <div className="mt-6">
-                    <div className="flex items-center gap-2 mb-2">
-                        <div className="w-1 h-4 rounded-full bg-brand-blue"></div>
-                        <h3 className="text-lg font-semibold text-foreground">
-                            Sides
-                        </h3>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                        {sides.map((side) => (
-                            <div
-                                key={side.id}
-                                className="flex justify-between items-center border-b p-2 px-3 text-sm border-brand"
-                            >
-                                <span className="text-secondary">
-                                    {side.name}
-                                </span>
-                                <div className="flex items-center gap-2">
-                                    <div
-                                        className="px-2 rounded font-bold cursor-pointer transition bg-bg-light"
-                                        onClick={() => handleDecrement(side.id)}
-                                    >
-                                        -
-                                    </div>
-                                    <span className="w-6 text-center text-brand-red">
-                                        {sideQuantities[side.id] ?? 0}
-                                    </span>
-                                    <div
-                                        className="px-2 rounded font-bold cursor-pointer transition bg-bg-light"
-                                        onClick={() => handleIncrement(side.id)}
-                                    >
-                                        +
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* <div className="grid grid-cols-2 gap-2">
-                        {sides.map((side) => (
-                            <div
-                                key={side.id}
-                                onClick={() => handleSideSelect(side)}
-                                className={`border rounded-lg p-2 text-sm ${
-                                    toggleSideSelection(side.id)
-                                        ? "border-green-600 bg-green-50"
-                                        : "border-gray-200"
-                                }`}
-                            >
-                                {side.name} (${side.price})
-                            </div>
-                        ))}
-                    </div> */}
                 </div>
 
                 {/* Actions */}

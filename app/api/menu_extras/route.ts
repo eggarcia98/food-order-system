@@ -4,7 +4,7 @@ export const runtime = "edge";
 
 export async function GET() {
     try {
-        const side = await prisma.side.findMany({
+        const side = await prisma.menuExtras.findMany({
             orderBy: {
                 name: "asc",
             },
@@ -12,7 +12,7 @@ export async function GET() {
 
         return NextResponse.json(side);
     } catch (error) {
-        console.error("Error fetching side:", error);
+
         return NextResponse.json(
             { error: "Failed to fetch side" },
             { status: 500 }

@@ -1,9 +1,50 @@
-export default function MenuPage() {
+import React from "react";
+
+type MenuVariant = {
+    id: number;
+    variant_name: string;
+    price: number;
+    is_active: boolean;
+};
+
+type MenuItem = {
+    id: number;
+    name: string;
+    description?: string;
+    item_variants: MenuVariant[];
+};
+
+async function getMenuItems(): Promise<MenuItem[]> {
+    const baseUrl =
+        process.env.NEXT_PUBLIC_BASE_URL ||
+        process.env.NEXTAUTH_URL ||
+        "http://localhost:3000";
+
+    try {
+        const res = await fetch(`${baseUrl}/api/menu_items`, {
+            cache: "no-store",
+        });
+
+        if (!res.ok) {
+
+            return [];
+        }
+
+        const data = await res.json();
+        return Array.isArray(data) ? data : [];
+    } catch (error) {
+
+        return [];
+    }
+}
+
+export default async function MenuPage() {
+    const menuItems = await getMenuItems();
+
     return (
         <div className=" mx-auto relative w-auto max-w-6xl p-6 m-8 ">
-            <div className="grid grid-col-1 md:grid-cols-3 md:grid-rows-2  gap-6 space-y-4">
+            <div className="grid grid-col-1 md:grid-cols-3 md:grid-rows-2 gap-6 space-y-4">
                 <div className="relative border-3 border-brand rounded-md px-6 pb-6 pt-8 col-span-3 w-full bg-background">
-                    {/* Section heading overlaying the border */}
                     <h2
                         className="absolute -top-3 left-4 px-2 text-2xl font-black tracking-tight font-bungee leading-none  bg-background"
                         style={{ WebkitTextStroke: "0.5px #3D3935" }}
@@ -11,180 +52,127 @@ export default function MenuPage() {
                         THE MAINS
                     </h2>
 
-                    {/* Items */}
                     <ul className="space-y-4 ">
-                        <div>
-                            <div className="text-lg font-medium">
-                                ENCEBOLLADO (DRINK INCLUDED)
-                            </div>
-                            <div className="text-sm text-secondary mb-1">
-                                A classic Ecuadorian Soup of Albacore Fish,
-                                Onion and Cassava. Perfect to recover you after
-                                HangOver
-                            </div>
-                            <ul className="space-y-2 ml-4 mt-4">
-                                <li className="flex items-center gap-4 ">
-                                    <span className="flex-none w-52 md:w-60 ">
-                                        Encebollado + Plantain Chips
-                                    </span>
-                                    <span className="flex-1 border-b border-dashed border-gray-400"></span>
-                                    <span className="flex-none w-16 text-right ">
-                                        $ 22
-                                    </span>
-                                </li>
-                                <li className="flex items-center gap-4">
-                                    <span className="flex-none w-52 md:w-60 ">
-                                        Encebollado
-                                    </span>
-                                    <span className="flex-1 border-b border-dashed border-gray-400"></span>
-                                    <span className="flex-none w-16 text-right ">
-                                        $ 19
-                                    </span>
-                                </li>
-                            </ul>
-                        </div>
+                        {menuItems.length === 0 && (
+                            <li className="text-sm text-secondary">
+                                Menu coming soon.
+                            </li>
+                        )}
 
-                        <div>
-                            <div className="text-lg font-medium">
-                                GUATITA (DRINK INCLUDED)
-                            </div>
-                            <div className="text-sm text-secondary mb-1">
-                                A classic Ecuadorian tripe stew in a creamy
-                                peanut sauce, served with potatoes and rice
-                            </div>
-                            <ul className="space-y-2 ml-4 mt-4">
-                                <li className="flex items-center gap-4 ">
-                                    <span className="flex-none w-52 md:w-60 ">
-                                        Guatita + Plantain Chips
-                                    </span>
-                                    <span className="flex-1 border-b border-dashed border-gray-400"></span>
-                                    <span className="flex-none w-16 text-right ">
-                                        $ 22
-                                    </span>
-                                </li>
-                                <li className="flex items-center gap-4">
-                                    <span className="flex-none w-52 md:w-60 ">
-                                        Guatita
-                                    </span>
-                                    <span className="flex-1 border-b border-dashed border-gray-400"></span>
-                                    <span className="flex-none w-16 text-right ">
-                                        $ 18
-                                    </span>
-                                </li>
-                            </ul>
-                        </div>
+                        {menuItems.map((menuItem) => (
+                            <li key={menuItem.id} className="">
+                                <div className="text-lg font-medium">
+                                    {menuItem.name.toUpperCase()}
+                                </div>
+                                {menuItem.description && (
+                                    <div className="text-sm text-secondary">
+                                        {menuItem.description}
+                                    </div>
+                                )}
 
-                        <div>
-                            <div className="text-lg font-medium">BOLON</div>
-                            <div className="text-sm text-secondary mb-1">
-                                Mashed green plantain mixed with cheese or pork
-                                cracklings, shaped into a ball
-                            </div>
-                            <ul className="space-y-2 ml-4 mt-4">
-                                <li className="flex items-center gap-4 ">
-                                    <span className="flex-none w-52 md:w-60 ">
-                                        Pork Belly Bolon
-                                    </span>
-                                    <span className="flex-1 border-b border-dashed border-gray-400"></span>
-                                    <span className="flex-none w-16 text-right ">
-                                        $ 17
-                                    </span>
-                                </li>
-                                <li className="flex items-center gap-4">
-                                    <span className="flex-none w-52 md:w-60 ">
-                                        Cheese Bolon
-                                    </span>
-                                    <span className="flex-1 border-b border-dashed border-gray-400"></span>
-                                    <span className="flex-none w-16 text-right ">
-                                        $ 17
-                                    </span>
-                                </li>
-                                <li className="flex items-center gap-4">
-                                    <span className="flex-none w-52 md:w-60 ">
-                                        Mixed Bolon (cheese and pork belly)
-                                    </span>
-                                    <span className="flex-1 border-b border-dashed border-gray-400"></span>
-                                    <span className="flex-none w-16 text-right ">
-                                        $ 20
-                                    </span>
-                                </li>
-                            </ul>
-                        </div>
+                                <ul className="space-y-2 ml-4 mt-4">
+                                    {menuItem.item_variants
+                                        ?.filter((variant) => variant.is_active)
+                                        .map((variant) => (
+                                            <li
+                                                key={variant.id}
+                                                className="flex items-center gap-4 "
+                                            >
+                                                <span className="flex-none w-52 md:w-60 ">
+                                                    {variant.variant_name}
+                                                </span>
+                                                <span className="flex-1 border-b border-dashed border-gray-400"></span>
+                                                <span className="flex-none w-16 text-right ">
+                                                    $ {variant.price}
+                                                </span>
+                                            </li>
+                                        ))}
+                                </ul>
+                            </li>
+                        ))}
                     </ul>
                 </div>
 
-                <div className="relative border-3 h-fit border-brand rounded-lg px-6 pb-6 pt-8 col-span-3 md:col-span-2 bg-background">
-                    {/* Section heading overlaying the border */}
-                    <h2
-                        className="absolute -top-3 left-4 px-2 text-2xl font-black tracking-tight font-bungee leading-none bg-background"
-                        style={{ WebkitTextStroke: "0.5px #3D3935" }}
-                    >
-                        EXTRAS
-                    </h2>
+                {/* EXTRAS Section */}
+                <div className="border-2 border-foreground rounded-xl px-5 py-4 col-span-3 md:col-span-1 bg-background">
+                    <h3 className="font-bold text-lg mb-4 font-bungee">EXTRAS</h3>
 
-                    {/* Items */}
-                    <ul className="space-y-4  ">
-                        <li className="flex items-center gap-4">
-                            <span className="flex-none w-52 md:w-60 text-lg ">
-                                35g Albacore Fish
-                            </span>
-                            <span className="flex-1 border-b border-dashed border-gray-400"></span>
-                            <span className="flex-none w-16 text-right text-lg ">
-                                $ 5
-                            </span>
+                    <ul className="space-y-2">
+                        <li className="flex items-center gap-3">
+                            <span className="text-foreground">•</span>
+                            <span className="flex-1 text-sm">35g Albacore Fish</span>
+                            <span className=" border-b border-dashed border-gray-300 flex-1"></span>
+                            <span className=" text-right text-sm ml-2">$ 5</span>
                         </li>
 
-                        <li className="flex items-center gap-4">
-                            <span className="flex-none w-52 md:w-60 text-lg ">
-                                Fried Egg
-                            </span>
-                            <span className="flex-1 border-b border-dashed border-gray-400"></span>
-                            <span className="flex-none w-16 text-right text-lg ">
-                                $ 2
-                            </span>
+                        <li className="flex items-center gap-3">
+                            <span className="text-foreground">•</span>
+                            <span className="flex-1 text-sm">Fried Egg</span>
+                            <span className=" border-b border-dashed border-gray-300 flex-1"></span>
+                            <span className=" text-right text-sm ml-2">$ 2</span>
                         </li>
 
-                        <li className="flex items-center gap-4">
-                            <span className="flex-none w-52 md:w-60 text-lg ">
-                                Plantain Chips
-                            </span>
-                            <span className="flex-1 border-b border-dashed border-gray-400"></span>
-                            <span className="flex-none w-16 text-right text-lg ">
-                                $ 3
-                            </span>
+                        <li className="flex items-center gap-3">
+                            <span className="text-foreground">•</span>
+                            <span className="flex-1 text-sm">Plantain Chips</span>
+                            <span className=" border-b border-dashed border-gray-300 flex-1"></span>
+                            <span className=" text-right text-sm ml-2">$ 3</span>
                         </li>
 
-                        <li className="flex items-center gap-4">
-                            <span className="flex-none w-52 md:w-60 text-lg ">
-                                Coca Cola
-                            </span>
-                            <span className="flex-1 border-b border-dashed border-gray-400"></span>
-                            <span className="flex-none w-16 text-right text-lg ">
-                                $ 3
-                            </span>
+                        <li className="flex items-center gap-3">
+                            <span className="text-foreground">•</span>
+                            <span className="flex-1 text-sm">Coca Cola</span>
+                            <span className=" border-b border-dashed border-gray-300 flex-1"></span>
+                            <span className=" text-right text-sm ml-2">$ 3</span>
+                        </li>
+
+                        <li className="flex items-center gap-3">
+                            <span className="text-foreground">•</span>
+                            <span className="flex-1 text-sm">Ripe Plantain</span>
+                            <span className=" border-b border-dashed border-gray-300 flex-1"></span>
+                            <span className=" text-right text-sm ml-2">$ 2</span>
                         </li>
                     </ul>
                 </div>
 
-                <div className="relative border-3 h-fit border-brand-blue rounded-md px-6 pb-6 pt-8 col-span-3 md:col-span-1 bg-background">
-                    {/* Section heading overlaying the border */}
-                    <h2
-                        className="absolute -top-3 left-4 px-2 text-2xl font-black tracking-tight font-bungee leading-none bg-background"
-                        style={{ WebkitTextStroke: "0.5px #3D3935" }}
-                    >
-                        INFO
-                    </h2>
-                    {/* Items */}
-                    <p className="text-lg text-foreground mb-2">
-                        <b>Location: </b> 10 Malt Street, Fortitude Valley QLD
-                        4006
-                    </p>
-                    <p className="text-lg text-foreground mb-2 flex flex-col">
-                        <b>Open Hours: </b> Sun, 10:30 AM - 2:00 PM
-                    </p>
-                    <p className="text-lg text-foreground ">
-                        <b>Phone: </b>0433807915
-                    </p>
+                {/* DELIVERY Section */}
+                <div className="border-2 border-brand-blue rounded-xl px-5 py-4 col-span-3 md:col-span-2 bg-background">
+                    <h3 className="font-bold text-lg mb-4 font-bungee">DELIVERY</h3>
+                    
+                    <div className="space-y-5">
+                        <div>
+                            <p className="font-semibold text-sm mb-2 text-foreground">Extra Fee:</p>
+                            <p className="text-sm text-secondary">$1.5 for each km from "Los Guayacos Location" to your place</p>
+                        </div>
+
+                        <div>
+                            <p className="font-semibold text-sm mb-2 text-foreground">Delivery Time:</p>
+                            <p className="text-sm text-secondary mb-3">11:00AM - 13:00PM</p>
+                            <p className="text-brand-red font-semibold text-sm">ASK FOR<br/>AVAILABILITY</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* INFO Section */}
+                <div className="border-2 border-brand-blue rounded-xl px-5 py-4 col-span-3 bg-background">
+                    <h3 className="font-bold text-lg mb-4 font-bungee">INFO</h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div>
+                            <p className="font-semibold text-sm mb-2 text-foreground">Location:</p>
+                            <p className="text-sm text-secondary leading-relaxed">26 Chermside St, <span className="text-brand-red font-semibold">Grange</span><br/>QLD 4051, Australia</p>
+                        </div>
+
+                        <div>
+                            <p className="font-semibold text-sm mb-2 text-foreground">Phone:</p>
+                            <p className="text-sm text-secondary">0433807915</p>
+                        </div>
+
+                        <div>
+                            <p className="font-semibold text-sm mb-2 text-foreground">Open Hours:</p>
+                            <p className="text-sm text-secondary">Sun, 10:30 AM - 2:00 PM</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

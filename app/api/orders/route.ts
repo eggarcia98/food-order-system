@@ -3,20 +3,22 @@ import { prisma } from "@/lib/prisma";
 export const runtime = "edge";
 
 interface OrderItem {
-    dish: Dish;
-    sides: Side[];
+    mainItems: MenuItem[];
+    extraItems: Extra[];
 }
 
-interface Dish {
-    id: number;
-    name: string;
+interface MenuItem {
+    item_id: number;
+    item_name: string;
+    variant_id: number;
+    variant_name: string;
     price: number;
-    img?: string;
+    // img?: string;
     quantity: number;
 }
 
-interface Side {
-    id: number;
+interface Extra {
+    extra_id: number;
     name: string;
     price: number;
     quantity: number;
@@ -24,9 +26,9 @@ interface Side {
 
 export async function POST(request: Request) {
     try {
-        const { client, itemsOrder, comments } = await request.json();
+        const { client, comments, ...rest} = await request.json();
 
-        const parsedDishes: OrderItem[] = [...itemsOrder]
+        const OrderItem: OrderItem = rest;
 
         const order = await prisma.order.create({
             data: {
@@ -45,21 +47,20 @@ export async function POST(request: Request) {
                     },
                 },
                 order_code: `ORD-BRI${Date.now()}`,
-                order_item: {
-                    create: parsedDishes.map((orderItem: OrderItem) => ({
-                        dish_id: orderItem.dish.id,
-                        quantity: orderItem.dish.quantity,
-                    })),
+                order_items: {
+                    create: OrderItem.mainItems.map((orderItem: MenuItem) => ({
+                        variant_id: orderItem.variant_id,
+                        quantity: orderItem.quantity,
+                        unit_price: orderItem.price,
+                    })),    
                 },
-                order_side_item: {
-                    create: parsedDishes.flatMap((orderItem: OrderItem) =>
-                        orderItem.sides.map((side: Side) => ({
-                            side_id: side.id,
-                            quantity: side.quantity,
-                        }))
-                    ),
+                order_item_extras: {
+                    create: OrderItem.extraItems.map((extraItem: Extra) => ({
+                        extra_id: extraItem.extra_id,
+                        quantity: extraItem.quantity,
+                        unit_price: extraItem.price,
+                    })),    
                 },
-
                 comments,
             },
             include: {
@@ -70,7 +71,7 @@ export async function POST(request: Request) {
 
         return NextResponse.json(order);
     } catch (error) {
-        console.error("Error creating order:", error);
+
         return NextResponse.json({ error }, { status: 500 });
     }
 }
@@ -80,14 +81,14 @@ export async function GET() {
         const orders = await prisma.order.findMany({
             include: {
                 customer: true,
-                order_item: {
+                order_items: {
                     include: {
-                        dish: true,
+                        ItemVariant: true,
                     },
                 },
-                order_side_item: {
+                order_item_extras: {
                     include: {
-                        side: true,
+                        MenuExtras: true,
                     },
                 },
                 status: true,
@@ -96,7 +97,7 @@ export async function GET() {
 
         return NextResponse.json(orders);
     } catch (error) {
-        console.error("Error fetching orders:", error);
+
         return NextResponse.json({ error }, { status: 500 });
     }
 }

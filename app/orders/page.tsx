@@ -11,8 +11,8 @@ export interface Order {
     comments: string;
     created_at: string; // ISO date string
     customer: Customer;
-    order_item: OrderItem[];
-    order_side_item: OrderSideItem[];
+    order_items: OrderItem[];
+    order_item_extras: OrderExtraItem[];
     status: any;
 }
 
@@ -28,29 +28,28 @@ export interface OrderItem {
     id: number;
     order_id: number;
     quantity: number;
-    dish_id: number;
-    dish: Dish;
+    variant_id: number;
+    ItemVariant: ItemVariant;
 }
 
-export interface Dish {
+export interface ItemVariant {
     id: number;
-    name: string;
+    variant_name: string;
     price: number;
-    description: string;
     img?: string;
     extras?: string;
 }
 
-export interface OrderSideItem {
+export interface OrderExtraItem {
     id: number;
     order_id: number;
-    side_id: number;
+    extra_id: number;
     quantity: number;
-    side: Side;
+    MenuExtras: Extra;
 }
 
-export interface Side {
-    id: number;
+export interface Extra {
+    extra_id: number;
     name: string;
     cost: number;
     price: number;
@@ -98,22 +97,20 @@ export default function OrdersList() {
             const response = await fetch("/api/orders");
             if (!response.ok) throw new Error("Failed to fetch orders");
             const data: Order[] = await response.json();
-            console.log("Fetched orders:", data);
             setOrders(data);
         } catch (err) {
             setError("Failed to load orders. Please try again.");
-            console.error(err);
         } finally {
             setIsLoading(false);
         }
     };
 
     const getSidesForOrder = (order: Order) => {
-        return order.order_side_item.map((osi) => {
+        return order.order_item_extras.map((osi) => {
             return {
-                id: osi.side.id,
-                name: osi.side.name,
-                price: osi.side.price,
+                id: osi.MenuExtras.extra_id,
+                name: osi.MenuExtras.name,
+                price: osi.MenuExtras.price,
                 quantity: osi.quantity,
             };
         });
@@ -125,8 +122,8 @@ export default function OrdersList() {
         const matchesSearch =
             customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             order.customer.phone_number.includes(searchTerm) ||
-            order.order_item.some((item) =>
-                item.dish.name.toLowerCase().includes(searchTerm.toLowerCase())
+            order.order_items.some((item) =>
+                item.ItemVariant.variant_name.toLowerCase().includes(searchTerm.toLowerCase())
             );
 
         const orderDate = new Date(order.created_at);
@@ -164,7 +161,6 @@ export default function OrdersList() {
             // Refresh orders after updating status
             fetchOrders();
         } catch (err) {
-            console.error(err);
             setError("Failed to update order status. Please try again.");
         }
     };
@@ -199,8 +195,8 @@ export default function OrdersList() {
             (acc, side) => acc + side.price * side.quantity,
             0
         );
-        const dishesTotal = order.order_item.reduce(
-            (acc, item) => acc + item.dish.price * item.quantity,
+        const dishesTotal = order.order_items.reduce(
+            (acc, item) => acc + item.ItemVariant.price * item.quantity,
             0
         );
         return sidesTotal + dishesTotal;
@@ -370,7 +366,7 @@ export default function OrdersList() {
                                             {formatDate(order.created_at)}
                                         </p>
                                         <p className="font-light text-brand-red">
-                                            {getTotalItems(order.order_item)}{" "}
+                                            {getTotalItems(order.order_items)}{" "}
                                             item(s)
                                         </p>
                                     </div>
@@ -382,14 +378,14 @@ export default function OrdersList() {
                                         Dishes
                                     </h4>
                                     <div className="grid gap-2">
-                                        {order.order_item.map((orderItem) => (
+                                        {order.order_items.map((orderItem) => (
                                             <div
                                                 key={orderItem.id}
                                                 className="flex justify-between items-start p-3 rounded-lg bg-soft-pink/10"
                                             >
                                                 <div className="flex-1">
                                                     <p className="font-light text-foreground text-sm">
-                                                        {orderItem.dish.name}
+                                                        {orderItem.ItemVariant.variant_name}
                                                     </p>
                                                 </div>
                                                 <div className="ml-4 flex items-center justify-center font-light px-3 rounded-lg text-xs bg-rose/20 text-brand-red">
