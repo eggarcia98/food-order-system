@@ -1,3 +1,4 @@
+"use client";
 export const runtime = "edge";
 
 import React from "react";
@@ -16,31 +17,31 @@ type MenuItem = {
     item_variants: MenuVariant[];
 };
 
-async function getMenuItems(): Promise<MenuItem[]> {
-    const baseUrl =
-        process.env.NEXT_PUBLIC_BASE_URL ||
-        process.env.NEXTAUTH_URL ||
-        "http://localhost:3000";
 
-    try {
-        const res = await fetch(`${baseUrl}/api/menu_items`, {
-            cache: "no-store",
-        });
-
-        if (!res.ok) {
-
-            return [];
-        }
-
-        const data = await res.json();
-        return Array.isArray(data) ? data : [];
-    } catch (error) {
-
-        return [];
-    }
-}
 
 export default async function MenuPage() {
+    async function getMenuItems(): Promise<MenuItem[]> {
+        const baseUrl =
+            process.env.NEXT_PUBLIC_BASE_URL ||
+            process.env.NEXTAUTH_URL ||
+            "http://localhost:3000";
+
+        try {
+            const res = await fetch(`${baseUrl}/api/menu_items`, {
+                cache: "no-store",
+            });
+
+            if (!res.ok) {
+                return [];
+            }
+
+            const data = await res.json();
+            return Array.isArray(data) ? data : [];
+        } catch (error) {
+            return [];
+        }
+    }
+
     const menuItems = await getMenuItems();
 
     return (
