@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { LayoutList, List } from "lucide-react";
 
 export interface Order {
     id: number;
@@ -61,7 +62,7 @@ export default function OrdersList() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
-    const [viewMode, setViewMode] = useState<"detailed" | "compact">("detailed");
+    const [viewMode, setViewMode] = useState<"detailed" | "compact">("compact");
     const [expandedOrders, setExpandedOrders] = useState<Set<number>>(new Set());
 
     // Get current week (Monday - Sunday)
@@ -333,31 +334,40 @@ export default function OrdersList() {
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    {/* View Mode Toggle */}
-                    <div className="mt-4">
-                        <div className="inline-flex rounded-lg bg-white border border-soft-pink/30 overflow-hidden">
+                {/* View Mode Toggle */}
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-4 mb-6">
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-sm font-light uppercase tracking-wide text-foreground">
+                            View Mode
+                        </h3>
+                        <div className="inline-flex rounded-lg bg-cream border border-soft-pink/30 overflow-hidden">
                             <button
                                 type="button"
                                 onClick={() => setViewMode("detailed")}
-                                className={`px-4 py-2 text-sm font-light transition ${
+                                className={`px-4 py-2.5 text-sm font-light transition flex items-center gap-2 ${
                                     viewMode === "detailed"
-                                        ? "bg-soft-blue/20 text-brand-blue"
+                                        ? "bg-soft-blue/30 text-brand-blue"
                                         : "text-text-light hover:bg-soft-blue/10"
                                 }`}
+                                title="Detailed View"
                             >
-                                Detailed View
+                                <LayoutList className="w-4 h-4" />
+                                <span className="hidden sm:inline">Detailed</span>
                             </button>
                             <button
                                 type="button"
                                 onClick={() => setViewMode("compact")}
-                                className={`px-4 py-2 text-sm font-light transition border-l border-soft-pink/30 ${
+                                className={`px-4 py-2.5 text-sm font-light transition border-l border-soft-pink/30 flex items-center gap-2 ${
                                     viewMode === "compact"
-                                        ? "bg-rose/20 text-brand-red"
+                                        ? "bg-rose/30 text-brand-red"
                                         : "text-text-light hover:bg-rose/10"
                                 }`}
+                                title="Compact View"
                             >
-                                Compact View
+                                <List className="w-4 h-4" />
+                                <span className="hidden sm:inline">Compact</span>
                             </button>
                         </div>
                     </div>
