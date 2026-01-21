@@ -1,4 +1,5 @@
 "use client";
+export const runtime = "edge";
 
 import React from "react";
 
@@ -40,7 +41,7 @@ export default async function MenuPage() {
             return [];
         }
     }
-    
+
     const menuItems = await getMenuItems();
 
     return (
