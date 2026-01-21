@@ -1,6 +1,7 @@
 "use client";
 
-import AddItemModal from "@/components/AddItemModal";
+import AddMainItemModal from "@/components/AddMainItemModal";
+import AddExtraItemModal from "@/components/AddExtraItemModal";
 import { DishToOrderItem } from "@/components/DishToOrderItem";
 import { Selector } from "@/components/SelectorComponent";
 import Link from "next/link";
@@ -32,18 +33,18 @@ export default function NewOrderPage() {
     const [firstname, setFirstname] = useState("");
     const [menuItems, setMenuItems] = useState<any[]>([]);
 
-    const [confirmedOrderList, setConfirmedOrderList] = useState<OrderItem[]>(
-        []
-    );
+    const [confirmedMainItems, setConfirmedMainItems] = useState<any[]>([]);
+    const [confirmedExtraItems, setConfirmedExtraItems] = useState<any[]>([]);
 
     const [nationality, setNationality] = useState({});
     const [nationalityList, setNationalityList] = useState([
         { id: 1, name: "Ecuadorian" },
     ]);
 
-    const [openAddItemModal, setOpenAddItemModal] = useState(false);
+    const [openAddMainItemModal, setOpenAddMainItemModal] = useState(false);
+    const [openAddExtraItemModal, setOpenAddExtraItemModal] = useState(false);
 
-    const [sides, setSides] = useState<any[]>([]);
+    const [extraItems, setExtraItems] = useState<any[]>([]);
 
     const [comments, setComments] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -67,14 +68,14 @@ export default function NewOrderPage() {
 
    
 
-    const fetchSides = async () => {
+    const fetchExtraItems = async () => {
         try {
-            const response = await fetch("/api/sides");
+            const response = await fetch("/api/menu_extras");
             if (!response.ok) throw new Error("Failed to fetch");
             const data = await response.json();
-            setSides(data);
+            setExtraItems(data);
         } catch (error) {
-            console.error("Error fetching sides:", error);
+            console.error("Error fetching extra items:", error);
         }
     };
 
@@ -104,20 +105,30 @@ export default function NewOrderPage() {
 
     useEffect(() => {
         fetchNationalities();
-        fetchSides();
+        fetchExtraItems();
         fetchPreviousCustomers();
         fetchMenuItems();
     }, []);
 
-    const removeDish = (index: number) => {
-        const updatedDishes = [...confirmedOrderList];
-        updatedDishes.splice(index, 1);
-        setConfirmedOrderList(updatedDishes);
+    const removeMainItem = (index: number) => {
+        const updatedItems = [...confirmedMainItems];
+        updatedItems.splice(index, 1);
+        setConfirmedMainItems(updatedItems);
+    };
+
+    const removeExtraItem = (index: number) => {
+        const updatedItems = [...confirmedExtraItems];
+        updatedItems.splice(index, 1);
+        setConfirmedExtraItems(updatedItems);
     };
 
     useEffect(() => {
-        console.log("Confirmed Order List: ", confirmedOrderList, JSON.stringify(confirmedOrderList)    );
-    }, [confirmedOrderList]);
+        console.log("Confirmed Main Items: ", confirmedMainItems, JSON.stringify(confirmedMainItems));
+    }, [confirmedMainItems]);
+
+    useEffect(() => {
+        console.log("Confirmed Extra Items: ", confirmedExtraItems, JSON.stringify(confirmedExtraItems));
+    }, [confirmedExtraItems]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -135,7 +146,8 @@ export default function NewOrderPage() {
                         nationality,
                         phoneNumber,
                     },
-                    itemsOrder: confirmedOrderList,
+                    mainItems: confirmedMainItems,
+                    extraItems: confirmedExtraItems,
                     comments,
                 }),
             });
@@ -153,7 +165,8 @@ export default function NewOrderPage() {
             setComments("");
             setNationalitySearch("");
             setNationality({});
-            setConfirmedOrderList([]);
+            setConfirmedMainItems([]);
+            setConfirmedExtraItems([]);
         } catch (error) {
             console.error("Error submitting order:", error);
             setMessage({
@@ -463,69 +476,191 @@ export default function NewOrderPage() {
                         </div>
                     </div>
 
-                    {/* Overlay */}
+                    {/* Overlay for Main Items Modal */}
                     <div
                         className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${
-                            openAddItemModal
+                            openAddMainItemModal
                                 ? "opacity-100 visible"
                                 : "opacity-0 invisible"
                         }`}
-                        onClick={() => setOpenAddItemModal(false)}
+                        onClick={() => setOpenAddMainItemModal(false)}
                     ></div>
 
-                    <AddItemModal
-                        sides={sides}
-                        open={openAddItemModal}
+                    <AddMainItemModal
+                        open={openAddMainItemModal}
                         menuItems={menuItems}
-                        setOpen={setOpenAddItemModal}
-                        setConfirmedOrderList={setConfirmedOrderList}
+                        setOpen={setOpenAddMainItemModal}
+                        setConfirmedMainItems={setConfirmedMainItems}
                     />
 
-                    {/* Order List Card */}
+                    {/* Overlay for Extra Items Modal */}
+                    <div
+                        className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${
+                            openAddExtraItemModal
+                                ? "opacity-100 visible"
+                                : "opacity-0 invisible"
+                        }`}
+                        onClick={() => setOpenAddExtraItemModal(false)}
+                    ></div>
+
+                    <AddExtraItemModal
+                        open={openAddExtraItemModal}
+                        extraItems={extraItems}
+                        setOpen={setOpenAddExtraItemModal}
+                        setConfirmedExtraItems={setConfirmedExtraItems}
+                    />
+
+                    {/* Order Items Card */}
                     <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-8 space-y-6">
-                        <div className="flex justify-between items-center">
+                        <div className="flex justify-between items-center mb-6">
                             <h2 className="text-xl font-light text-foreground uppercase tracking-wide">
                                 Order Items
                             </h2>
-                            <button
-                                type="button"
-                                onClick={() => setOpenAddItemModal(true)}
-                                className="px-6 py-2.5 rounded-lg cursor-pointer transition btn-brand-blue text-sm font-light"
-                            >
-                                + Add Item
-                            </button>
                         </div>
 
-                        {confirmedOrderList.length === 0 ? (
-                            <div className="flex items-center gap-4 p-6 rounded-lg bg-soft-pink/10 border border-soft-pink/20">
-                                <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-soft-pink/20">
-                                    <svg
-                                        className="w-5 h-5 text-brand-red"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                                        />
-                                    </svg>
+                        {/* Main Items Section */}
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center">
+                                <h3 className="text-lg font-light text-foreground">
+                                    Main Items
+                                </h3>
+                                <button
+                                    type="button"
+                                    onClick={() => setOpenAddMainItemModal(true)}
+                                    className="px-4 py-2 rounded-lg cursor-pointer transition btn-brand-blue text-sm font-light"
+                                >
+                                    + Add Main Item
+                                </button>
+                            </div>
+
+                            {confirmedMainItems.length === 0 ? (
+                                <div className="flex items-center gap-4 p-4 rounded-lg bg-soft-pink/10 border border-soft-pink/20">
+                                    <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-soft-pink/20">
+                                        <svg
+                                            className="w-4 h-4 text-brand-red"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p className="text-text-light font-light text-sm">
+                                        No main items added yet.
+                                    </p>
                                 </div>
-                                <p className="text-text-light font-light text-sm">
-                                    No items added yet. Click "Add Item" to
-                                    start your order.
-                                </p>
+                            ) : (
+                                <div className="space-y-3">
+                                    {confirmedMainItems.map((item, index) => (
+                                        <div key={index} className="flex justify-between items-center border-b pb-3 border-brand/30">
+                                            <div className="flex-1">
+                                                <p className="font-medium text-foreground">
+                                                    {item.item_name} - {item.variant_name}
+                                                </p>
+                                                <p className="text-sm text-text-light">
+                                                    Quantity: {item.quantity} × ${item.price}
+                                                </p>
+                                            </div>
+                                            <div className="flex items-center gap-4">
+                                                <p className="font-semibold text-brand-red">
+                                                    ${(item.quantity * item.price).toFixed(2)}
+                                                </p>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeMainItem(index)}
+                                                    className="text-brand-red hover:text-red-700 transition"
+                                                >
+                                                    ✕
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Elegant Divider */}
+                        <div className="relative py-4">
+                            <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-gradient-to-r from-transparent via-brand-blue/30 to-transparent"></div>
                             </div>
-                        ) : (
-                            <div className="space-y-4">
-                                <DishToOrderItem
-                                    orderList={confirmedOrderList}
-                                    removeItemFromOrder={removeDish}
-                                />
+                            <div className="relative flex justify-center">
+                                <span className="bg-white px-4 text-sm text-text-light font-light">
+                                    •••
+                                </span>
                             </div>
-                        )}
+                        </div>
+
+                        {/* Extra Items Section */}
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center">
+                                <h3 className="text-lg font-light text-foreground">
+                                    Extra Items
+                                </h3>
+                                <button
+                                    type="button"
+                                    onClick={() => setOpenAddExtraItemModal(true)}
+                                    className="px-4 py-2 rounded-lg cursor-pointer transition btn-brand-blue text-sm font-light"
+                                >
+                                    + Add Extras
+                                </button>
+                            </div>
+
+                            {confirmedExtraItems.length === 0 ? (
+                                <div className="flex items-center gap-4 p-4 rounded-lg bg-soft-pink/10 border border-soft-pink/20">
+                                    <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-soft-pink/20">
+                                        <svg
+                                            className="w-4 h-4 text-brand-red"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <p className="text-text-light font-light text-sm">
+                                        No extra items added yet.
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="space-y-3">
+                                    {confirmedExtraItems.map((item, index) => (
+                                        <div key={index} className="flex justify-between items-center border-b pb-3 border-brand/30">
+                                            <div className="flex-1">
+                                                <p className="font-medium text-foreground">
+                                                    {item.name}
+                                                </p>
+                                                <p className="text-sm text-text-light">
+                                                    Quantity: {item.quantity} × ${item.price}
+                                                </p>
+                                            </div>
+                                            <div className="flex items-center gap-4">
+                                                <p className="font-semibold text-brand-red">
+                                                    ${(item.quantity * item.price).toFixed(2)}
+                                                </p>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeExtraItem(index)}
+                                                    className="text-brand-red hover:text-red-700 transition"
+                                                >
+                                                    ✕
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     {/* Comments Card */}
