@@ -1,0 +1,27 @@
+# Los Guayacos Restaurant - Robot Configuration
+# Allow all search engines to crawl public pages
+
+User-agent: *
+Allow: /
+Allow: /menu
+Allow: /new_order
+Allow: /orders
+
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /login
+Disallow: /signup
+
+# Specific search engine rules
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Sitemap location
+Sitemap: https://app.losguayacos.com/sitemap.xml
+
+# Crawl delay (optional)
+Crawl-delay: 1
