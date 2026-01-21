@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { LayoutList, List } from "lucide-react";
 
 export interface Order {
     id: number;
@@ -61,6 +62,8 @@ export default function OrdersList() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
+    const [viewMode, setViewMode] = useState<"detailed" | "compact">("compact");
+    const [expandedOrders, setExpandedOrders] = useState<Set<number>>(new Set());
 
     // Get current week (Monday - Sunday)
     const getWeekDates = () => {
@@ -202,6 +205,33 @@ export default function OrdersList() {
         return sidesTotal + dishesTotal;
     };
 
+    const summarizeMainItems = (order: Order) => {
+        if (!order.order_items?.length) return "—";
+        return order.order_items
+            .map((item) => `${item.ItemVariant.variant_name} ×${item.quantity}`)
+            .join(", ");
+    };
+
+    const summarizeExtras = (order: Order) => {
+        const sides = getSidesForOrder(order);
+        if (!sides.length) return "—";
+        return sides
+            .map((side) => `${side.name} ×${side.quantity}`)
+            .join(", ");
+    };
+
+    const toggleOrderExpand = (orderId: number) => {
+        setExpandedOrders((prev) => {
+            const newSet = new Set(prev);
+            if (newSet.has(orderId)) {
+                newSet.delete(orderId);
+            } else {
+                newSet.add(orderId);
+            }
+            return newSet;
+        });
+    };
+
     if (isLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -306,6 +336,43 @@ export default function OrdersList() {
                     </div>
                 </div>
 
+                {/* View Mode Toggle */}
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-4 mb-6">
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-sm font-light uppercase tracking-wide text-foreground">
+                            View Mode
+                        </h3>
+                        <div className="inline-flex rounded-lg bg-cream border border-soft-pink/30 overflow-hidden">
+                            <button
+                                type="button"
+                                onClick={() => setViewMode("detailed")}
+                                className={`px-4 py-2.5 text-sm font-light transition flex items-center gap-2 ${
+                                    viewMode === "detailed"
+                                        ? "bg-soft-blue/30 text-brand-blue"
+                                        : "text-text-light hover:bg-soft-blue/10"
+                                }`}
+                                title="Detailed View"
+                            >
+                                <LayoutList className="w-4 h-4" />
+                                <span className="hidden sm:inline">Detailed</span>
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setViewMode("compact")}
+                                className={`px-4 py-2.5 text-sm font-light transition border-l border-soft-pink/30 flex items-center gap-2 ${
+                                    viewMode === "compact"
+                                        ? "bg-rose/30 text-brand-red"
+                                        : "text-text-light hover:bg-rose/10"
+                                }`}
+                                title="Compact View"
+                            >
+                                <List className="w-4 h-4" />
+                                <span className="hidden sm:inline">Compact</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 {/* Error Message */}
                 {error && (
                     <div className="rounded-lg p-4 mb-6 bg-rose/20 text-brand-red border border-rose/40 font-light text-sm">
@@ -340,6 +407,160 @@ export default function OrdersList() {
                                 : "Start by creating your first order"}
                         </p>
                     </div>
+                ) : viewMode === "compact" ? (
+                    <div className="space-y-3">
+                        {filteredOrders.map((order) => {
+                            const isExpanded = expandedOrders.has(order.id);
+                            return (
+                                <div
+                                    key={order.id}
+                                    className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm hover:shadow-md transition overflow-hidden"
+                                >
+                                    {/* Compact Row */}
+                                    <div className="flex items-center justify-between p-4 gap-4">
+                                        {/* Client Info */}
+                                        <div className="flex-1 min-w-0">
+                                            <div className="font-light text-foreground text-sm">
+                                                {order.customer.first_name} {order.customer.last_name}
+                                            </div>
+                                            <div className="text-xs text-text-light truncate">
+                                                {order.customer.phone_number}
+                                            </div>
+                                        </div>
+
+                                        {/* Total */}
+                                        <div className="text-right">
+                                            <div className="font-light text-brand-blue text-lg">
+                                                ${getTotal(order).toFixed(2)}
+                                            </div>
+                                            <div className="text-xs text-text-light">
+                                                {order.status.name}
+                                            </div>
+                                        </div>
+
+                                        {/* Action Buttons */}
+                                        <div className="flex items-center gap-2">
+                                            {order.status.id === 1 && (
+                                                <>
+                                                    <button
+                                                        onClick={() => updateOrderStatus(order.id, 5)}
+                                                        className="p-2 rounded-lg transition bg-soft-blue/20 hover:bg-soft-blue/40 text-brand-blue"
+                                                        title="Confirm Order"
+                                                    >
+                                                        <svg
+                                                            className="w-5 h-5"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                strokeWidth={2}
+                                                                d="M5 13l4 4L19 7"
+                                                            />
+                                                        </svg>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => updateOrderStatus(order.id, 6)}
+                                                        className="p-2 rounded-lg transition bg-rose/20 hover:bg-rose/40 text-brand-red"
+                                                        title="Cancel Order"
+                                                    >
+                                                        <svg
+                                                            className="w-5 h-5"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                strokeWidth={2}
+                                                                d="M6 18L18 6M6 6l12 12"
+                                                            />
+                                                        </svg>
+                                                    </button>
+                                                </>
+                                            )}
+
+                                            {/* Expand Button */}
+                                            <button
+                                                onClick={() => toggleOrderExpand(order.id)}
+                                                className="p-2 rounded-lg transition bg-soft-pink/20 hover:bg-soft-pink/40 text-foreground"
+                                                title={isExpanded ? "Collapse" : "Expand Details"}
+                                            >
+                                                <svg
+                                                    className={`w-5 h-5 transition-transform ${isExpanded ? "rotate-180" : ""}`}
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth={2}
+                                                        d="M19 9l-7 7-7-7"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Expanded Details */}
+                                    {isExpanded && (
+                                        <div className="px-4 pb-4 pt-2 border-t border-soft-pink/20 space-y-3">
+                                            {/* Main Items */}
+                                            <div>
+                                                <div className="text-xs text-text-light uppercase tracking-wide mb-1">
+                                                    Main Items
+                                                </div>
+                                                <div className="text-sm text-foreground font-light">
+                                                    {order.order_items.map((item, idx) => (
+                                                        <div key={item.id} className="py-1">
+                                                            • {item.ItemVariant.variant_name} ×{item.quantity}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                            {/* Extras */}
+                                            {getSidesForOrder(order).length > 0 && (
+                                                <div>
+                                                    <div className="text-xs text-text-light uppercase tracking-wide mb-1">
+                                                        Extras
+                                                    </div>
+                                                    <div className="text-sm text-foreground font-light">
+                                                        {getSidesForOrder(order).map((side) => (
+                                                            <div key={side.id} className="py-1">
+                                                                • {side.name} ×{side.quantity}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Comments */}
+                                            {order.comments && (
+                                                <div>
+                                                    <div className="text-xs text-text-light uppercase tracking-wide mb-1">
+                                                        Notes
+                                                    </div>
+                                                    <div className="text-sm text-foreground font-light italic">
+                                                        {order.comments}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Created Date */}
+                                            <div className="text-xs text-text-light pt-2">
+                                                Created: {formatDate(order.created_at)}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
                 ) : (
                     <div className="space-y-4">
                         {filteredOrders.map((order) => (
@@ -351,8 +572,7 @@ export default function OrdersList() {
                                 <div className="flex flex-row justify-between items-start md:items-center mb-4 pb-4 border-b border-soft-pink/20">
                                     <div>
                                         <h3 className="text-lg md:text-xl font-light text-foreground">
-                                            {order.customer.first_name}{" "}
-                                            {order.customer.last_name}
+                                            {order.customer.first_name} {order.customer.last_name}
                                         </h3>
                                         <p className="text-xs md:text-sm text-brand-red font-light">
                                             {order.customer.phone_number}
@@ -366,8 +586,7 @@ export default function OrdersList() {
                                             {formatDate(order.created_at)}
                                         </p>
                                         <p className="font-light text-brand-red">
-                                            {getTotalItems(order.order_items)}{" "}
-                                            item(s)
+                                            {getTotalItems(order.order_items)} item(s)
                                         </p>
                                     </div>
                                 </div>
@@ -404,23 +623,21 @@ export default function OrdersList() {
                                                 Sides
                                             </h4>
                                             <div className="grid gap-2">
-                                                {getSidesForOrder(order).map(
-                                                    (side) => (
-                                                        <div
-                                                            key={side.id}
-                                                            className="flex justify-between items-start p-3 rounded-lg bg-soft-blue/10"
-                                                        >
-                                                            <div className="flex-1">
-                                                                <p className="font-light text-foreground text-sm">
-                                                                    {side.name}
-                                                                </p>
-                                                            </div>
-                                                            <div className="ml-4 flex items-center justify-center font-light px-3 rounded-lg text-xs bg-accent-blue/20 text-brand-blue">
-                                                                ×{side.quantity}
-                                                            </div>
+                                                {getSidesForOrder(order).map((side) => (
+                                                    <div
+                                                        key={side.id}
+                                                        className="flex justify-between items-start p-3 rounded-lg bg-soft-blue/10"
+                                                    >
+                                                        <div className="flex-1">
+                                                            <p className="font-light text-foreground text-sm">
+                                                                {side.name}
+                                                            </p>
                                                         </div>
-                                                    )
-                                                )}
+                                                        <div className="ml-4 flex items-center justify-center font-light px-3 rounded-lg text-xs bg-accent-blue/20 text-brand-blue">
+                                                            ×{side.quantity}
+                                                        </div>
+                                                    </div>
+                                                ))}
                                             </div>
                                         </div>
                                     )}
@@ -448,34 +665,22 @@ export default function OrdersList() {
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4 mt-6">
-                                    {order.status.id !== 5 &&
-                                        order.status.id === 1 && (
-                                            <div
-                                                className="px-4 py-2.5 font-light rounded-lg transition text-center cursor-pointer btn-brand-blue text-sm"
-                                                onClick={() =>
-                                                    updateOrderStatus(
-                                                        order.id,
-                                                        5
-                                                    )
-                                                }
-                                            >
-                                                Confirm
-                                            </div>
-                                        )}
-                                    {order.status.id !== 6 &&
-                                        order.status.id === 1 && (
-                                            <div
-                                                className="px-4 py-2.5 font-light rounded-lg transition text-center cursor-pointer btn-brand-red text-sm"
-                                                onClick={() =>
-                                                    updateOrderStatus(
-                                                        order.id,
-                                                        6
-                                                    )
-                                                }
-                                            >
-                                                Cancel
-                                            </div>
-                                        )}
+                                    {order.status.id !== 5 && order.status.id === 1 && (
+                                        <div
+                                            className="px-4 py-2.5 font-light rounded-lg transition text-center cursor-pointer btn-brand-blue text-sm"
+                                            onClick={() => updateOrderStatus(order.id, 5)}
+                                        >
+                                            Confirm
+                                        </div>
+                                    )}
+                                    {order.status.id !== 6 && order.status.id === 1 && (
+                                        <div
+                                            className="px-4 py-2.5 font-light rounded-lg transition text-center cursor-pointer btn-brand-red text-sm"
+                                            onClick={() => updateOrderStatus(order.id, 6)}
+                                        >
+                                            Cancel
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         ))}
