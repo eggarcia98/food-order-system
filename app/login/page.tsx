@@ -68,9 +68,9 @@ export default function LoginPage() {
         // TODO: Handle user registration
         // Handle signup
         // console.log("Signup:", {
-            name: signupName,
-            email: signupEmail,
-            password: signupPassword,
+            // name: signupName,
+            // email: signupEmail,
+            // password: signupPassword,
         // });
         router.push("/new_order");
     };
