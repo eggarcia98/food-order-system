@@ -1,12 +1,10 @@
 export default function SocialLoginButtons() {
     const handleGoogleLogin = () => {
         // TODO: Implement Google OAuth login
-        console.log("Google login clicked");
     };
 
     const handleAppleLogin = () => {
         // TODO: Implement Apple login
-        console.log("Apple login clicked");
     };
 
     return (

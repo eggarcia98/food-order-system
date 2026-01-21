@@ -26,14 +26,14 @@ async function getMenuItems(): Promise<MenuItem[]> {
         });
 
         if (!res.ok) {
-            console.error("Failed to fetch menu items", res.statusText);
+
             return [];
         }
 
         const data = await res.json();
         return Array.isArray(data) ? data : [];
     } catch (error) {
-        console.error("Error fetching menu items", error);
+
         return [];
     }
 }

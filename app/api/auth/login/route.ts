@@ -6,7 +6,7 @@ export async function POST(request: Request) {
     try {
         const { name, email, password } = await request.json();
         const authUrl = process.env.AUTH_ENDPOINT;
-        console.log("Auth URL:", authUrl);
+
 
         const response = await fetch(`${authUrl}/login`, {
             method: "POST",
@@ -17,9 +17,9 @@ export async function POST(request: Request) {
         });
 
         if (!response.ok) {
-            console.error("Login failed:", response.statusText);
+
             const data = await response.json();
-            console.log("Error data:", data);
+
             return NextResponse.json(
                 { error: data.error || "Login failed" },
                 { status: response.status }

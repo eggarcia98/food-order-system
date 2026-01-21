@@ -135,9 +135,7 @@ export default function AddItemModal({
         updateSidesList();
     }, [sideQuantities]);
 
-    // useEffect(() => {
-    //     console.log("Current Order Item: ", orderItem);
-    // }, [orderItem]);
+
 
     if (!open) return null;
 

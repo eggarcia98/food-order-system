@@ -12,7 +12,7 @@ export async function GET() {
 
         return NextResponse.json(side);
     } catch (error) {
-        console.error("Error fetching side:", error);
+
         return NextResponse.json(
             { error: "Failed to fetch side" },
             { status: 500 }

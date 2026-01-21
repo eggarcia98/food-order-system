@@ -62,7 +62,7 @@ export default function NewOrderPage() {
             const data = await response.json();
             setNationalityList(data);
         } catch (error) {
-            console.error("Error fetching nationalities:", { error });
+
         }
     };
 
@@ -75,7 +75,7 @@ export default function NewOrderPage() {
             const data = await response.json();
             setExtraItems(data);
         } catch (error) {
-            console.error("Error fetching extra items:", error);
+
         }
     };
 
@@ -96,7 +96,6 @@ export default function NewOrderPage() {
             const response = await fetch("/api/menu_items");
             if (!response.ok) throw new Error("Failed to fetch");
             const data = await response.json();
-            console.log("Menu Items:", data);
             setMenuItems(data);
         } catch (error) {
             console.error("Error fetching previous customers:", error);
@@ -122,13 +121,7 @@ export default function NewOrderPage() {
         setConfirmedExtraItems(updatedItems);
     };
 
-    useEffect(() => {
-        console.log("Confirmed Main Items: ", confirmedMainItems, JSON.stringify(confirmedMainItems));
-    }, [confirmedMainItems]);
 
-    useEffect(() => {
-        console.log("Confirmed Extra Items: ", confirmedExtraItems, JSON.stringify(confirmedExtraItems));
-    }, [confirmedExtraItems]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -168,7 +161,7 @@ export default function NewOrderPage() {
             setConfirmedMainItems([]);
             setConfirmedExtraItems([]);
         } catch (error) {
-            console.error("Error submitting order:", error);
+
             setMessage({
                 type: "error",
                 text: "Failed to register order. Please try again.",
@@ -196,7 +189,7 @@ export default function NewOrderPage() {
             const filtered = previousCustomers.filter((customer) =>
                 customer.phone_number.includes(value)
             );
-            console.log("Filtered Suggestions:", filtered);
+
             setFilteredSuggestions(filtered);
             setShowSuggestions(filtered.length > 0);
         } else {

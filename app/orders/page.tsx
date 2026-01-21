@@ -97,11 +97,9 @@ export default function OrdersList() {
             const response = await fetch("/api/orders");
             if (!response.ok) throw new Error("Failed to fetch orders");
             const data: Order[] = await response.json();
-            console.log("Fetched orders:", data);
             setOrders(data);
         } catch (err) {
             setError("Failed to load orders. Please try again.");
-            console.error(err);
         } finally {
             setIsLoading(false);
         }
@@ -163,7 +161,6 @@ export default function OrdersList() {
             // Refresh orders after updating status
             fetchOrders();
         } catch (err) {
-            console.error(err);
             setError("Failed to update order status. Please try again.");
         }
     };
