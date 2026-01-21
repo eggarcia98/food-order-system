@@ -3,19 +3,21 @@ import { prisma } from "@/lib/prisma";
 export const runtime = "edge";
 
 interface OrderItem {
-    dish: Dish;
-    sides: Side[];
+    dish: MenuItem;
+    sides: Extra[];
 }
 
-interface Dish {
-    id: number;
-    name: string;
+interface MenuItem {
+    item_id: number;
+    item_name: string;
+    variant_id: number;
+    variant_name: string;
     price: number;
-    img?: string;
+    // img?: string;
     quantity: number;
 }
 
-interface Side {
+interface Extra {
     id: number;
     name: string;
     price: number;
@@ -53,7 +55,7 @@ export async function POST(request: Request) {
                 },
                 order_side_item: {
                     create: parsedDishes.flatMap((orderItem: OrderItem) =>
-                        orderItem.sides.map((side: Side) => ({
+                        orderItem.sides.map((side: Extra) => ({
                             side_id: side.id,
                             quantity: side.quantity,
                         }))

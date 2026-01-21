@@ -4,7 +4,7 @@ export const runtime = "edge";
 
 export async function GET() {
     try {
-        const side = await prisma.side.findMany({
+        const side = await prisma.menuExtras.findMany({
             orderBy: {
                 name: "asc",
             },
