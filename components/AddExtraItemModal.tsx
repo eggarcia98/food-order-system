@@ -19,7 +19,13 @@ export default function AddExtraItemModal({
 
     useEffect(() => {
         setExtraQuantities(() =>
-            extraItems.reduce((acc: any, extra: ExtraItem) => ({ ...acc, [extra.extra_id]: 0 }), {}),
+            extraItems.reduce(
+                (acc: any, extra: ExtraItem) => ({
+                    ...acc,
+                    [extra.extra_id]: 0,
+                }),
+                {},
+            ),
         );
     }, [extraItems]);
 
@@ -42,7 +48,13 @@ export default function AddExtraItemModal({
 
     const resetForm = () => {
         setExtraQuantities(
-            extraItems.reduce((acc: any, extra: ExtraItem) => ({ ...acc, [extra.extra_id]: 0 }), {})
+            extraItems.reduce(
+                (acc: any, extra: ExtraItem) => ({
+                    ...acc,
+                    [extra.extra_id]: 0,
+                }),
+                {},
+            ),
         );
     };
 
@@ -103,7 +115,7 @@ export default function AddExtraItemModal({
                             >
                                 <div className="flex flex-col">
                                     <span className="text-secondary font-medium">
-                                       {extra.extra_id} {extra.name}
+                                        {extra.name}
                                     </span>
                                     <span className="text-xs text-brand-red">
                                         ${extra.price}
