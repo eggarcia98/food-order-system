@@ -2,8 +2,40 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 
 export default function Page() {
+    useEffect(() => {
+        // Add JSON-LD structured data
+        const schemaData = {
+            "@context": "https://schema.org",
+            "@type": "Restaurant",
+            name: "Los Guayacos",
+            description: "Authentic Ecuadorian cuisine with fresh, local, and traditional dishes",
+            url: "https://app.losguayacos.com",
+            image: "https://app.losguayacos.com/og-image.jpg",
+            priceRange: "$$",
+            servesCuisine: "Ecuadorian",
+            telephone: "+1-XXX-XXX-XXXX", // Update with actual phone
+            address: {
+                "@type": "PostalAddress",
+                addressCountry: "US",
+                // Add more address details as available
+            },
+            sameAs: [
+                // Add social media URLs
+            ],
+        };
+
+        const script = document.createElement("script");
+        script.type = "application/ld+json";
+        script.textContent = JSON.stringify(schemaData);
+        document.head.appendChild(script);
+
+        return () => {
+            document.head.removeChild(script);
+        };
+    }, []);
     return (
         <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-cream/50 via-background to-cream/30 flex flex-col items-center justify-center px-6 sm:px-8">
             {/* Main Content */}
