@@ -39,6 +39,11 @@ export interface ItemVariant {
     price: number;
     img?: string;
     extras?: string;
+    MenuItem?: {
+        id: number;
+        name: string;
+        category_id: number | null;
+    };
 }
 
 export interface OrderExtraItem {
@@ -180,6 +185,32 @@ export default function OrdersList() {
         } catch (err) {
             setError("Failed to update order status. Please try again.");
         }
+    };
+
+    const getMenuItemSummary = (orders: Order[]) => {
+        const menuItemCounts: { [key: string]: { name: string; count: number } } = {};
+        orders.forEach((order) => {
+            order.order_items.forEach((item) => {
+                const menuId = item.ItemVariant.MenuItem?.id;
+                const menuName = item.ItemVariant.MenuItem?.name || item.ItemVariant.variant_name;
+                if (menuId == null) {
+                    const key = `unknown-${menuName}`;
+                    menuItemCounts[key] = {
+                        name: menuName,
+                        count: (menuItemCounts[key]?.count || 0) + item.quantity,
+                    };
+                } else {
+                    const key = String(menuId);
+                    menuItemCounts[key] = {
+                        name: menuName,
+                        count: (menuItemCounts[key]?.count || 0) + item.quantity,
+                    };
+                }
+            });
+        });
+        return Object.entries(menuItemCounts)
+            .sort(([, a], [, b]) => b.count - a.count)
+            .slice(0, 10);
     };
 
     const getTotalItems = (orderItem: OrderItem[]) => {
@@ -576,6 +607,27 @@ export default function OrdersList() {
                         })}
                     </div>
                 ) : (
+                    <>
+                        {/* Items Summary (by Menu Item) */}
+                        {filteredOrders.length > 0 && (
+                            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-6 mb-6">
+                                <h3 className="text-sm font-light uppercase tracking-wide text-foreground mb-4">
+                                    Items Summary
+                                </h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {getMenuItemSummary(filteredOrders).map(([id, data]) => (
+                                        <div
+                                            key={id}
+                                            className="px-4 py-2 rounded-full bg-soft-blue/20 border border-soft-blue/40 text-xs font-light text-foreground"
+                                        >
+                                            {data.name} <span className="text-brand-blue font-light ml-1">×{data.count}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                        
+                        {/* Orders Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {filteredOrders.sort((a, b) => {
                             // Pending orders (status id 1) first, completed orders (status id 5 or 6) last
@@ -692,6 +744,7 @@ export default function OrdersList() {
                             </div>
                         ))}
                     </div>
+                    </>
                 )}
 
                 {/* Summary */}

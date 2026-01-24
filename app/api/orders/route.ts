@@ -83,7 +83,11 @@ export async function GET() {
                 customer: true,
                 order_items: {
                     include: {
-                        ItemVariant: true,
+                        ItemVariant: {
+                            include: {
+                                MenuItem: true,
+                            },
+                        },
                     },
                 },
                 order_item_extras: {
