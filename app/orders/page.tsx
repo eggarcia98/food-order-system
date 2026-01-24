@@ -382,7 +382,7 @@ export default function OrdersList() {
                 </div>
 
                 {/* View Mode Toggle */}
-                <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-4 mb-6">
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-4 mb-1">
                     <div className="flex items-center justify-between">
                         <h3 className="text-sm font-light uppercase tracking-wide text-foreground">
                             View Mode
@@ -399,7 +399,9 @@ export default function OrdersList() {
                                 title="Detailed View"
                             >
                                 <LayoutList className="w-4 h-4" />
-                                <span className="hidden sm:inline">Detailed</span>
+                                <span className="hidden sm:inline">
+                                    Detailed
+                                </span>
                             </button>
                             <button
                                 type="button"
@@ -412,11 +414,39 @@ export default function OrdersList() {
                                 title="Compact View"
                             >
                                 <List className="w-4 h-4" />
-                                <span className="hidden sm:inline">Compact</span>
+                                <span className="hidden sm:inline">
+                                    Compact
+                                </span>
                             </button>
                         </div>
                     </div>
                 </div>
+
+                {/* Items Summary (by Menu Item) */}
+                {filteredOrders.length > 0 && (
+                    <div className=" backdrop-blur-sm rounded-2xl p-5 ">
+                        <div className="text-center text-xs md:text-sm font-light text-foreground flex flex-wrap justify-center gap-y-1">
+                            {getMenuItemSummary(filteredOrders).map(
+                                ([id, data], idx, arr) => (
+                                    <span
+                                        key={id}
+                                        className="inline-flex items-center"
+                                    >
+                                        <span>{data.name}</span>
+                                        <span className="text-brand-blue ml-1">
+                                            ×{data.count}
+                                        </span>
+                                        {idx < arr.length - 1 && (
+                                            <span className="mx-2 text-text-light">
+                                                |
+                                            </span>
+                                        )}
+                                    </span>
+                                ),
+                            )}
+                        </div>
+                    </div>
+                )}
 
                 {/* Error Message */}
                 {error && (
@@ -466,20 +496,11 @@ export default function OrdersList() {
                                         {/* Client Info */}
                                         <div className="flex-1 min-w-0">
                                             <div className="font-light text-foreground text-sm">
-                                                {order.customer.first_name} {order.customer.last_name}
+                                                {order.customer.first_name}{" "}
+                                                {order.customer.last_name}
                                             </div>
                                             <div className="text-xs text-text-light truncate">
                                                 {order.customer.phone_number}
-                                            </div>
-                                        </div>
-
-                                        {/* Total */}
-                                        <div className="text-right">
-                                            <div className="font-light text-brand-blue text-lg">
-                                                ${getTotal(order).toFixed(2)}
-                                            </div>
-                                            <div className="text-xs text-text-light">
-                                                {order.status.name}
                                             </div>
                                         </div>
 
@@ -488,7 +509,12 @@ export default function OrdersList() {
                                             {order.status.id === 1 && (
                                                 <>
                                                     <button
-                                                        onClick={() => updateOrderStatus(order.id, 5)}
+                                                        onClick={() =>
+                                                            updateOrderStatus(
+                                                                order.id,
+                                                                5,
+                                                            )
+                                                        }
                                                         className="p-2 rounded-lg transition bg-soft-blue/20 hover:bg-soft-blue/40 text-brand-blue"
                                                         title="Confirm Order"
                                                     >
@@ -507,7 +533,12 @@ export default function OrdersList() {
                                                         </svg>
                                                     </button>
                                                     <button
-                                                        onClick={() => updateOrderStatus(order.id, 6)}
+                                                        onClick={() =>
+                                                            updateOrderStatus(
+                                                                order.id,
+                                                                6,
+                                                            )
+                                                        }
                                                         className="p-2 rounded-lg transition bg-rose/20 hover:bg-rose/40 text-brand-red"
                                                         title="Cancel Order"
                                                     >
@@ -527,12 +558,27 @@ export default function OrdersList() {
                                                     </button>
                                                 </>
                                             )}
-
+                                            {/* Total */}
+                                            <div className="text-right">
+                                                <div className="font-light text-brand-blue text-lg">
+                                                    $
+                                                    {getTotal(order).toFixed(2)}
+                                                </div>
+                                                <div className="text-xs text-text-light">
+                                                    {order.status.name}
+                                                    </div>
+                                            </div>
                                             {/* Expand Button */}
                                             <button
-                                                onClick={() => toggleOrderExpand(order.id)}
+                                                onClick={() =>
+                                                    toggleOrderExpand(order.id)
+                                                }
                                                 className="p-2 rounded-lg transition bg-soft-pink/20 hover:bg-soft-pink/40 text-foreground"
-                                                title={isExpanded ? "Collapse" : "Expand Details"}
+                                                title={
+                                                    isExpanded
+                                                        ? "Collapse"
+                                                        : "Expand Details"
+                                                }
                                             >
                                                 <svg
                                                     className={`w-5 h-5 transition-transform ${isExpanded ? "rotate-180" : ""}`}
@@ -560,24 +606,42 @@ export default function OrdersList() {
                                                     Main Items
                                                 </div>
                                                 <div className="text-sm text-foreground font-light">
-                                                    {order.order_items.map((item, idx) => (
-                                                        <div key={item.id} className="py-1">
-                                                            • {item.ItemVariant.variant_name} ×{item.quantity}
-                                                        </div>
-                                                    ))}
+                                                    {order.order_items.map(
+                                                        (item, idx) => (
+                                                            <div
+                                                                key={item.id}
+                                                                className="py-1"
+                                                            >
+                                                                •{" "}
+                                                                {
+                                                                    item
+                                                                        .ItemVariant
+                                                                        .variant_name
+                                                                }{" "}
+                                                                ×{item.quantity}
+                                                            </div>
+                                                        ),
+                                                    )}
                                                 </div>
                                             </div>
 
                                             {/* Extras */}
-                                            {getSidesForOrder(order).length > 0 && (
+                                            {getSidesForOrder(order).length >
+                                                0 && (
                                                 <div>
                                                     <div className="text-xs text-text-light uppercase tracking-wide mb-1">
                                                         Extras
                                                     </div>
                                                     <div className="text-sm text-foreground font-light">
-                                                        {getSidesForOrder(order).map((side) => (
-                                                            <div key={side.id} className="py-1">
-                                                                • {side.name} ×{side.quantity}
+                                                        {getSidesForOrder(
+                                                            order,
+                                                        ).map((side) => (
+                                                            <div
+                                                                key={side.id}
+                                                                className="py-1"
+                                                            >
+                                                                • {side.name} ×
+                                                                {side.quantity}
                                                             </div>
                                                         ))}
                                                     </div>
@@ -598,7 +662,8 @@ export default function OrdersList() {
 
                                             {/* Created Date */}
                                             <div className="text-xs text-text-light pt-2">
-                                                Created: {formatDate(order.created_at)}
+                                                Created:{" "}
+                                                {formatDate(order.created_at)}
                                             </div>
                                         </div>
                                     )}
@@ -608,142 +673,190 @@ export default function OrdersList() {
                     </div>
                 ) : (
                     <>
-                        {/* Items Summary (by Menu Item) */}
-                        {filteredOrders.length > 0 && (
-                            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-6 mb-6">
-                                <h3 className="text-sm font-light uppercase tracking-wide text-foreground mb-4">
-                                    Items Summary
-                                </h3>
-                                <div className="flex flex-wrap gap-2">
-                                    {getMenuItemSummary(filteredOrders).map(([id, data]) => (
-                                        <div
-                                            key={id}
-                                            className="px-4 py-2 rounded-full bg-soft-blue/20 border border-soft-blue/40 text-xs font-light text-foreground"
-                                        >
-                                            {data.name} <span className="text-brand-blue font-light ml-1">×{data.count}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                        
                         {/* Orders Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {filteredOrders.sort((a, b) => {
-                            // Pending orders (status id 1) first, completed orders (status id 5 or 6) last
-                            const aIsPending = a.status.id === 1;
-                            const bIsPending = b.status.id === 1;
-                            if (aIsPending && !bIsPending) return -1;
-                            if (!aIsPending && bIsPending) return 1;
-                            return 0;
-                        }).map((order) => (
-                            <div
-                                key={order.id}
-                                className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition p-4 flex flex-col aspect-square"
-                            >
-                                {/* Header with Customer Name and Info */}
-                                <div className="flex justify-between items-start mb-3 pb-3 border-b border-soft-pink/20">
-                                    <div className="flex-1">
-                                        <h3 className="text-sm font-light text-foreground leading-tight">
-                                            {order.customer.first_name} {order.customer.last_name} <span className="text-xs text-gray-400 italic">({formatDateShort(order.created_at)})</span>
-                                        </h3>
-                                        <p className="text-xs text-brand-red font-light">
-                                            {order.customer.phone_number}
-                                        </p>
-                                    </div>
-                                    <div className="text-right text-xs space-y-1 ml-2">
-                                        <div className="text-brand-blue font-light">
-                                            {order.status.name}
-                                        </div>
-                                        <p className="text-text-light font-light text-xs">
-                                            {getTotalItems(order.order_items)} item(s)
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {/* Dishes */}
-                                <div className="space-y-1 mb-2">
-                                    <h4 className="font-light uppercase tracking-wide text-foreground text-xs">
-                                        Dishes
-                                    </h4>
-                                    <div className="space-y-1">
-                                        {order.order_items.map((orderItem) => (
-                                            <div key={orderItem.id} className="text-xs text-foreground font-light grid grid-cols-3 gap-2">
-                                                <span className="col-span-1 truncate">{orderItem.ItemVariant.variant_name}</span>
-                                                <span className="text-brand-red text-right">×{orderItem.quantity}</span>
-                                                <span className="text-brand-blue text-right">${(orderItem.ItemVariant.price * orderItem.quantity).toFixed(2)}</span>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {filteredOrders
+                                .sort((a, b) => {
+                                    // Pending orders (status id 1) first, completed orders (status id 5 or 6) last
+                                    const aIsPending = a.status.id === 1;
+                                    const bIsPending = b.status.id === 1;
+                                    if (aIsPending && !bIsPending) return -1;
+                                    if (!aIsPending && bIsPending) return 1;
+                                    return 0;
+                                })
+                                .map((order) => (
+                                    <div
+                                        key={order.id}
+                                        className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition p-4 flex flex-col aspect-square"
+                                    >
+                                        {/* Header with Customer Name and Info */}
+                                        <div className="flex justify-between items-start mb-3 pb-3 border-b border-soft-pink/20">
+                                            <div className="flex-1">
+                                                <h3 className="text-sm font-light text-foreground leading-tight">
+                                                    {order.customer.first_name}{" "}
+                                                    {order.customer.last_name}{" "}
+                                                    <span className="text-xs text-gray-400 italic">
+                                                        (
+                                                        {formatDateShort(
+                                                            order.created_at,
+                                                        )}
+                                                        )
+                                                    </span>
+                                                </h3>
+                                                <p className="text-xs text-brand-red font-light">
+                                                    {
+                                                        order.customer
+                                                            .phone_number
+                                                    }
+                                                </p>
                                             </div>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Sides */}
-                                {getSidesForOrder(order).length > 0 && (
-                                    <div className="space-y-1 mb-2">
-                                        <h4 className="font-light uppercase tracking-wide text-foreground text-xs">
-                                            Sides
-                                        </h4>
-                                        <div className="space-y-1">
-                                            {getSidesForOrder(order).map((side) => (
-                                                <div key={side.id} className="text-xs text-foreground font-light grid grid-cols-3 gap-2">
-                                                    <span className="col-span-1 truncate">{side.name}</span>
-                                                    <span className="text-brand-red text-right">×{side.quantity}</span>
-                                                    <span className="text-brand-blue text-right">${(side.price * side.quantity).toFixed(2)}</span>
+                                            <div className="text-right text-xs space-y-1 ml-2">
+                                                <div className="text-brand-blue font-light">
+                                                    {order.status.name}
                                                 </div>
-                                            ))}
+                                                <p className="text-text-light font-light text-xs">
+                                                    {getTotalItems(
+                                                        order.order_items,
+                                                    )}{" "}
+                                                    item(s)
+                                                </p>
+                                            </div>
                                         </div>
-                                    </div>
-                                )}
 
-                                {/* Total */}
-                                <div className="mt-auto pt-3 border-t border-soft-pink/20 mb-3">
-                                    <div className="flex justify-between items-center">
-                                        <h4 className="font-light text-foreground text-xs">
-                                            Total
-                                        </h4>
-                                        <p className="font-light text-base text-brand-blue">
-                                            ${getTotal(order).toFixed(2)}
-                                        </p>
-                                    </div>
-                                </div>
+                                        {/* Dishes */}
+                                        <div className="space-y-1 mb-2">
+                                            <h4 className="font-light uppercase tracking-wide text-foreground text-xs">
+                                                Dishes
+                                            </h4>
+                                            <div className="space-y-1">
+                                                {order.order_items.map(
+                                                    (orderItem) => (
+                                                        <div
+                                                            key={orderItem.id}
+                                                            className="text-xs text-foreground font-light grid grid-cols-3 gap-2"
+                                                        >
+                                                            <span className="col-span-1 truncate">
+                                                                {
+                                                                    orderItem
+                                                                        .ItemVariant
+                                                                        .variant_name
+                                                                }
+                                                            </span>
+                                                            <span className="text-brand-red text-right">
+                                                                ×
+                                                                {
+                                                                    orderItem.quantity
+                                                                }
+                                                            </span>
+                                                            <span className="text-brand-blue text-right">
+                                                                $
+                                                                {(
+                                                                    orderItem
+                                                                        .ItemVariant
+                                                                        .price *
+                                                                    orderItem.quantity
+                                                                ).toFixed(2)}
+                                                            </span>
+                                                        </div>
+                                                    ),
+                                                )}
+                                            </div>
+                                        </div>
 
-                                {/* Comments */}
-                                {order.comments && (
-                                    <div className="mb-3 p-2 rounded-lg bg-soft-pink/20 border border-soft-pink/30">
-                                        <p className="text-xs text-foreground font-light italic line-clamp-3">
-                                            {order.comments}
-                                        </p>
-                                    </div>
-                                )}
-
-                                {/* Action Buttons */}
-                                {order.status.id === 5 || order.status.id === 6 ? (
-                                    <div className="px-3 py-2 font-light rounded-lg text-center text-sm text-green-600 bg-green-50 border border-green-200">
-                                        Done
-                                    </div>
-                                ) : (
-                                    <div className="grid grid-cols-2 gap-2">
-                                        {order.status.id === 1 && (
-                                            <>
-                                                <div
-                                                    className="px-3 py-2 font-light rounded-lg transition text-center cursor-pointer btn-brand-blue text-xs"
-                                                    onClick={() => updateOrderStatus(order.id, 5)}
-                                                >
-                                                    Confirm
+                                        {/* Sides */}
+                                        {getSidesForOrder(order).length > 0 && (
+                                            <div className="space-y-1 mb-2">
+                                                <h4 className="font-light uppercase tracking-wide text-foreground text-xs">
+                                                    Sides
+                                                </h4>
+                                                <div className="space-y-1">
+                                                    {getSidesForOrder(
+                                                        order,
+                                                    ).map((side) => (
+                                                        <div
+                                                            key={side.id}
+                                                            className="text-xs text-foreground font-light grid grid-cols-3 gap-2"
+                                                        >
+                                                            <span className="col-span-1 truncate">
+                                                                {side.name}
+                                                            </span>
+                                                            <span className="text-brand-red text-right">
+                                                                ×{side.quantity}
+                                                            </span>
+                                                            <span className="text-brand-blue text-right">
+                                                                $
+                                                                {(
+                                                                    side.price *
+                                                                    side.quantity
+                                                                ).toFixed(2)}
+                                                            </span>
+                                                        </div>
+                                                    ))}
                                                 </div>
-                                                <div
-                                                    className="px-3 py-2 font-light rounded-lg transition text-center cursor-pointer btn-brand-red text-xs"
-                                                    onClick={() => updateOrderStatus(order.id, 6)}
-                                                >
-                                                    Cancel
-                                                </div>
-                                            </>
+                                            </div>
+                                        )}
+
+                                        {/* Total */}
+                                        <div className="mt-auto pt-3 border-t border-soft-pink/20 mb-3">
+                                            <div className="flex justify-between items-center">
+                                                <h4 className="font-light text-foreground text-xs">
+                                                    Total
+                                                </h4>
+                                                <p className="font-light text-base text-brand-blue">
+                                                    $
+                                                    {getTotal(order).toFixed(2)}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {/* Comments */}
+                                        {order.comments && (
+                                            <div className="mb-3 p-2 rounded-lg bg-soft-pink/20 border border-soft-pink/30">
+                                                <p className="text-xs text-foreground font-light italic line-clamp-3">
+                                                    {order.comments}
+                                                </p>
+                                            </div>
+                                        )}
+
+                                        {/* Action Buttons */}
+                                        {order.status.id === 5 ||
+                                        order.status.id === 6 ? (
+                                            <div className="px-3 py-2 font-light rounded-lg text-center text-sm text-green-600 bg-green-50 border border-green-200">
+                                                Done
+                                            </div>
+                                        ) : (
+                                            <div className="grid grid-cols-2 gap-2">
+                                                {order.status.id === 1 && (
+                                                    <>
+                                                        <div
+                                                            className="px-3 py-2 font-light rounded-lg transition text-center cursor-pointer btn-brand-blue text-xs"
+                                                            onClick={() =>
+                                                                updateOrderStatus(
+                                                                    order.id,
+                                                                    5,
+                                                                )
+                                                            }
+                                                        >
+                                                            Confirm
+                                                        </div>
+                                                        <div
+                                                            className="px-3 py-2 font-light rounded-lg transition text-center cursor-pointer btn-brand-red text-xs"
+                                                            onClick={() =>
+                                                                updateOrderStatus(
+                                                                    order.id,
+                                                                    6,
+                                                                )
+                                                            }
+                                                        >
+                                                            Cancel
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </div>
                                         )}
                                     </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
+                                ))}
+                        </div>
                     </>
                 )}
 
