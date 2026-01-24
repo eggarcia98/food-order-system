@@ -810,11 +810,15 @@ export default function OrdersList() {
                                         </div>
 
                                         {/* Comments */}
-                                        {order.comments && (
+                                        {order.comments ? (
                                             <div className="mb-3 p-2 rounded-lg bg-soft-pink/20 border border-soft-pink/30">
                                                 <p className="text-xs text-foreground font-light italic line-clamp-3">
                                                     {order.comments}
                                                 </p>
+                                            </div>
+                                        ) : (
+                                            <div className="mb-3 p-2 rounded-lg bg-gray-100 text-gray-500 text-center text-xs font-light">
+                                                No comments
                                             </div>
                                         )}
 
