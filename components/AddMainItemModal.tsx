@@ -56,8 +56,14 @@ export default function AddMainItemModal({
     };
 
     const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setQuantity(Number(e.target.value));
+        const nextValue = Math.max(1, Number(e.target.value) || 1);
+        setQuantity(nextValue);
     };
+
+    const incrementQuantity = () => setQuantity((prev) => prev + 1);
+
+    const decrementQuantity = () =>
+        setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
 
     const toggleCategory = (categoryId: number) => {
         if (expandedCategory === categoryId) {
@@ -177,13 +183,31 @@ export default function AddMainItemModal({
                     <label className="text-lg font-semibold text-foreground">
                         Quantity
                     </label>
-                    <input
-                        type="number"
-                        value={quantity}
-                        onChange={(e) => handleQuantityChange(e)}
-                        min={1}
-                        className="border rounded-lg w-20 text-center transition input-brand"
-                    />
+                    <div className="flex items-center gap-3">
+                        <button
+                            type="button"
+                            onClick={decrementQuantity}
+                            className="px-3 py-1 rounded-lg font-bold bg-bg-light text-secondary transition"
+                            aria-label="Decrease quantity"
+                        >
+                            -
+                        </button>
+                        <input
+                            type="number"
+                            value={quantity}
+                            onChange={(e) => handleQuantityChange(e)}
+                            min={1}
+                            className="border rounded-lg w-16 text-center transition input-brand"
+                        />
+                        <button
+                            type="button"
+                            onClick={incrementQuantity}
+                            className="px-3 py-1 rounded-lg font-bold bg-bg-light text-secondary transition"
+                            aria-label="Increase quantity"
+                        >
+                            +
+                        </button>
+                    </div>
                 </div>
 
                 {/* Actions */}
