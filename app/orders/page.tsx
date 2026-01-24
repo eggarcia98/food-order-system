@@ -188,28 +188,34 @@ export default function OrdersList() {
     };
 
     const getMenuItemSummary = (orders: Order[]) => {
-        const menuItemCounts: { [key: string]: { name: string; count: number } } = {};
-        orders.forEach((order) => {
-            order.order_items.forEach((item) => {
-                const menuId = item.ItemVariant.MenuItem?.id;
-                const menuName = item.ItemVariant.MenuItem?.name || item.ItemVariant.variant_name;
-                if (menuId == null) {
-                    const key = `unknown-${menuName}`;
-                    menuItemCounts[key] = {
+        const menuItemCounts: {
+            [key: string]: { name: string; received: number; dispatched: number };
+        } = {};
+        orders
+            // Exclude cancelled orders (status id 6)
+            .filter((order) => order.status?.id !== 6)
+            .forEach((order) => {
+                const isReceived = order.status?.id === 1;
+                const isDispatched = order.status?.id === 5;
+                order.order_items.forEach((item) => {
+                    const menuId = item.ItemVariant.MenuItem?.id;
+                    const menuName =
+                        item.ItemVariant.MenuItem?.name || item.ItemVariant.variant_name;
+                    const key = menuId == null ? `unknown-${menuName}` : String(menuId);
+                    const existing = menuItemCounts[key] || {
                         name: menuName,
-                        count: (menuItemCounts[key]?.count || 0) + item.quantity,
+                        received: 0,
+                        dispatched: 0,
                     };
-                } else {
-                    const key = String(menuId);
                     menuItemCounts[key] = {
-                        name: menuName,
-                        count: (menuItemCounts[key]?.count || 0) + item.quantity,
+                        name: existing.name,
+                        received: existing.received + (isReceived ? item.quantity : 0),
+                        dispatched: existing.dispatched + (isDispatched ? item.quantity : 0),
                     };
-                }
+                });
             });
-        });
         return Object.entries(menuItemCounts)
-            .sort(([, a], [, b]) => b.count - a.count)
+            .sort(([, a], [, b]) => (b.received + b.dispatched) - (a.received + a.dispatched))
             .slice(0, 10);
     };
 
@@ -426,24 +432,19 @@ export default function OrdersList() {
                 {filteredOrders.length > 0 && (
                     <div className=" backdrop-blur-sm rounded-2xl p-5 ">
                         <div className="text-center text-xs md:text-sm font-light text-foreground flex flex-wrap justify-center gap-y-1">
-                            {getMenuItemSummary(filteredOrders).map(
-                                ([id, data], idx, arr) => (
-                                    <span
-                                        key={id}
-                                        className="inline-flex items-center"
-                                    >
-                                        <span>{data.name}</span>
-                                        <span className="text-brand-blue ml-1">
-                                            ×{data.count}
-                                        </span>
-                                        {idx < arr.length - 1 && (
-                                            <span className="mx-2 text-text-light">
-                                                |
-                                            </span>
-                                        )}
+                            {getMenuItemSummary(filteredOrders).map(([id, data], idx, arr) => (
+                                <span key={id} className="inline-flex items-center">
+                                    <span>{data.name}</span>
+                                    <span className="ml-2">
+                                        <span className="text-brand-red">{data.received}</span>
+                                        <span className="mx-1 text-text-light">|</span>
+                                        <span className="text-brand-blue">{data.dispatched}</span>
                                     </span>
-                                ),
-                            )}
+                                    {idx < arr.length - 1 && (
+                                        <span className="mx-2 text-text-light">‧</span>
+                                    )}
+                                </span>
+                            ))}
                         </div>
                     </div>
                 )}
