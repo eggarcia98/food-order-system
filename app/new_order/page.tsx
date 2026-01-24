@@ -284,14 +284,14 @@ export default function NewOrderPage() {
                     </div>
 
                     {/* View Orders Link */}
-                    <div className="flex justify-end mb-6 h-fit">
+                    {/* <div className="flex justify-end mb-6 h-fit">
                         <Link
                             href="/orders"
                             className="px-6 py-2.5 rounded-lg transition text-sm font-light btn-brand-blue"
                         >
                             View Orders
                         </Link>
-                    </div>
+                    </div> */}
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-8">
