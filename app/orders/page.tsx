@@ -70,6 +70,7 @@ export default function OrdersList() {
     const [viewMode, setViewMode] = useState<"detailed" | "compact">(
         "detailed",
     );
+    const [userSetViewMode, setUserSetViewMode] = useState(false);
     const [expandedOrders, setExpandedOrders] = useState<Set<number>>(new Set());
 
     // Get current week (Monday - Sunday)
@@ -100,6 +101,20 @@ export default function OrdersList() {
     useEffect(() => {
         fetchOrders();
     }, []);
+
+    // Set default view mode based on screen size (compact for small screens, detailed for larger)
+    useEffect(() => {
+        if (typeof window === "undefined") return;
+        const mql = window.matchMedia("(max-width: 768px)");
+        const apply = () => {
+            if (!userSetViewMode) {
+                setViewMode(mql.matches ? "compact" : "detailed");
+            }
+        };
+        apply();
+        mql.addEventListener("change", apply);
+        return () => mql.removeEventListener("change", apply);
+    }, [userSetViewMode]);
 
     const fetchOrders = async () => {
         try {
@@ -396,7 +411,10 @@ export default function OrdersList() {
                         <div className="inline-flex rounded-lg bg-cream border border-soft-pink/30 overflow-hidden">
                             <button
                                 type="button"
-                                onClick={() => setViewMode("detailed")}
+                                onClick={() => {
+                                    setUserSetViewMode(true);
+                                    setViewMode("detailed");
+                                }}
                                 className={`px-4 py-2.5 text-sm font-light transition flex items-center gap-2 ${
                                     viewMode === "detailed"
                                         ? "bg-soft-blue/30 text-brand-blue"
@@ -411,7 +429,10 @@ export default function OrdersList() {
                             </button>
                             <button
                                 type="button"
-                                onClick={() => setViewMode("compact")}
+                                onClick={() => {
+                                    setUserSetViewMode(true);
+                                    setViewMode("compact");
+                                }}
                                 className={`px-4 py-2.5 text-sm font-light transition border-l border-soft-pink/30 flex items-center gap-2 ${
                                     viewMode === "compact"
                                         ? "bg-rose/30 text-brand-red"
