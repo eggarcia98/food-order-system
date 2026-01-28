@@ -67,6 +67,8 @@ model MenuItems {
   name          String
   description   String
   item_variants ItemVariant[]
+  img_url      String?
+  is_active     Boolean       @default(true)
 
   @@map("menu_items")
 }

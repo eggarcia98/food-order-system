@@ -348,9 +348,11 @@ export default function OrdersList() {
         return (
             <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
-                    <div 
-                        className="animate-spin rounded-full h-12 w-12 border-b-2 border-b-brand-red mx-auto"
-                    ></div>
+                    <object 
+                        data="/loading-icon.svg"
+                        type="image/svg+xml"
+                        className="h-12 w-12 mx-auto"
+                    />
                     <p className="mt-4 text-text-light font-light">Loading orders...</p>
                 </div>
             </div>
