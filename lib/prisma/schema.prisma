@@ -67,6 +67,7 @@ model MenuItems {
   name          String
   description   String
   item_variants ItemVariant[]
+  img_url      String?
 
   @@map("menu_items")
 }

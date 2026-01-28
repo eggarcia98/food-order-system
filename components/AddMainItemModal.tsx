@@ -16,6 +16,7 @@ interface MenuItem {
     category_id: number;
     name: string;
     description: string;
+    img_url?: string;
     item_variants: ItemVariant[];
 }
 
@@ -125,9 +126,18 @@ export default function AddMainItemModal({
                                     onClick={() => toggleCategory(menuItem.id)}
                                     className="flex items-center justify-between cursor-pointer mb-3 p-2 rounded-lg hover:bg-gray-50 transition"
                                 >
-                                    <h4 className="font-semibold text-foreground">
-                                        {menuItem.name}
-                                    </h4>
+                                    <div className="flex items-center gap-3 flex-1">
+                                        {menuItem.img_url && (
+                                            <img
+                                                src={menuItem.img_url}
+                                                alt={menuItem.name}
+                                                className="w-12 h-12 md:w-16 md:h-16 object-cover rounded-lg flex-shrink-0"
+                                            />
+                                        )}
+                                        <h4 className="font-semibold text-foreground">
+                                            {menuItem.name}
+                                        </h4>
+                                    </div>
                                     <span
                                         className={`text-lg transition-transform ${expandedCategory === menuItem.id ? "rotate-180" : ""}`}
                                     >

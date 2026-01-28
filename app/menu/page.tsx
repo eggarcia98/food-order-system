@@ -13,6 +13,7 @@ type MenuItem = {
     id: number;
     name: string;
     description?: string;
+    img_url?: string;
     item_variants: MenuVariant[];
 };
 
@@ -71,34 +72,47 @@ export default function MenuPage() {
 
                     <ul className="space-y-4 ">
                         {menuItems.map((menuItem) => (
-                            <li key={menuItem.id} className="">
-                                <div className="text-lg font-medium">
-                                    {menuItem.name.toUpperCase()}
-                                </div>
-                                {menuItem.description && (
-                                    <div className="text-sm text-secondary">
-                                        {menuItem.description}
+                            <li key={menuItem.id} className="flex gap-4 items-center">
+                                <div className="flex-1">
+                                    <div className="text-lg font-medium">
+                                        {menuItem.name.toUpperCase()}
                                     </div>
-                                )}
+                                    {menuItem.description && (
+                                        <div className="text-sm text-secondary">
+                                            {menuItem.description}
+                                        </div>
+                                    )}
 
-                                <ul className="space-y-2 ml-4 mt-4">
-                                    {menuItem.item_variants
-                                        ?.filter((variant) => variant.is_active)
-                                        .map((variant) => (
-                                            <li
-                                                key={variant.id}
-                                                className="flex items-center gap-4 "
-                                            >
-                                                <span className="flex-none w-52 md:w-60 ">
-                                                    {variant.variant_name}
-                                                </span>
-                                                <span className="flex-1 border-b border-dashed border-gray-400"></span>
-                                                <span className="flex-none w-16 text-right ">
-                                                    $ {variant.price}
-                                                </span>
-                                            </li>
-                                        ))}
-                                </ul>
+                                    <ul className="space-y-2 ml-4 mt-4">
+                                        {menuItem.item_variants
+                                            ?.filter(
+                                                (variant) => variant.is_active,
+                                            )
+                                            .map((variant) => (
+                                                <li
+                                                    key={variant.id}
+                                                    className="flex items-center gap-4 "
+                                                >
+                                                    <span className="flex-none w-52 md:w-60 ">
+                                                        {variant.variant_name}
+                                                    </span>
+                                                    <span className="flex-1 border-b border-dashed border-gray-400"></span>
+                                                    <span className="flex-none w-16 text-right ">
+                                                        $ {variant.price}
+                                                    </span>
+                                                </li>
+                                            ))}
+                                    </ul>
+                                </div>
+                                {menuItem.img_url ? (
+                                    <img
+                                        src={menuItem.img_url}
+                                        alt={menuItem.name}
+                                        className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 object-cover rounded-lg flex-shrink-0"
+                                    />
+                                ) : (
+                                    <div className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 flex-shrink-0"></div>
+                                )}
                             </li>
                         ))}
                     </ul>
