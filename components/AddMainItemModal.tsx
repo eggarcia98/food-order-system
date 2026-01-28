@@ -120,7 +120,9 @@ export default function AddMainItemModal({
                         </h3>
                     </div>
                     <div className="space-y-6">
-                        {menuItems.map((menuItem: MenuItem) => (
+                        {menuItems
+                            .filter((item: MenuItem) => item.is_active)
+                            .map((menuItem: MenuItem) => (
                             <div key={menuItem.id}>
                                 <div
                                     onClick={() => toggleCategory(menuItem.id)}

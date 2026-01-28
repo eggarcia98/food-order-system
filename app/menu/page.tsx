@@ -15,6 +15,7 @@ type MenuItem = {
     description?: string;
     img_url?: string;
     item_variants: MenuVariant[];
+    is_active: boolean;
 };
 
 export default function MenuPage() {
@@ -71,7 +72,9 @@ export default function MenuPage() {
                     </h2>
 
                     <ul className="space-y-4 ">
-                        {menuItems.map((menuItem) => (
+                        {menuItems
+                            .filter((item) => item.is_active)
+                            .map((menuItem) => (
                             <li key={menuItem.id} className="flex gap-2 md:gap-4 items-center">
                                 <div className="flex-1">
                                     <div className="text-lg font-medium">
@@ -108,10 +111,10 @@ export default function MenuPage() {
                                     <img
                                         src={menuItem.img_url}
                                         alt={menuItem.name}
-                                        className="w-20 h-20 sm:w-28 sm:h-28 md:w-40 md:h-40 lg:w-48 lg:h-48 object-cover rounded-lg flex-shrink-0"
+                                        className="w-17 h-17 sm:w-28 sm:h-28 md:w-40 md:h-40 lg:w-48 lg:h-48 object-cover rounded-lg flex-shrink-0"
                                     />
                                 ) : (
-                                    <div className="w-20 h-20 sm:w-28 sm:h-28 md:w-40 md:h-40 lg:w-48 lg:h-48 flex-shrink-0"></div>
+                                    <div className="w-17 h-17 sm:w-28 sm:h-28 md:w-40 md:h-40 lg:w-48 lg:h-48 flex-shrink-0"></div>
                                 )}
                             </li>
                         ))}
