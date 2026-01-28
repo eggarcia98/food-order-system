@@ -18,6 +18,7 @@ interface MenuItem {
     description: string;
     img_url?: string;
     item_variants: ItemVariant[];
+    is_active: boolean;
 }
 
 interface SelectedVariant {
