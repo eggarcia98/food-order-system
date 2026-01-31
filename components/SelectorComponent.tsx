@@ -1,10 +1,9 @@
-// components/DishSelector.tsx
 import React, { useState, FC, use, useEffect } from "react";
 
 interface SelectItem {
     id: number;
     name: string;
-    [key: string]: any; // For any additional properties
+    [key: string]: any;
 }
 
 interface SelectorProps {
@@ -55,8 +54,7 @@ export const Selector: FC<SelectorProps> = ({
             <option value="">{placeholder}</option>
 
             {useCategories
-                ? // Render with categories (optgroups)
-                  selectorList.map((category) => (
+                ? selectorList.map((category) => (
                       <optgroup
                           key={category.category}
                           label={category.category}
@@ -69,7 +67,6 @@ export const Selector: FC<SelectorProps> = ({
                       </optgroup>
                   ))
                 : // Render simple list
-                  selectorList.map(({ id, name, price }) => (
                       <option key={id} value={id}>
                           {name} {price ? `- $${price.toFixed(2)}` : ""}
                       </option>
@@ -78,4 +75,4 @@ export const Selector: FC<SelectorProps> = ({
     );
 };
 
-// Export the dish lists for external use if needed
+//

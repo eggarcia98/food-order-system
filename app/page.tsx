@@ -1,4 +1,3 @@
-// app/page.tsx
 "use client";
 
 import Link from "next/link";
@@ -6,7 +5,6 @@ import { useEffect } from "react";
 
 export default function Page() {
     useEffect(() => {
-        // Add JSON-LD structured data
         const schemaData = {
             "@context": "https://schema.org",
             "@type": "Restaurant",
@@ -16,15 +14,12 @@ export default function Page() {
             image: "https://app.losguayacos.com/og-image.jpg",
             priceRange: "$$",
             servesCuisine: "Ecuadorian",
-            telephone: "+1-XXX-XXX-XXXX", // Update with actual phone
+            telephone: "+1-XXX-XXX-XXXX",
             address: {
                 "@type": "PostalAddress",
                 addressCountry: "US",
-                // Add more address details as available
             },
-            sameAs: [
-                // Add social media URLs
-            ],
+            sameAs: [],
         };
 
         const script = document.createElement("script");
