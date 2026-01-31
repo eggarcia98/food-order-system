@@ -1,6 +1,25 @@
+"use client";
+
 export default function SocialLoginButtons() {
-    const handleGoogleLogin = () => {
-        // TODO: Implement Google OAuth login
+    const handleGoogleLogin = async () => {
+        try {
+            const res = await fetch("/api/auth/oauth/google");
+
+            if (!res.ok) {
+                throw new Error("Failed to start OAuth");
+            }
+
+            const { data } = await res.json();
+
+            if (!data?.url) {
+                throw new Error("Invalid OAuth response");
+            }
+
+            window.location.href = data.url;
+        } catch (error) {
+            console.error("Google login failed:", error);
+            alert("Unable to start Google login. Please try again.");
+        }
     };
 
     const handleAppleLogin = () => {
