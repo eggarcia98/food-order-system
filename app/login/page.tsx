@@ -9,19 +9,12 @@ type AuthMode = "social" | "login" | "signup";
 
 export default function LoginPage() {
     const router = useRouter();
-    const [authMode, setAuthMode] = useState<AuthMode>("social");
 
     const [loginEmail, setLoginEmail] = useState("");
     const [loginPassword, setLoginPassword] = useState("");
 
-    const [signupName, setSignupName] = useState("");
-    const [signupEmail, setSignupEmail] = useState("");
     const [signupPassword, setSignupPassword] = useState("");
     const [signupConfirmPassword, setSignupConfirmPassword] = useState("");
-
-    const handleGoogleLogin = () => {};
-
-    const handleAppleLogin = () => {};
 
     const handleLoginSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -47,23 +40,12 @@ export default function LoginPage() {
         }
     };
 
-    const handleSignupSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-
-        // Validate password match
-        if (signupPassword !== signupConfirmPassword) {
-            alert("Passwords don't match!");
-            return;
-        }
-
-        // TODO: Handle user registration
-        // Handle signup
-        // console.log("Signup:", {
-        if (signupPassword !== signupConfirmPassword) {
-            alert("Passwords don't match!");
-            return;
-        }
-      <h2 className="relative -top-8 bg-white -left-3 w-fit px-3 text-2xl font-extrabold tracking-wider font-bungee rounded-xl">
+    return (
+        <div className="min-h-[calc(100vh-200px)] flex items-center justify-center p-6">
+            <div className="mx-auto w-full max-w-md">
+                <div className="border-3 border-brand rounded-md px-6 pb-8 pt-4 bg-white shadow-lg">
+                    {/* Heading overlay */}
+                    <h2 className="relative -top-8 bg-white -left-3 w-fit px-3 text-2xl font-extrabold tracking-wider font-bungee rounded-xl">
                         WELCOME
                     </h2>
 
