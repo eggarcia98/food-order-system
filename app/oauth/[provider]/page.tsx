@@ -9,7 +9,6 @@ export default function OAuthCallbackPage() {
     const provider = params.provider as string;
 
     useEffect(() => {
-        // Extract fragment parameters (after #)
         const hash = window.location.hash.substring(1);
         const fragments: Record<string, string> = {};
         
@@ -20,20 +19,16 @@ export default function OAuthCallbackPage() {
             });
         }
 
-        // Combine search params and fragments
         const combined: Record<string, string> = {};
         
-        // Add search params (query string)
         searchParams.forEach((value, key) => {
             combined[key] = value;
         });
         
-        // Add fragment params
         Object.entries(fragments).forEach(([key, value]) => {
             combined[key] = value;
         });
 
-        // Send tokens to API callback
         if (Object.keys(combined).length > 0) {
             sendTokensToBackend(combined);
         }
@@ -63,8 +58,7 @@ export default function OAuthCallbackPage() {
         }
     };
 
-    return (
-        <div className="min-h-screen flex items-center justify-center">
+    return ( className="min-h-screen flex items-center justify-center">
             <img src="/loading-icon.svg" alt="Loading..." className="w-12 h-12" />
         </div>
     );

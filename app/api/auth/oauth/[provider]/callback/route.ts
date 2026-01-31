@@ -22,7 +22,6 @@ export async function POST(request: Request, { params }: RouteParams) {
 
         const body = await request.json();
 
-        // Validate tokens received from OAuth provider
         if (!body || Object.keys(body).length === 0) {
             return NextResponse.json(
                 { error: "No tokens provided" },
@@ -34,7 +33,6 @@ export async function POST(request: Request, { params }: RouteParams) {
             keys: Object.keys(body),
         });
 
-        // Forward tokens to auth backend
         console.log(`[OAuth ${provider}] Forwarding to auth backend: ${authUrl}/oauth/${provider}/callback`);
 
         const response = await fetch(`${authUrl}/oauth/${provider}/callback`, {

@@ -22,9 +22,7 @@ export default function SocialLoginButtons() {
         }
     };
 
-    const handleAppleLogin = () => {
-        // TODO: Implement Apple login
-    };
+    const handleAppleLogin = () => {};
 
     return (
         <div className="space-y-4">
