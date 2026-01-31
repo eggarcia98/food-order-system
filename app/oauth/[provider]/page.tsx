@@ -58,7 +58,8 @@ export default function OAuthCallbackPage() {
         }
     };
 
-    return ( className="min-h-screen flex items-center justify-center">
+    return (
+        <div className="min-h-screen flex items-center justify-center">
             <img src="/loading-icon.svg" alt="Loading..." className="w-12 h-12" />
         </div>
     );
