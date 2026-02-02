@@ -8,15 +8,15 @@ interface RouteParams {
     };
 }
 
-export async function POST(request: Request, { params }: RouteParams) {
+export async function POST(request: Request) {
     try {
-        const { provider } = params;
+        const { provider } = await request.json();
         const authUrl = process.env.AUTH_ENDPOINT;
 
         if (!authUrl) {
             return NextResponse.json(
                 { error: "Missing AUTH_ENDPOINT env var" },
-                { status: 500 }
+                { status: 500 },
             );
         }
 
@@ -25,7 +25,7 @@ export async function POST(request: Request, { params }: RouteParams) {
         if (!body || Object.keys(body).length === 0) {
             return NextResponse.json(
                 { error: "No tokens provided" },
-                { status: 400 }
+                { status: 400 },
             );
         }
 
@@ -33,7 +33,9 @@ export async function POST(request: Request, { params }: RouteParams) {
             keys: Object.keys(body),
         });
 
-        console.log(`[OAuth ${provider}] Forwarding to auth backend: ${authUrl}/oauth/${provider}/callback`);
+        console.log(
+            `[OAuth ${provider}] Forwarding to auth backend: ${authUrl}/oauth/${provider}/callback`,
+        );
 
         const response = await fetch(`${authUrl}/oauth/${provider}/callback`, {
             method: "POST",
@@ -48,7 +50,7 @@ export async function POST(request: Request, { params }: RouteParams) {
             console.error(`[OAuth ${provider}] Auth backend error:`, data);
             return NextResponse.json(
                 { error: data?.error || "OAuth callback failed" },
-                { status: response.status }
+                { status: response.status },
             );
         }
 
@@ -59,7 +61,7 @@ export async function POST(request: Request, { params }: RouteParams) {
         console.error("Error processing OAuth callback:", error);
         return NextResponse.json(
             { error: "Failed to process OAuth callback" },
-            { status: 500 }
+            { status: 500 },
         );
     }
 }
