@@ -8,9 +8,9 @@ interface RouteParams {
     };
 }
 
-export async function POST(request: Request, { params }: RouteParams) {
+export async function POST(request: Request) {
     try {
-        const { provider } = params;
+        const { provider } = await request.json();
         const authUrl = process.env.AUTH_ENDPOINT;
 
         if (!authUrl) {

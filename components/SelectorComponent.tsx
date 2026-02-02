@@ -67,6 +67,7 @@ export const Selector: FC<SelectorProps> = ({
                       </optgroup>
                   ))
                 : // Render simple list
+                  selectorList.map(({ id, name, price }) => (
                       <option key={id} value={id}>
                           {name} {price ? `- $${price.toFixed(2)}` : ""}
                       </option>
@@ -75,4 +76,4 @@ export const Selector: FC<SelectorProps> = ({
     );
 };
 
-//
+// Export the dish lists for external use if needed
