@@ -102,7 +102,388 @@ export default function OrdersList() {
         fetchOrders();
     }, []);
 
-    // Set default view mode based on screen size (compact for small screens, detailed for larger)
+    const fetchOrders = async () => {
+        try {
+            setIsLoading(true);
+            
+            // MOCK DATA FOR PRESENTATION - API DISABLED FOR SAFETY
+            const mockOrders: Order[] = [
+                {
+                    id: 1,
+                    order_code: "ORD-001",
+                    customer_id: 1,
+                    comments: "Please make it spicy!",
+                    created_at: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+                    customer: {
+                        id: 1,
+                        first_name: "Emma",
+                        last_name: "Thompson",
+                        phone_number: "0412345678",
+                        nationality_id: 1,
+                    },
+                    order_items: [
+                        {
+                            id: 1,
+                            order_id: 1,
+                            quantity: 2,
+                            variant_id: 1,
+                            ItemVariant: {
+                                id: 1,
+                                variant_name: "Encebollado + Plantain Chips",
+                                price: 23.00,
+                                MenuItem: {
+                                    id: 1,
+                                    name: "Encebollado",
+                                    category_id: 1,
+                                },
+                            },
+                        },
+                        {
+                            id: 2,
+                            order_id: 1,
+                            quantity: 1,
+                            variant_id: 2,
+                            ItemVariant: {
+                                id: 2,
+                                variant_name: "Second of Chicken",
+                                price: 15.00,
+                                MenuItem: {
+                                    id: 2,
+                                    name: "Second of Chicken",
+                                    category_id: 1,
+                                },
+                            },
+                        },
+                    ],
+                    order_item_extras: [
+                        {
+                            id: 1,
+                            order_id: 1,
+                            extra_id: 1,
+                            quantity: 1,
+                            MenuExtras: {
+                                extra_id: 1,
+                                name: "Fried Egg",
+                                cost: 1.00,
+                                price: 2.00,
+                                description: "Fried egg",
+                            },
+                        },
+                        {
+                            id: 7,
+                            order_id: 1,
+                            extra_id: 4,
+                            quantity: 1,
+                            MenuExtras: {
+                                extra_id: 4,
+                                name: "Coca Cola",
+                                cost: 2.00,
+                                price: 3.00,
+                                description: "Soft drink",
+                            },
+                        },
+                    ],
+                    status: { id: 1, name: "Received" },
+                },
+                {
+                    id: 2,
+                    order_code: "ORD-002",
+                    customer_id: 2,
+                    comments: "",
+                    created_at: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
+                    customer: {
+                        id: 2,
+                        first_name: "James",
+                        last_name: "O'Connor",
+                        phone_number: "0423456789",
+                        nationality_id: 1,
+                    },
+                    order_items: [
+                        {
+                            id: 3,
+                            order_id: 2,
+                            quantity: 1,
+                            variant_id: 3,
+                            ItemVariant: {
+                                id: 3,
+                                variant_name: "Ceviche + Plantain Chips",
+                                price: 28.00,
+                                MenuItem: {
+                                    id: 3,
+                                    name: "Ceviche",
+                                    category_id: 2,
+                                },
+                            },
+                        },
+                    ],
+                    order_item_extras: [
+                        {
+                            id: 2,
+                            order_id: 2,
+                            extra_id: 2,
+                            quantity: 1,
+                            MenuExtras: {
+                                extra_id: 2,
+                                name: "Plantain Chips",
+                                cost: 2.00,
+                                price: 3.00,
+                                description: "Fried plantain chips",
+                            },
+                        },
+                    ],
+                    status: { id: 5, name: "Dispatched" },
+                },
+                {
+                    id: 3,
+                    order_code: "ORD-003",
+                    customer_id: 3,
+                    comments: "Extra cilantro please",
+                    created_at: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
+                    customer: {
+                        id: 3,
+                        first_name: "Sophia",
+                        last_name: "Nguyen",
+                        phone_number: "0434567890",
+                        nationality_id: 1,
+                    },
+                    order_items: [
+                        {
+                            id: 4,
+                            order_id: 3,
+                            quantity: 2,
+                            variant_id: 4,
+                            ItemVariant: {
+                                id: 4,
+                                variant_name: "Mixed Bolon (Cheese and Pork)",
+                                price: 22.00,
+                                MenuItem: {
+                                    id: 4,
+                                    name: "Bolon",
+                                    category_id: 1,
+                                },
+                            },
+                        },
+                    ],
+                    order_item_extras: [],
+                    status: { id: 1, name: "Received" },
+                },
+                {
+                    id: 4,
+                    order_code: "ORD-004",
+                    customer_id: 4,
+                    comments: "No onions",
+                    created_at: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
+                    customer: {
+                        id: 4,
+                        first_name: "Lucas",
+                        last_name: "Smith",
+                        phone_number: "0445678901",
+                        nationality_id: 1,
+                    },
+                    order_items: [
+                        {
+                            id: 5,
+                            order_id: 4,
+                            quantity: 1,
+                            variant_id: 5,
+                            ItemVariant: {
+                                id: 5,
+                                variant_name: "Pork Belly Bolon",
+                                price: 18.00,
+                                MenuItem: {
+                                    id: 4,
+                                    name: "Bolon",
+                                    category_id: 1,
+                                },
+                            },
+                        },
+                        {
+                            id: 7,
+                            order_id: 4,
+                            quantity: 1,
+                            variant_id: 7,
+                            ItemVariant: {
+                                id: 7,
+                                variant_name: "Cheese Bolon",
+                                price: 18.00,
+                                MenuItem: {
+                                    id: 4,
+                                    name: "Bolon",
+                                    category_id: 1,
+                                },
+                            },
+                        },
+                    ],
+                    order_item_extras: [
+                        {
+                            id: 3,
+                            order_id: 4,
+                            extra_id: 1,
+                            quantity: 2,
+                            MenuExtras: {
+                                extra_id: 1,
+                                name: "35g Albacore Fish",
+                                cost: 3.50,
+                                price: 5.00,
+                                description: "Albacore fish portion",
+                            },
+                        },
+                        {
+                            id: 4,
+                            order_id: 4,
+                            extra_id: 3,
+                            quantity: 1,
+                            MenuExtras: {
+                                extra_id: 3,
+                                name: "Ripe Plantain",
+                                cost: 1.00,
+                                price: 2.00,
+                                description: "Ripe plantain",
+                            },
+                        },
+                    ],
+                    status: { id: 5, name: "Dispatched" },
+                },
+                {
+                    id: 5,
+                    order_code: "ORD-005",
+                    customer_id: 5,
+                    comments: "",
+                    created_at: new Date(Date.now() - 1000 * 60 * 150).toISOString(),
+                    customer: {
+                        id: 5,
+                        first_name: "Isabella",
+                        last_name: "Chen",
+                        phone_number: "0456789012",
+                        nationality_id: 1,
+                    },
+                    order_items: [
+                        {
+                            id: 6,
+                            order_id: 5,
+                            quantity: 1,
+                            variant_id: 6,
+                            ItemVariant: {
+                                id: 6,
+                                variant_name: "Encebollado",
+                                price: 20.00,
+                                MenuItem: {
+                                    id: 1,
+                                    name: "Encebollado",
+                                    category_id: 1,
+                                },
+                            },
+                        },
+                    ],
+                    order_item_extras: [
+                        {
+                            id: 5,
+                            order_id: 5,
+                            extra_id: 3,
+                            quantity: 1,
+                            MenuExtras: {
+                                extra_id: 3,
+                                name: "Ripe Plantain",
+                                cost: 1.00,
+                                price: 2.00,
+                                description: "Ripe plantain",
+                            },
+                        },
+                    ],
+                    status: { id: 1, name: "Received" },
+                },
+                {
+                    id: 6,
+                    order_code: "ORD-006",
+                    customer_id: 6,
+                    comments: "Extra lime please",
+                    created_at: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
+                    customer: {
+                        id: 6,
+                        first_name: "Oliver",
+                        last_name: "Martinez",
+                        phone_number: "0467890123",
+                        nationality_id: 1,
+                    },
+                    order_items: [
+                        {
+                            id: 8,
+                            order_id: 6,
+                            quantity: 1,
+                            variant_id: 8,
+                            ItemVariant: {
+                                id: 8,
+                                variant_name: "Ceviche",
+                                price: 25.00,
+                                MenuItem: {
+                                    id: 3,
+                                    name: "Ceviche",
+                                    category_id: 2,
+                                },
+                            },
+                        },
+                        {
+                            id: 9,
+                            order_id: 6,
+                            quantity: 1,
+                            variant_id: 9,
+                            ItemVariant: {
+                                id: 9,
+                                variant_name: "Second of Chicken",
+                                price: 15.00,
+                                MenuItem: {
+                                    id: 2,
+                                    name: "Second of Chicken",
+                                    category_id: 1,
+                                },
+                            },
+                        },
+                    ],
+                    order_item_extras: [
+                        {
+                            id: 6,
+                            order_id: 6,
+                            extra_id: 2,
+                            quantity: 1,
+                            MenuExtras: {
+                                extra_id: 2,
+                                name: "Plantain Chips",
+                                cost: 2.00,
+                                price: 3.00,
+                                description: "Fried plantain chips",
+                            },
+                        },
+                        {
+                            id: 8,
+                            order_id: 6,
+                            extra_id: 1,
+                            quantity: 1,
+                            MenuExtras: {
+                                extra_id: 1,
+                                name: "Fried Egg",
+                                cost: 1.00,
+                                price: 2.00,
+                                description: "Fried egg",
+                            },
+                        },
+                    ],
+                    status: { id: 1, name: "Received" },
+                },
+            ];
+            
+            setOrders(mockOrders);
+            
+            // API CALL DISABLED - Remove comments below to re-enable
+            // const response = await fetch("/api/orders");
+            // if (!response.ok) throw new Error("Failed to fetch orders");
+            // const data: Order[] = await response.json();
+            // setOrders(data);
+        } catch (err) {
+            setError("Failed to load orders. Please try again.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
     useEffect(() => {
         if (typeof window === "undefined") return;
         const mql = window.matchMedia("(max-width: 768px)");
@@ -115,20 +496,6 @@ export default function OrdersList() {
         mql.addEventListener("change", apply);
         return () => mql.removeEventListener("change", apply);
     }, [userSetViewMode]);
-
-    const fetchOrders = async () => {
-        try {
-            setIsLoading(true);
-            const response = await fetch("/api/orders");
-            if (!response.ok) throw new Error("Failed to fetch orders");
-            const data: Order[] = await response.json();
-            setOrders(data);
-        } catch (err) {
-            setError("Failed to load orders. Please try again.");
-        } finally {
-            setIsLoading(false);
-        }
-    };
 
     const getSidesForOrder = (order: Order) => {
         return order.order_item_extras.map((osi) => {
@@ -186,6 +553,11 @@ export default function OrdersList() {
     };
 
     const updateOrderStatus = async (orderId: number, status_id: number) => {
+        // API CALL DISABLED FOR PRESENTATION
+        console.log(`Order ${orderId} status would be updated to ${status_id}`);
+        return;
+        
+        /* DISABLED - Remove comments to re-enable
         try {
             const response = await fetch(`/api/orders/${orderId}/dispatch`, {
                 method: "PUT",
@@ -195,11 +567,11 @@ export default function OrdersList() {
                 },
             });
             if (!response.ok) throw new Error("Failed to update order status");
-            // Refresh orders after updating status
             fetchOrders();
         } catch (err) {
             setError("Failed to update order status. Please try again.");
         }
+        */
     };
 
     const getMenuItemSummary = (orders: Order[]) => {

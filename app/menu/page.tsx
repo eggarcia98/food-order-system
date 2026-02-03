@@ -63,10 +63,10 @@ export default function MenuPage() {
 
     return (
         <div className=" mx-auto relative w-auto max-w-6xl p-6 m-8 ">
-            <div className="grid grid-col-1 md:grid-cols-3 md:grid-rows-2 gap-6 space-y-4">
+            <div className="grid grid-col-1 md:grid-cols-3 gap-6 space-y-4 md:space-y-0 md:items-start">
                 <div className="relative border-3 border-brand rounded-md px-6 pb-6 pt-8 col-span-3 w-full bg-background">
                     <h2
-                        className="absolute -top-3 left-4 px-2 text-2xl font-black tracking-tight font-bungee leading-none  bg-background"
+                        className="absolute -top-3 left-4 px-2 text-2xl lg:text-3xl xl:text-4xl font-black tracking-tight font-bungee leading-none  bg-background"
                         style={{ WebkitTextStroke: "0.5px #3D3935" }}
                     >
                         THE MAINS
@@ -78,11 +78,11 @@ export default function MenuPage() {
                             .map((menuItem) => (
                             <li key={menuItem.id} className="flex gap-2 md:gap-4 items-center">
                                 <div className="flex-1">
-                                    <div className="text-lg font-medium">
+                                    <div className="text-lg lg:text-xl xl:text-2xl font-medium">
                                         {menuItem.name.toUpperCase()}
                                     </div>
                                     {menuItem.description && (
-                                        <div className="text-sm text-secondary">
+                                        <div className="text-sm lg:text-base xl:text-lg text-secondary">
                                             {menuItem.description}
                                         </div>
                                     )}
@@ -97,11 +97,11 @@ export default function MenuPage() {
                                                     key={variant.id}
                                                     className="flex items-center gap-4 "
                                                 >
-                                                    <span className="flex-none w-32 sm:w-40 md:w-52 lg:w-60 text-xs sm:text-sm">
+                                                    <span className="flex-none w-32 sm:w-40 md:w-52 lg:w-60 text-xs sm:text-sm lg:text-base xl:text-lg">
                                                         {variant.variant_name}
                                                     </span>
                                                     <span className="flex-1 border-b border-dashed border-gray-400"></span>
-                                                    <span className="flex-none w-16 text-right ">
+                                                    <span className="flex-none w-16 text-right text-xs sm:text-sm lg:text-base xl:text-lg">
                                                         $ {variant.price}
                                                     </span>
                                                 </li>
@@ -123,15 +123,15 @@ export default function MenuPage() {
                 </div>
 
                 {/* EXTRAS Section */}
-                <div className="border-2 border-foreground rounded-xl px-5 py-4 col-span-3 md:col-span-1 bg-background">
-                    <h3 className="font-bold text-lg mb-4 font-bungee">
+                <div className="border-2 border-foreground rounded-xl px-4 py-3 col-span-3 md:col-span-1 bg-background h-fit">
+                    <h3 className="font-bold text-lg lg:text-xl xl:text-2xl mb-2 font-bungee">
                         EXTRAS
                     </h3>
 
-                    <ul className="space-y-2">
+                    <ul className="space-y-1.5">
                         <li className="flex items-center gap-3">
                             <span className="text-foreground">•</span>
-                            <span className="flex-1 text-sm">
+                            <span className="flex-1 text-sm lg:text-base xl:text-lg">
                                 35g Albacore Fish
                             </span>
                             <span className=" border-b border-dashed border-gray-300 flex-1"></span>
@@ -142,7 +142,7 @@ export default function MenuPage() {
 
                         <li className="flex items-center gap-3">
                             <span className="text-foreground">•</span>
-                            <span className="flex-1 text-sm">Fried Egg</span>
+                            <span className="flex-1 text-sm lg:text-base xl:text-lg">Fried Egg</span>
                             <span className=" border-b border-dashed border-gray-300 flex-1"></span>
                             <span className=" text-right text-sm ml-2">
                                 $ 2
@@ -151,7 +151,7 @@ export default function MenuPage() {
 
                         <li className="flex items-center gap-3">
                             <span className="text-foreground">•</span>
-                            <span className="flex-1 text-sm">
+                            <span className="flex-1 text-sm lg:text-base xl:text-lg">
                                 Plantain Chips
                             </span>
                             <span className=" border-b border-dashed border-gray-300 flex-1"></span>
@@ -162,7 +162,7 @@ export default function MenuPage() {
 
                         <li className="flex items-center gap-3">
                             <span className="text-foreground">•</span>
-                            <span className="flex-1 text-sm">Coca Cola</span>
+                            <span className="flex-1 text-sm lg:text-base xl:text-lg">Coca Cola</span>
                             <span className=" border-b border-dashed border-gray-300 flex-1"></span>
                             <span className=" text-right text-sm ml-2">
                                 $ 3
@@ -171,7 +171,7 @@ export default function MenuPage() {
 
                         <li className="flex items-center gap-3">
                             <span className="text-foreground">•</span>
-                            <span className="flex-1 text-sm">
+                            <span className="flex-1 text-sm lg:text-base xl:text-lg">
                                 Ripe Plantain
                             </span>
                             <span className=" border-b border-dashed border-gray-300 flex-1"></span>
@@ -183,30 +183,30 @@ export default function MenuPage() {
                 </div>
 
                 {/* DELIVERY Section */}
-                <div className="border-2 border-brand-blue rounded-xl px-5 py-4 col-span-3 md:col-span-2 bg-background">
-                    <h3 className="font-bold text-lg mb-4 font-bungee">
+                <div className="border-2 border-brand-blue rounded-xl px-4 py-3 col-span-3 md:col-span-2 bg-background h-fit">
+                    <h3 className="font-bold text-lg lg:text-xl xl:text-2xl mb-2 font-bungee">
                         DELIVERY
                     </h3>
 
-                    <div className="space-y-5">
+                    <div className="space-y-3">
                         <div>
-                            <p className="font-semibold text-sm mb-2 text-foreground">
+                            <p className="font-semibold text-sm lg:text-base xl:text-lg mb-1 text-foreground">
                                 Extra Fee:
                             </p>
-                            <p className="text-sm text-secondary">
+                            <p className="text-sm lg:text-base xl:text-lg text-secondary">
                                 $1.5 for each km from "Los Guayacos Location" to
                                 your place
                             </p>
                         </div>
 
                         <div>
-                            <p className="font-semibold text-sm mb-2 text-foreground">
+                            <p className="font-semibold text-sm lg:text-base xl:text-lg mb-1 text-foreground">
                                 Delivery Time:
                             </p>
-                            <p className="text-sm text-secondary mb-3">
+                            <p className="text-sm lg:text-base xl:text-lg text-secondary mb-2">
                                 11:00AM - 13:00PM
                             </p>
-                            <p className="text-brand-red font-semibold text-sm">
+                            <p className="text-brand-red font-semibold text-sm lg:text-base xl:text-lg">
                                 ASK FOR
                                 <br />
                                 AVAILABILITY
@@ -216,15 +216,15 @@ export default function MenuPage() {
                 </div>
 
                 {/* INFO Section */}
-                <div className="border-2 border-brand-blue rounded-xl px-5 py-4 col-span-3 bg-background">
-                    <h3 className="font-bold text-lg mb-4 font-bungee">INFO</h3>
+                <div className="border-2 border-brand-blue rounded-xl px-4 py-3 col-span-3 bg-background h-fit">
+                    <h3 className="font-bold text-lg lg:text-xl xl:text-2xl mb-2 font-bungee">INFO</h3>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
-                            <p className="font-semibold text-sm mb-2 text-foreground">
+                            <p className="font-semibold text-sm lg:text-base xl:text-lg mb-1 text-foreground">
                                 Location:
                             </p>
-                            <p className="text-sm text-secondary leading-relaxed">
+                            <p className="text-sm lg:text-base xl:text-lg text-secondary leading-relaxed">
                                 26 Chermside St,{" "}
                                 <span className="text-brand-red font-semibold">
                                     Grange
@@ -235,17 +235,17 @@ export default function MenuPage() {
                         </div>
 
                         <div>
-                            <p className="font-semibold text-sm mb-2 text-foreground">
+                            <p className="font-semibold text-sm lg:text-base xl:text-lg mb-1 text-foreground">
                                 Phone:
                             </p>
-                            <p className="text-sm text-secondary">0433807915</p>
+                            <p className="text-sm lg:text-base xl:text-lg text-secondary">0433807915</p>
                         </div>
 
                         <div>
-                            <p className="font-semibold text-sm mb-2 text-foreground">
+                            <p className="font-semibold text-sm lg:text-base xl:text-lg mb-1 text-foreground">
                                 Open Hours:
                             </p>
-                            <p className="text-sm text-secondary">
+                            <p className="text-sm lg:text-base xl:text-lg text-secondary">
                                 Sun, 10:30 AM - 2:00 PM
                             </p>
                         </div>

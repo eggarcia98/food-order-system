@@ -36,7 +36,7 @@ export default function HeaderComponent() {
                                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-red group-hover:w-full transition-all duration-300"></span>
                             </Link>
                         </li>
-                        {/* <li>
+                        <li>
                             <Link
                                 href="/orders"
                                 className="text-sm font-light text-foreground hover:text-brand-red transition-colors duration-200 relative group"
@@ -44,7 +44,7 @@ export default function HeaderComponent() {
                                 Orders
                                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-red group-hover:w-full transition-all duration-300"></span>
                             </Link>
-                        </li> */}
+                        </li>
                     </ul>
                     <Link
                         className="btn-brand-blue px-6 py-2.5 rounded-lg font-light text-sm transition-all duration-200"
@@ -108,13 +108,13 @@ export default function HeaderComponent() {
                     >
                         Menu
                     </Link>
-                    {/* <Link
+                    <Link
                         href="/orders"
                         onClick={() => setMenuOpen(false)}
                         className="block px-4 py-2.5 text-foreground font-light hover:bg-soft-pink/20 rounded-lg transition-colors duration-200"
                     >
                         Orders
-                    </Link> */}
+                    </Link>
                 </nav>
             </div>
         </header>
