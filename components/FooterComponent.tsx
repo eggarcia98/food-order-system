@@ -192,6 +192,12 @@ export default function FooterComponent() {
                     </ul>
                 </nav>
             </div>
+            <div className="border-t border-soft-pink/20 py-4 text-center">
+                <p className="text-xs font-light text-text-light">
+                    © {new Date().getFullYear()} Los Guayacos Restaurant. All
+                    rights reserved.
+                </p>
+            </div>
         </footer>
     );
 }
