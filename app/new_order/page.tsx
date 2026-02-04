@@ -66,8 +66,6 @@ export default function NewOrderPage() {
         }
     };
 
-   
-
     const fetchExtraItems = async () => {
         try {
             const response = await fetch("/api/menu_extras");
@@ -89,7 +87,6 @@ export default function NewOrderPage() {
             console.error("Error fetching previous customers:", error);
         }
     };
-
 
     const fetchMenuItems = async () => {
         try {
@@ -121,8 +118,6 @@ export default function NewOrderPage() {
         setConfirmedExtraItems(updatedItems);
     };
 
-
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
@@ -151,7 +146,7 @@ export default function NewOrderPage() {
                 type: "success",
                 text: "Order registered successfully!",
             });
-            // Reset form
+
             setPhoneNumber("");
             setLastname("");
             setFirstname("");
@@ -171,12 +166,10 @@ export default function NewOrderPage() {
         }
     };
 
-    // Autocomplete states
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [filteredSuggestions, setFilteredSuggestions] = useState<any[]>([]);
     const suggestionsRef = useRef<HTMLDivElement>(null);
 
-    // Nationality autocomplete states
     const [nationalitySearch, setNationalitySearch] = useState("");
     const [showNationalitySuggestions, setShowNationalitySuggestions] = useState(false);
     const [filteredNationalities, setFilteredNationalities] = useState<any[]>([]);
@@ -203,8 +196,7 @@ export default function NewOrderPage() {
         setFirstname(customer.first_name || "");
         setLastname(customer.last_name || "");
         setShowSuggestions(false);
-        
-        // Update nationality search display
+
         const selectedNationality = nationalityList.find(n => n.id === customer.nationality_id);
         if (selectedNationality) {
             setNationalitySearch(selectedNationality.name);
@@ -233,7 +225,6 @@ export default function NewOrderPage() {
         setShowNationalitySuggestions(false);
     };
 
-    // Click outside handler for phone suggestions
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
@@ -250,7 +241,6 @@ export default function NewOrderPage() {
         };
     }, []);
 
-    // Click outside handler for nationality suggestions
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
@@ -271,9 +261,9 @@ export default function NewOrderPage() {
         <div
             className={`flex flex-col m-8 min-h-screen bg-gradient-to-b from-background via-cream/30 to-background`}
         >
-            <div className="w-full max-w-5xl mx-auto p-6 flex-grow ">
+            <div className="w-full max-w-5xl mx-auto p-6 flex-grow">
                 <div className="flex justify-between">
-                    {/* Header */}
+
                     <div className="mb-8">
                         <h1 className="text-4xl font-light text-foreground mb-2">
                             New Order
@@ -283,19 +273,10 @@ export default function NewOrderPage() {
                         </p>
                     </div>
 
-                    {/* View Orders Link */}
-                    {/* <div className="flex justify-end mb-6 h-fit">
-                        <Link
-                            href="/orders"
-                            className="px-6 py-2.5 rounded-lg transition text-sm font-light btn-brand-blue"
-                        >
-                            View Orders
-                        </Link>
-                    </div> */}
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-8">
-                    {/* Customer Information Card */}
+
                     <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-8 space-y-6">
                         <h2 className="text-xl font-light text-foreground uppercase tracking-wide">
                             Customer Information
@@ -332,7 +313,6 @@ export default function NewOrderPage() {
                                         autoComplete="off"
                                     />
 
-                                    {/* Suggestions Dropdown */}
                                     {showSuggestions &&
                                         filteredSuggestions.length > 0 && (
                                             <div className="absolute z-10 w-full mt-1 bg-white/95 backdrop-blur-sm border border-soft-pink/20 rounded-lg shadow-lg max-h-60 overflow-auto">
@@ -407,7 +387,6 @@ export default function NewOrderPage() {
                                         autoComplete="off"
                                     />
 
-                                    {/* Nationality Suggestions Dropdown */}
                                     {showNationalitySuggestions && filteredNationalities.length > 0 && (
                                         <div className="absolute z-10 w-full mt-1 bg-white/95 backdrop-blur-sm border border-soft-pink/20 rounded-lg shadow-lg max-h-60 overflow-auto">
                                             {filteredNationalities.slice(0, 3).map((nat) => (
@@ -469,7 +448,6 @@ export default function NewOrderPage() {
                         </div>
                     </div>
 
-                    {/* Overlay for Main Items Modal */}
                     <div
                         className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${
                             openAddMainItemModal
@@ -486,7 +464,6 @@ export default function NewOrderPage() {
                         setConfirmedMainItems={setConfirmedMainItems}
                     />
 
-                    {/* Overlay for Extra Items Modal */}
                     <div
                         className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${
                             openAddExtraItemModal
@@ -503,7 +480,6 @@ export default function NewOrderPage() {
                         setConfirmedExtraItems={setConfirmedExtraItems}
                     />
 
-                    {/* Order Items Card */}
                     <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-8 space-y-6">
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-xl font-light text-foreground uppercase tracking-wide">
@@ -511,7 +487,6 @@ export default function NewOrderPage() {
                             </h2>
                         </div>
 
-                        {/* Main Items Section */}
                         <div className="space-y-4">
                             <div className="flex justify-between items-center">
                                 <h3 className="text-lg font-light text-foreground">
@@ -577,7 +552,6 @@ export default function NewOrderPage() {
                             )}
                         </div>
 
-                        {/* Elegant Divider */}
                         <div className="relative py-4">
                             <div className="absolute inset-0 flex items-center">
                                 <div className="w-full border-t border-gradient-to-r from-transparent via-brand-blue/30 to-transparent"></div>
@@ -589,7 +563,6 @@ export default function NewOrderPage() {
                             </div>
                         </div>
 
-                        {/* Extra Items Section */}
                         <div className="space-y-4">
                             <div className="flex justify-between items-center">
                                 <h3 className="text-lg font-light text-foreground">
@@ -656,7 +629,6 @@ export default function NewOrderPage() {
                         </div>
                     </div>
 
-                    {/* Comments Card */}
                     <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-8 space-y-4">
                         <label className="block text-sm font-light text-foreground uppercase tracking-wide">
                             Special Notes
@@ -670,7 +642,6 @@ export default function NewOrderPage() {
                         />
                     </div>
 
-                    {/* Submit Button */}
                     <button
                         type="submit"
                         disabled={isSubmitting}
@@ -685,7 +656,6 @@ export default function NewOrderPage() {
                             : "Register Order"}
                     </button>
 
-                    {/* Success/Error Message */}
                     {message && (
                         <div
                             className={`p-4 mb-6 rounded-2xl backdrop-blur-sm font-light text-sm ${

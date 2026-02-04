@@ -98,7 +98,6 @@ export default function RootLayout({
             >
                 <HeaderComponent />
 
-                {/* Main content with top padding for fixed navbar */}
                 <main className="flex-1 pt-16 transition-all duration-300 bg-gradient-to-b from-background via-cream/30 to-background">
                     <div className="min-h-full">
                         {children}

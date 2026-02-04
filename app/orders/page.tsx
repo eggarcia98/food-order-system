@@ -1,4 +1,4 @@
-// app/orders/page.tsx
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -10,7 +10,7 @@ export interface Order {
     order_code: string;
     customer_id: number;
     comments: string;
-    created_at: string; // ISO date string
+    created_at: string;
     customer: Customer;
     order_items: OrderItem[];
     order_item_extras: OrderExtraItem[];
@@ -73,14 +73,13 @@ export default function OrdersList() {
     const [userSetViewMode, setUserSetViewMode] = useState(false);
     const [expandedOrders, setExpandedOrders] = useState<Set<number>>(new Set());
 
-    // Get current week (Monday - Sunday)
     const getWeekDates = () => {
         const now = new Date();
-        const dayOfWeek = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
-        const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Adjust if Sunday
+        const dayOfWeek = now.getDay();
+        const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
 
         const monday = new Date(now);
-        monday.setDate(now.getDate() + diff + 1); // I have to check timezone of database
+        monday.setDate(now.getDate() + diff + 1);
         monday.setHours(0, 0, 0, 0);
 
         const sunday = new Date(monday);
@@ -102,7 +101,6 @@ export default function OrdersList() {
         fetchOrders();
     }, []);
 
-    // Set default view mode based on screen size (compact for small screens, detailed for larger)
     useEffect(() => {
         if (typeof window === "undefined") return;
         const mql = window.matchMedia("(max-width: 768px)");
@@ -195,7 +193,7 @@ export default function OrdersList() {
                 },
             });
             if (!response.ok) throw new Error("Failed to update order status");
-            // Refresh orders after updating status
+
             fetchOrders();
         } catch (err) {
             setError("Failed to update order status. Please try again.");
@@ -207,7 +205,7 @@ export default function OrdersList() {
             [key: string]: { name: string; received: number; dispatched: number };
         } = {};
         orders
-            // Exclude cancelled orders (status id 6)
+
             .filter((order) => order.status?.id !== 6)
             .forEach((order) => {
                 const isReceived = order.status?.id === 1;
@@ -299,33 +297,28 @@ export default function OrdersList() {
     };
 
     const formatAustralianNumber = (phoneNumber: string): string => {
-        // Remove all non-digit characters
+
         let cleaned = phoneNumber.replace(/[^0-9]/g, '');
-        
-        // If number starts with 61 (country code without +), keep it
+
         if (cleaned.startsWith('61')) {
             return cleaned;
         }
-        
-        // If number starts with 0 (Australian local format), replace with 61
+
         if (cleaned.startsWith('0')) {
             return '61' + cleaned.substring(1);
         }
-        
-        // If number doesn't start with 61 or 0, assume it's missing country code
-        // and it's an Australian mobile (should start with 4) or landline
+
         if (cleaned.length >= 9) {
             return '61' + cleaned;
         }
-        
-        // Return as-is if format is unclear
+
         return cleaned;
     };
 
     const getWhatsAppLink = (order: Order, messageType: 'confirmation' | 'info' = 'confirmation') => {
         const phone = formatAustralianNumber(order.customer.phone_number);
         const customerName = `${order.customer.first_name} ${order.customer.last_name}`;
-        
+
         let message = '';
 
         if (messageType === 'confirmation') {
@@ -336,7 +329,7 @@ export default function OrdersList() {
                 .map(side => `${side.name} x${side.quantity}`)
                 .join(', ');
             const total = getTotal(order).toFixed(2);
-            
+
             message = `Hi ${customerName}! 👋\n\nYour order has been confirmed:\n\n`;
             message += `📋 *Order Details:*\n${items}`;
             if (sides) {
@@ -353,7 +346,7 @@ export default function OrdersList() {
             message += `(Dine-in service ends at 2:30 PM)\n\n`;
             message += `Thank you for choosing us! 🙏`;
         }
-        
+
         return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
     };
 
@@ -361,7 +354,7 @@ export default function OrdersList() {
         return (
             <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
-                    <object 
+                    <object
                         data="/loading-icon.svg"
                         type="image/svg+xml"
                         className="h-12 w-12 mx-auto"
@@ -374,8 +367,8 @@ export default function OrdersList() {
 
     return (
         <div className="min-h-screen py-12 px-4 bg-gradient-to-b from-background via-cream/30 to-background">
-            <div className="max-w-6xl mx-auto ">
-                {/* Header */}
+            <div className="max-w-6xl mx-auto">
+
                 <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-7 mb-6">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
@@ -394,7 +387,6 @@ export default function OrdersList() {
                         </Link>
                     </div>
 
-                    {/* Search Bar */}
                     <div className="mt-6">
                         <input
                             type="text"
@@ -405,13 +397,11 @@ export default function OrdersList() {
                         />
                     </div>
 
-                    {/* Date Filter */}
                     <div className="mt-6 space-y-4">
                         <h3 className="text-sm font-light uppercase tracking-wide text-foreground">
                             Filter by Date
                         </h3>
 
-                        {/* Quick Filters */}
                         <div className="flex flex-wrap gap-3 justify-center md:justify-start">
                             <button
                                 onClick={setToday}
@@ -433,7 +423,6 @@ export default function OrdersList() {
                             </button>
                         </div>
 
-                        {/* Date Inputs */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-light mb-2 text-text-light">
@@ -463,7 +452,6 @@ export default function OrdersList() {
                     </div>
                 </div>
 
-                {/* View Mode Toggle */}
                 <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-4 mb-1">
                     <div className="flex items-center justify-between">
                         <h3 className="text-sm font-light uppercase tracking-wide text-foreground">
@@ -510,9 +498,8 @@ export default function OrdersList() {
                     </div>
                 </div>
 
-                {/* Items Summary (by Menu Item) */}
                 {filteredOrders.length > 0 && (
-                    <div className=" backdrop-blur-sm rounded-2xl p-5 ">
+                    <div className=" backdrop-blur-sm rounded-2xl p-5">
                         <div className="text-center text-xs md:text-sm font-light text-foreground flex flex-wrap justify-center gap-y-1">
                             {getMenuItemSummary(filteredOrders).map(([id, data], idx, arr) => (
                                 <span key={id} className="inline-flex items-center">
@@ -531,14 +518,12 @@ export default function OrdersList() {
                     </div>
                 )}
 
-                {/* Error Message */}
                 {error && (
                     <div className="rounded-lg p-4 mb-6 bg-rose/20 text-brand-red border border-rose/40 font-light text-sm">
                         {error}
                     </div>
                 )}
 
-                {/* Orders List */}
                 {filteredOrders.length === 0 ? (
                     <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-12 text-center">
                         <div className="mb-4 text-brand-red/40">
@@ -574,9 +559,9 @@ export default function OrdersList() {
                                     key={order.id}
                                     className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm hover:shadow-md transition overflow-hidden"
                                 >
-                                    {/* Compact Row */}
+
                                     <div className="flex items-center justify-between p-4 gap-4">
-                                        {/* Client Info */}
+
                                         <div className="flex-1 min-w-0">
                                             <div className="font-light text-foreground text-sm">
                                                 {order.customer.first_name}{" "}
@@ -611,7 +596,6 @@ export default function OrdersList() {
                                             </div>
                                         </div>
 
-                                        {/* Action Buttons */}
                                         <div className="flex items-center gap-2">
                                             {order.status.id === 1 && (
                                                 <>
@@ -665,7 +649,7 @@ export default function OrdersList() {
                                                     </button>
                                                 </>
                                             )}
-                                            {/* Total */}
+
                                             <div className="text-right">
                                                 <div className="font-light text-brand-blue text-lg">
                                                     $
@@ -675,7 +659,7 @@ export default function OrdersList() {
                                                     {order.status.name}
                                                     </div>
                                             </div>
-                                            {/* Expand Button */}
+
                                             <button
                                                 onClick={() =>
                                                     toggleOrderExpand(order.id)
@@ -704,10 +688,9 @@ export default function OrdersList() {
                                         </div>
                                     </div>
 
-                                    {/* Expanded Details */}
                                     {isExpanded && (
                                         <div className="px-4 pb-4 pt-2 border-t border-soft-pink/20 space-y-3">
-                                            {/* Main Items */}
+
                                             <div>
                                                 <div className="text-xs text-text-light uppercase tracking-wide mb-1">
                                                     Main Items
@@ -732,7 +715,6 @@ export default function OrdersList() {
                                                 </div>
                                             </div>
 
-                                            {/* Extras */}
                                             {getSidesForOrder(order).length >
                                                 0 && (
                                                 <div>
@@ -755,7 +737,6 @@ export default function OrdersList() {
                                                 </div>
                                             )}
 
-                                            {/* Comments */}
                                             {order.comments && (
                                                 <div>
                                                     <div className="text-xs text-text-light uppercase tracking-wide mb-1">
@@ -767,7 +748,6 @@ export default function OrdersList() {
                                                 </div>
                                             )}
 
-                                            {/* Created Date */}
                                             <div className="text-xs text-text-light pt-2">
                                                 Created:{" "}
                                                 {formatDate(order.created_at)}
@@ -780,11 +760,11 @@ export default function OrdersList() {
                     </div>
                 ) : (
                     <>
-                        {/* Orders Grid */}
+
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {filteredOrders
                                 .sort((a, b) => {
-                                    // Pending orders (status id 1) first, completed orders (status id 5 or 6) last
+
                                     const aIsPending = a.status.id === 1;
                                     const bIsPending = b.status.id === 1;
                                     if (aIsPending && !bIsPending) return -1;
@@ -796,7 +776,7 @@ export default function OrdersList() {
                                         key={order.id}
                                         className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition p-4 flex flex-col aspect-square"
                                     >
-                                        {/* Header with Customer Name and Info */}
+
                                         <div className="flex justify-between items-start mb-3 pb-3 border-b border-soft-pink/20">
                                             <div className="flex-1">
                                                 <h3 className="text-sm font-light text-foreground leading-tight">
@@ -851,7 +831,6 @@ export default function OrdersList() {
                                             </div>
                                         </div>
 
-                                        {/* Dishes */}
                                         <div className="space-y-1 mb-2">
                                             <h4 className="font-light uppercase tracking-wide text-foreground text-xs">
                                                 Dishes
@@ -891,7 +870,6 @@ export default function OrdersList() {
                                             </div>
                                         </div>
 
-                                        {/* Sides */}
                                         {getSidesForOrder(order).length > 0 && (
                                             <div className="space-y-1 mb-2">
                                                 <h4 className="font-light uppercase tracking-wide text-foreground text-xs">
@@ -924,7 +902,6 @@ export default function OrdersList() {
                                             </div>
                                         )}
 
-                                        {/* Total */}
                                         <div className="mt-auto pt-3 border-t border-soft-pink/20 mb-3">
                                             <div className="flex justify-between items-center">
                                                 <h4 className="font-light text-foreground text-xs">
@@ -937,7 +914,6 @@ export default function OrdersList() {
                                             </div>
                                         </div>
 
-                                        {/* Comments */}
                                         {order.comments ? (
                                             <div className="mb-3 p-2 rounded-lg bg-soft-pink/20 border border-soft-pink/30">
                                                 <p className="text-xs text-foreground font-light italic line-clamp-3">
@@ -950,7 +926,6 @@ export default function OrdersList() {
                                             </div>
                                         )}
 
-                                        {/* Action Buttons */}
                                         {order.status.id === 5 ||
                                         order.status.id === 6 ? (
                                             <div className="px-3 py-2 font-light rounded-lg text-center text-sm text-green-600 bg-green-50 border border-green-200">
@@ -992,7 +967,6 @@ export default function OrdersList() {
                     </>
                 )}
 
-                {/* Summary */}
                 {filteredOrders.length > 0 && (
                     <div className="mt-6 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-6 text-center">
                         <p className="text-text-light font-light text-sm">

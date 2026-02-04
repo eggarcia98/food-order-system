@@ -62,17 +62,17 @@ export default function MenuPage() {
     }
 
     return (
-        <div className=" mx-auto relative w-auto max-w-6xl p-6 m-8 ">
+        <div className=" mx-auto relative w-auto max-w-6xl p-6 m-8">
             <div className="grid grid-col-1 md:grid-cols-3 gap-6 space-y-4 md:space-y-0 md:items-start">
                 <div className="relative border-3 border-brand rounded-md px-6 pb-6 pt-8 col-span-3 w-full bg-background">
                     <h2
-                        className="absolute -top-3 left-4 px-2 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black tracking-tight font-bungee leading-none  bg-background"
+                        className="absolute -top-3 left-4 px-2 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black tracking-tight font-bungee leading-none bg-background"
                         style={{ WebkitTextStroke: "0.5px #3D3935" }}
                     >
                         THE MAINS
                     </h2>
 
-                    <ul className="space-y-4 ">
+                    <ul className="space-y-4">
                         {menuItems
                             .filter((item) => item.is_active)
                             .map((menuItem) => (
@@ -99,7 +99,7 @@ export default function MenuPage() {
                                                 .map((variant) => (
                                                     <li
                                                         key={variant.id}
-                                                        className="flex items-center gap-4 "
+                                                        className="flex items-center gap-4"
                                                     >
                                                         <span className="flex-none w-32 sm:w-40 md:w-52 lg:w-60 text-xs sm:text-sm md:text-base lg:text-lg">
                                                             {
@@ -129,7 +129,7 @@ export default function MenuPage() {
                 </div>
 
                 <div className="flex flex-wrap md:grid md:grid-cols-[1.5fr_1fr] col-span-3 gap-6 w-full">
-                    {/* EXTRAS Section */}
+
                     <div className="border-2 border-foreground rounded-xl px-5 py-4 bg-background w-full flex flex-col">
                             <h3 className="font-bold text-base sm:text-lg md:text-xl lg:text-2xl mb-2 font-bungee">
                             EXTRAS
@@ -193,7 +193,6 @@ export default function MenuPage() {
                         </ul>
                     </div>
 
-                    {/* DELIVERY Section */}
                     <div className="border-2 border-brand-blue rounded-xl px-5 py-4 bg-background h-auto w-full">
                         <h3 className="font-bold text-base sm:text-lg md:text-xl lg:text-2xl mb-4 font-bungee">
                             DELIVERY
@@ -227,7 +226,6 @@ export default function MenuPage() {
                     </div>
                 </div>
 
-                {/* INFO Section */}
                 <div className="border-2 border-brand-blue rounded-xl px-5 py-4 col-span-3 bg-background h-fit">
                     <h3 className="font-bold text-base sm:text-lg md:text-xl lg:text-2xl mb-2 font-bungee">
                         INFO

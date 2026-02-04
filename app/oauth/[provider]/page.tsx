@@ -1,7 +1,6 @@
 "use client";
 export const runtime = 'edge';
 
-
 import { useParams, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
@@ -13,7 +12,7 @@ export default function OAuthCallbackPage() {
     useEffect(() => {
         const hash = window.location.hash.substring(1);
         const fragments: Record<string, string> = {};
-        
+
         if (hash) {
             const hashParams = new URLSearchParams(hash);
             hashParams.forEach((value, key) => {
@@ -22,11 +21,11 @@ export default function OAuthCallbackPage() {
         }
 
         const combined: Record<string, string> = {};
-        
+
         searchParams.forEach((value, key) => {
             combined[key] = value;
         });
-        
+
         Object.entries(fragments).forEach(([key, value]) => {
             combined[key] = value;
         });
@@ -55,7 +54,7 @@ export default function OAuthCallbackPage() {
             await response.json();
             window.location.href = "/";
         } catch (error) {
-            // Redirect to login on error
+
             window.location.href = "/login";
         }
     };

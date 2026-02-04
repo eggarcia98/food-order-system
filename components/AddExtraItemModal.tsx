@@ -99,7 +99,7 @@ export default function AddExtraItemModal({
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 smooth-scroll">
-                {/* Extra Items */}
+
                 <div>
                     <div className="flex items-center gap-2 mb-4">
                         <div className="w-1 h-4 rounded-full bg-brand-blue"></div>
@@ -147,7 +147,6 @@ export default function AddExtraItemModal({
                     </div>
                 </div>
 
-                {/* Actions */}
                 <div className="mt-6 flex justify-end gap-2">
                     <div
                         onClick={() => {

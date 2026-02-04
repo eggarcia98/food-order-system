@@ -112,7 +112,7 @@ export default function AddMainItemModal({
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 smooth-scroll">
-                {/* Menu Items */}
+
                 <div>
                     <div className="flex items-center gap-2 mb-4">
                         <div className="w-1 h-4 rounded-full bg-brand-blue"></div>
@@ -182,7 +182,6 @@ export default function AddMainItemModal({
                     </div>
                 </div>
 
-                {/* Quantity */}
                 <div className="mt-6 flex items-center justify-between">
                     <label className="text-lg font-semibold text-foreground">
                         Quantity
@@ -214,7 +213,6 @@ export default function AddMainItemModal({
                     </div>
                 </div>
 
-                {/* Actions */}
                 <div className="mt-6 flex justify-end gap-2">
                     <div
                         onClick={() => {

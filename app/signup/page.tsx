@@ -15,21 +15,18 @@ export default function SignupPage() {
     const handleSignupSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Validate password match
         if (password !== confirmPassword) {
             alert("Passwords don't match!");
             return;
         }
 
-        // Validate password length
         if (password.length < 8) {
             alert("Password must be at least 8 characters long!");
             return;
         }
 
-        // TODO: Handle user registration
         console.log("Signup:", { name, email, password });
-        // Navigate to the app
+
         router.push("/new_order");
     };
 
@@ -37,18 +34,17 @@ export default function SignupPage() {
         <div className="min-h-[calc(100vh-200px)] flex items-center justify-center p-6">
             <div className="mx-auto w-full max-w-md">
                 <div className="border-3 border-brand rounded-md px-6 pb-8 pt-4 bg-white shadow-lg">
-                    {/* Heading overlay */}
+
                     <h2 className="relative -top-8 bg-white -left-3 w-fit px-3 text-2xl font-extrabold tracking-wider font-bungee rounded-xl">
                         SIGN UP
                     </h2>
 
                     <div className="space-y-6 -mt-4">
-                        {/* Subtitle */}
+
                         <p className="text-center text-lg font-medium text-secondary">
                             Create your account
                         </p>
 
-                        {/* Signup Form */}
                         <form
                             onSubmit={handleSignupSubmit}
                             className="space-y-4"
@@ -142,7 +138,6 @@ export default function SignupPage() {
                             </button>
                         </form>
 
-                        {/* Login link */}
                         <p className="text-sm text-center text-gray-600">
                             Already have an account?{" "}
                             <Link
@@ -153,7 +148,6 @@ export default function SignupPage() {
                             </Link>
                         </p>
 
-                        {/* Terms and Privacy */}
                         <p className="text-xs text-center text-gray-500 mt-6">
                             By signing up, you agree to our{" "}
                             <a

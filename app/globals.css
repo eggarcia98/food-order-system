@@ -1,20 +1,11 @@
 @import "tailwindcss";
 
-/*
-  Cleaned and organized global stylesheet.
-  - Variables are grouped and alphabetized for discoverability
-  - Keep utilities minimal; prefer Tailwind classes in components
-  - Preserve a small set of app-specific utilities used across the UI
-*/
-
 :root {
-  /* Fonts */
+  
   --font-guayacos: 'Fredoka', "Helvetica Neue", sans-serif;
   --font-bungee: 'Bungee', "Helvetica Neue", sans-serif;
   --font-ibm-plex-mono: 'IBM Plex Mono', "Helvetica Neue", monospace;
-  
 
-  /* Pastel Color Palette */
   --color-background: #F9F7F4;
   --color-cream: #FFFBF7;
   --color-soft-pink: #F5DEDD;
@@ -28,16 +19,13 @@
   --color-text-light: #6B6A68;
   --color-hover-overlay: rgba(216, 165, 161, 0.4);
 
-  /* Brand accent colors */
   --color-brand-blue: #7BA8D1;
   --color-brand-dark-red: #8B6B66;
   --color-brand-red: #C17A73;
-  
-  /* Small helpers */
+
   --color-border: #E8D5D0;
 }
 
-/* Base element rules */
 html, body {
   height: 100%;
 }
@@ -51,7 +39,6 @@ body {
   letter-spacing: -0.01em;
 }
 
-/* Typography refinements - consistent throughout */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-guayacos);
   letter-spacing: -0.02em;
@@ -67,9 +54,6 @@ p {
   font-weight: 300;
 }
 
-/* Small app-specific utilities (keep these limited; use Tailwind where possible) */
-
-/* Background utilities */
 .bg-background { background-color: var(--color-background); }
 .bg-brand-blue { background-color: var(--color-brand-blue); }
 .bg-brand-blue-10 { background-color: rgba(123, 168, 209, 0.1); }
@@ -81,7 +65,6 @@ p {
 .bg-light-pink { background-color: var(--color-light-pink); }
 .bg-soft-purple { background-color: var(--color-soft-purple); }
 
-/* Patterned background (kept as a utility layer to be opt-in) */
 @layer utilities {
   .bg-pattern {
     background-repeat: repeat;
@@ -90,10 +73,9 @@ p {
     background-size: 2500px;
     background-image: url('/media/seemless.png');
   }
-  /* Utility to apply the Bungee display font via className */
-  .font-bungee { font-family: var(--font-bungee); }
   
-  /* Logo styling */
+  .font-bungee { font-family: var(--font-bungee); }
+
   .logo-container {
     filter: drop-shadow(0 4px 12px rgba(193, 122, 115, 0.15));
     transition: filter 0.3s ease, transform 0.3s ease;
@@ -105,13 +87,11 @@ p {
   }
 }
 
-/* Text utilities */
 .text-brand-blue { color: var(--color-brand-blue); }
 .text-brand-red { color: var(--color-brand-red); }
 .text-foreground { color: var(--color-foreground); }
 .text-light { color: var(--color-text-light); }
 
-/* Buttons (minimal helpers; prefer component styles) */
 .btn-brand-blue { 
   background-color: var(--color-brand-blue); 
   color: var(--color-cream); 
@@ -141,7 +121,6 @@ p {
   transform: translateY(-1px);
 }
 
-/* Form inputs */
 .input-brand { 
   border: 1px solid var(--color-border); 
   background-color: var(--color-cream);
@@ -154,7 +133,6 @@ p {
   outline: none; 
 }
 
-/* Badges */
 .badge-blue { 
   background-color: rgba(123, 168, 209, 0.12); 
   color: var(--color-accent-blue); 
@@ -166,17 +144,14 @@ p {
   font-weight: 500;
 }
 
-/* Borders & rings */
 .border-brand { border-color: var(--color-border); }
 .border-brand-blue { border-color: var(--color-brand-blue); }
 .border-b-brand-red { border-bottom-color: var(--color-brand-red); }
 .ring-brand-blue { box-shadow: 0 0 0 3px rgba(123, 168, 209, 0.12); }
 
-/* Misc UI helpers */
 .suggestion { background-color: transparent; }
 .suggestion:hover { background-color: rgba(123, 168, 209, 0.04); }
 
-/* Marquee / infinite scrolling banner (kept small) */
 .marquee { width: 100%; overflow: hidden; }
 .marquee__content {
   display: inline-flex;
@@ -189,10 +164,4 @@ p {
   100% { transform: translateX(-50%); }
 }
 
-/* End of globals */
-/* Additional utilities */
-
 .text-secondary:hover { color: var(--color-brand-red); }
-
-.border-brand-blue { border-color: var(--color-brand-blue); }
-
