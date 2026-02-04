@@ -15,6 +15,8 @@ export async function GET() {
             );
         }
 
+        console.log("Starting Google OAuth with auth backend:", `${authUrl}/oauth/google`);
+
         const response = await fetch(`${authUrl}/oauth/google`, {
             method: "GET",
             headers: {
