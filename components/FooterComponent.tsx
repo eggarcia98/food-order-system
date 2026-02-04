@@ -28,10 +28,8 @@ export default function FooterComponent() {
 
     return (
         <footer className="bg-gradient-to-t from-background/95 via-cream/20 to-transparent border-t border-soft-pink/10 backdrop-blur-sm mt-12">
-
             <div className="max-w-7xl mx-auto px-6 py-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-
                     <div className="text-center">
                         <h3 className="text-2xl font-light text-foreground mb-3 tracking-wide">
                             Los Guayacos
@@ -43,11 +41,10 @@ export default function FooterComponent() {
                             Fresh, local, and traditional flavors
                         </p>
 
-                        <div className="text-center">
-                            <h4 className="text-xs font-light text-foreground mt-5 tracking-widest uppercase opacity-80">
-                                Connect With Us
-                            </h4>
-                            <div className="flex items-center justify-center gap-4">
+                        <h4 className="text-xs font-light text-foreground mt-5 tracking-widest uppercase opacity-80">
+                            Connect With Us
+                        </h4>
+                        <div className="flex items-center justify-center gap-4">
                                 <a
                                     href="https://www.instagram.com/losguayacos.bne.au?igsh=NHVleTQ0Z2ZyeHJk&utm_source=qr"
                                     target="_blank"
@@ -82,7 +79,6 @@ export default function FooterComponent() {
                                     </div>
                                 </a>
                             </div>
-                        </div>
                     </div>
 
                     <nav className="hidden md:flex md:flex-col text-center justify-center">

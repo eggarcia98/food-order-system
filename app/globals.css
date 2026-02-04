@@ -56,24 +56,11 @@ p {
 
 .bg-background { background-color: var(--color-background); }
 .bg-brand-blue { background-color: var(--color-brand-blue); }
-.bg-brand-blue-10 { background-color: rgba(123, 168, 209, 0.1); }
 .bg-brand-red { background-color: var(--color-brand-red); }
-.bg-brand-red-10 { background-color: rgba(193, 122, 115, 0.1); }
-.bg-bg-light { background-color: var(--color-background); }
 .bg-cream { background-color: var(--color-cream); }
 .bg-soft-pink { background-color: var(--color-soft-pink); }
-.bg-light-pink { background-color: var(--color-light-pink); }
-.bg-soft-purple { background-color: var(--color-soft-purple); }
 
 @layer utilities {
-  .bg-pattern {
-    background-repeat: repeat;
-    background-position: center;
-    background-attachment: fixed;
-    background-size: 2500px;
-    background-image: url('/media/seemless.png');
-  }
-  
   .font-bungee { font-family: var(--font-bungee); }
 
   .logo-container {
@@ -131,17 +118,6 @@ p {
   border-color: var(--color-brand-blue); 
   box-shadow: 0 0 0 3px rgba(123, 168, 209, 0.12); 
   outline: none; 
-}
-
-.badge-blue { 
-  background-color: rgba(123, 168, 209, 0.12); 
-  color: var(--color-accent-blue); 
-  font-weight: 500;
-}
-.badge-red { 
-  background-color: rgba(216, 165, 161, 0.12); 
-  color: var(--color-brand-red); 
-  font-weight: 500;
 }
 
 .border-brand { border-color: var(--color-border); }
