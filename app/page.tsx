@@ -33,9 +33,9 @@ export default function Page() {
     }, []);
     return (
         <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-cream/50 via-background to-cream/30 flex flex-col items-center justify-center px-6 sm:px-8">
-            {/* Main Content */}
+
             <div className="max-w-md w-full text-center space-y-8">
-                {/* Logo/Title Section */}
+
                 <div className="space-y-3">
                     <h1 className="text-5xl font-light text-foreground tracking-tight">
                         Los Guayacos
@@ -50,12 +50,10 @@ export default function Page() {
                     </p>
                 </div>
 
-                {/* Subtitle */}
                 <p className="text-lg text-text-light font-light leading-relaxed">
                     Discover genuine flavors and warm hospitality in every dish
                 </p>
 
-                {/* CTA Section */}
                 <div className="space-y-3 pt-6">
                     <Link
                         href="/new_order"
@@ -71,7 +69,6 @@ export default function Page() {
                     </Link>
                 </div>
 
-                {/* Footer Text */}
                 <div className="pt-6 border-t border-soft-pink/30">
                     <p className="text-xs text-text-light font-light">
                         Fresh • Local • Traditional

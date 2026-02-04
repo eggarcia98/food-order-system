@@ -26,7 +26,7 @@ export default function SocialLoginButtons() {
 
     return (
         <div className="space-y-4">
-            {/* Google Login Button */}
+
             <button
                 onClick={handleGoogleLogin}
                 className="w-full flex items-center justify-center gap-3 px-6 py-3 bg-white border-2 border-brand-blue text-brand-blue font-semibold rounded-lg transition-all duration-200 hover:bg-brand-blue hover:text-white shadow-md hover:shadow-xl"
@@ -56,7 +56,6 @@ export default function SocialLoginButtons() {
                 Continue with Google
             </button>
 
-            {/* Apple Login Button */}
             <button
                 onClick={handleAppleLogin}
                 className="w-full flex items-center justify-center gap-3 px-6 py-3 bg-black text-white font-semibold rounded-lg transition-all duration-200 hover:bg-gray-800 shadow-md hover:shadow-xl"

@@ -34,7 +34,6 @@ export default function LoginPage() {
             if (!response.ok) throw new Error("Failed to fetch orders");
             const data = await response.json();
 
-            
         } catch (err) {
 
         }
@@ -44,13 +43,13 @@ export default function LoginPage() {
         <div className="min-h-[calc(100vh-200px)] flex items-center justify-center p-6">
             <div className="mx-auto w-full max-w-md">
                 <div className="border-3 border-brand rounded-md px-6 pb-8 pt-4 bg-white shadow-lg">
-                    {/* Heading overlay */}
+
                     <h2 className="relative -top-8 bg-white -left-3 w-fit px-3 text-2xl font-extrabold tracking-wider font-bungee rounded-xl">
                         WELCOME
                     </h2>
 
                     <div className="space-y-6 -mt-4">
-                        {/* Subtitle */}
+
                         <p className="text-center text-lg font-medium text-secondary">
                             Sign in to continue
                         </p>
@@ -110,7 +109,6 @@ export default function LoginPage() {
                             </div>
                         </form>
 
-                        {/* Divider */}
                         <div className="relative">
                             <div className="absolute inset-0 flex items-center">
                                 <div className="w-full border-t border-gray-300"></div>
@@ -133,7 +131,6 @@ export default function LoginPage() {
                             </a>
                         </p>
 
-                        {/* Terms and Privacy */}
                         <p className="text-xs text-center text-gray-500 mt-6">
                             By continuing, you agree to our{" "}
                             <a

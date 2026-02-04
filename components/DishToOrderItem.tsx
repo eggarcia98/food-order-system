@@ -68,15 +68,12 @@ export const DishToOrderItem = ({
                     className="p-4 flex flex-col sm:flex-row sm:justify-between sm:items-center"
                 >
                     <div className="flex items-start gap-3">
-                        {/* <div className="w-16 h-16 rounded-lg border flex items-center justify-center bg-bg-light text-xs text-secondary">
-                            {item.variant.item_name[0] || "?"}
-                        </div> */}
 
                         <div>
                             <p className="font-medium text-foreground">
                                 {item.variant.variant_name}
                             </p>
-                           
+
                             <p className="text-sm text-brand-red">
                                 ${item.variant.price.toFixed(2)} ×{" "}
                                 {item.quantity ?? item.variant.quantity ?? 1}

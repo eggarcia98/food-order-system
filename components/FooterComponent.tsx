@@ -15,7 +15,7 @@ export default function FooterComponent() {
         setMessage("");
 
         try {
-            // Simple mailto implementation - replace with your email service
+
             window.location.href = `mailto:info@losguayacos.com?subject=Newsletter Subscription&body=Email: ${email}`;
             setMessage("Thank you for subscribing!");
             setEmail("");
@@ -28,11 +28,9 @@ export default function FooterComponent() {
 
     return (
         <footer className="bg-gradient-to-t from-background/95 via-cream/20 to-transparent border-t border-soft-pink/10 backdrop-blur-sm mt-12">
-            {/* Main Content */}
             <div className="max-w-7xl mx-auto px-6 py-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {/* Brand */}
-                    <div className="text-center ">
+                    <div className="text-center">
                         <h3 className="text-2xl font-light text-foreground mb-3 tracking-wide">
                             Los Guayacos
                         </h3>
@@ -43,11 +41,10 @@ export default function FooterComponent() {
                             Fresh, local, and traditional flavors
                         </p>
 
-                        <div className="text-center ">
-                            <h4 className="text-xs font-light text-foreground mt-5 tracking-widest uppercase opacity-80  ">
-                                Connect With Us
-                            </h4>
-                            <div className="flex items-center justify-center  gap-4">
+                        <h4 className="text-xs font-light text-foreground mt-5 tracking-widest uppercase opacity-80">
+                            Connect With Us
+                        </h4>
+                        <div className="flex items-center justify-center gap-4">
                                 <a
                                     href="https://www.instagram.com/losguayacos.bne.au?igsh=NHVleTQ0Z2ZyeHJk&utm_source=qr"
                                     target="_blank"
@@ -82,9 +79,8 @@ export default function FooterComponent() {
                                     </div>
                                 </a>
                             </div>
-                        </div>
                     </div>
-                    {/* Quick Links - Desktop only */}
+
                     <nav className="hidden md:flex md:flex-col text-center justify-center">
                         <h2 className="mb-4">Quick Links</h2>
 
@@ -116,14 +112,13 @@ export default function FooterComponent() {
                         </ul>
                     </nav>
 
-                    {/* Email Subscribe Form */}
-                    <div className="text-center flex flex-col justify-center ">
+                    <div className="text-center flex flex-col justify-center">
                         <h2 className="font-light text-foreground mb-4 opacity-80">
                             Stay Updated
                         </h2>
                         <form
                             onSubmit={handleSubmit}
-                            className="flex flex-col items-center justify-center  gap-2"
+                            className="flex flex-col items-center justify-center gap-2"
                         >
                             <input
                                 type="email"
@@ -157,10 +152,8 @@ export default function FooterComponent() {
                         )}
                     </div>
 
-                    {/* Social Links */}
                 </div>
 
-                {/* Quick Links - Mobile only */}
                 <nav className="md:hidden mt-8">
                     <ul className="flex items-center justify-center gap-6">
                         <li>

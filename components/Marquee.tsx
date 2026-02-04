@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 
 interface MarqueeProps {
   message?: string;
-  items?: string[]; // image URLs
+  items?: string[];
 }
 
 export default function Marquee({ message = "", items = [] }: MarqueeProps) {
@@ -16,7 +16,6 @@ export default function Marquee({ message = "", items = [] }: MarqueeProps) {
     const content = contentRef.current;
     if (!container || !content) return;
 
-    // Reset content
     content.innerHTML = "";
 
     const createTextChunk = () => {
@@ -43,7 +42,6 @@ export default function Marquee({ message = "", items = [] }: MarqueeProps) {
       return wrapper;
     };
 
-    // Choose chunk type
     const baseChunk = items.length > 0 ? createImageChunk() : createTextChunk();
     content.appendChild(baseChunk);
 

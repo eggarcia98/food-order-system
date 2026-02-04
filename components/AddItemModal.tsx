@@ -74,7 +74,7 @@ export default function AddItemModal({
     };
 
     const updateSidesList = () => {
-        // Get the ids of sides with quantity > 0 and update sides Selected with an array of objects wiht { id, name, quantity }
+
         const updatedSides = sides
             .filter((side) => sideQuantities[side.id] > 0)
             .map((side) => ({
@@ -135,8 +135,6 @@ export default function AddItemModal({
         updateSidesList();
     }, [sideQuantities]);
 
-
-
     if (!open) return null;
 
     return (
@@ -161,7 +159,7 @@ export default function AddItemModal({
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 smooth-scroll">
-                {/* Menu Items */}
+
                 <div>
                     <div className="flex items-center gap-2 mb-4">
                         <div className="w-1 h-4 rounded-full bg-brand-blue"></div>
@@ -229,7 +227,6 @@ export default function AddItemModal({
                     </div>
                 </div>
 
-                {/* Quantity */}
                 <div className="mt-6 flex items-center justify-between">
                     <label className="text-lg font-semibold text-foreground">
                         Quantity
@@ -243,7 +240,6 @@ export default function AddItemModal({
                     />
                 </div>
 
-                {/* Sides */}
                 <div className="mt-6">
                     <div className="flex items-center gap-2 mb-2">
                         <div className="w-1 h-4 rounded-full bg-brand-blue"></div>
@@ -281,24 +277,8 @@ export default function AddItemModal({
                         ))}
                     </div>
 
-                    {/* <div className="grid grid-cols-2 gap-2">
-                        {sides.map((side) => (
-                            <div
-                                key={side.id}
-                                onClick={() => handleSideSelect(side)}
-                                className={`border rounded-lg p-2 text-sm ${
-                                    toggleSideSelection(side.id)
-                                        ? "border-green-600 bg-green-50"
-                                        : "border-gray-200"
-                                }`}
-                            >
-                                {side.name} (${side.price})
-                            </div>
-                        ))}
-                    </div> */}
                 </div>
 
-                {/* Actions */}
                 <div className="mt-6 flex justify-end gap-2">
                     <div
                         onClick={() => {
