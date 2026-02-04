@@ -76,148 +76,162 @@ export default function MenuPage() {
                         {menuItems
                             .filter((item) => item.is_active)
                             .map((menuItem) => (
-                            <li key={menuItem.id} className="flex gap-2 md:gap-4 items-center">
-                                <div className="flex-1">
-                                    <div className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-medium">
-                                        {menuItem.name.toUpperCase()}
-                                    </div>
-                                    {menuItem.description && (
-                                        <div className="text-xs sm:text-sm md:text-base lg:text-lg text-secondary">
-                                            {menuItem.description}
+                                <li
+                                    key={menuItem.id}
+                                    className="flex gap-2 md:gap-4 items-center"
+                                >
+                                    <div className="flex-1">
+                                        <div className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-medium">
+                                            {menuItem.name.toUpperCase()}
                                         </div>
+                                        {menuItem.description && (
+                                            <div className="text-xs sm:text-sm md:text-base lg:text-lg text-secondary">
+                                                {menuItem.description}
+                                            </div>
+                                        )}
+
+                                        <ul className="space-y-2 ml-4 mt-4">
+                                            {menuItem.item_variants
+                                                ?.filter(
+                                                    (variant) =>
+                                                        variant.is_active,
+                                                )
+                                                .map((variant) => (
+                                                    <li
+                                                        key={variant.id}
+                                                        className="flex items-center gap-4 "
+                                                    >
+                                                        <span className="flex-none w-32 sm:w-40 md:w-52 lg:w-60 text-xs sm:text-sm md:text-base lg:text-lg">
+                                                            {
+                                                                variant.variant_name
+                                                            }
+                                                        </span>
+                                                        <span className="flex-1 border-b border-dashed border-gray-400"></span>
+                                                        <span className="flex-none w-16 text-right text-xs sm:text-sm md:text-base lg:text-lg">
+                                                            $ {variant.price}
+                                                        </span>
+                                                    </li>
+                                                ))}
+                                        </ul>
+                                    </div>
+                                    {menuItem.img_url ? (
+                                        <img
+                                            src={menuItem.img_url}
+                                            alt={menuItem.name}
+                                            className="w-17 h-17 sm:w-28 sm:h-28 md:w-40 md:h-40 lg:w-48 lg:h-48 object-cover rounded-lg flex-shrink-0"
+                                        />
+                                    ) : (
+                                        <div className="w-17 h-17 sm:w-28 sm:h-28 md:w-40 md:h-40 lg:w-48 lg:h-48 flex-shrink-0"></div>
                                     )}
+                                </li>
+                            ))}
+                    </ul>
+                </div>
 
-                                    <ul className="space-y-2 ml-4 mt-4">
-                                        {menuItem.item_variants
-                                            ?.filter(
-                                                (variant) => variant.is_active,
-                                            )
-                                            .map((variant) => (
-                                                <li
-                                                    key={variant.id}
-                                                    className="flex items-center gap-4 "
-                                                >
-                                                    <span className="flex-none w-32 sm:w-40 md:w-52 lg:w-60 text-xs sm:text-sm md:text-base lg:text-lg">
-                                                        {variant.variant_name}
-                                                    </span>
-                                                    <span className="flex-1 border-b border-dashed border-gray-400"></span>
-                                                    <span className="flex-none w-16 text-right text-xs sm:text-sm md:text-base lg:text-lg">
-                                                        $ {variant.price}
-                                                    </span>
-                                                </li>
-                                            ))}
-                                    </ul>
-                                </div>
-                                {menuItem.img_url ? (
-                                    <img
-                                        src={menuItem.img_url}
-                                        alt={menuItem.name}
-                                        className="w-17 h-17 sm:w-28 sm:h-28 md:w-40 md:h-40 lg:w-48 lg:h-48 object-cover rounded-lg flex-shrink-0"
-                                    />
-                                ) : (
-                                    <div className="w-17 h-17 sm:w-28 sm:h-28 md:w-40 md:h-40 lg:w-48 lg:h-48 flex-shrink-0"></div>
-                                )}
+                <div className="flex flex-wrap md:grid md:grid-cols-[1.5fr_1fr] col-span-3 gap-6 w-full">
+                    {/* EXTRAS Section */}
+                    <div className="border-2 border-foreground rounded-xl px-5 py-4 bg-background w-full flex flex-col">
+                            <h3 className="font-bold text-base sm:text-lg md:text-xl lg:text-2xl mb-2 font-bungee">
+                            EXTRAS
+                        </h3>
+
+                            <ul className="space-y-2 flex-1 flex flex-col justify-center">
+                            <li className="flex items-center gap-3">
+                                <span className="text-foreground">•</span>
+                                <span className="flex-1 text-xs sm:text-sm md:text-base lg:text-lg">
+                                    35g Albacore Fish
+                                </span>
+                                <span className=" border-b border-dashed border-gray-300 flex-1"></span>
+                                <span className=" text-right text-xs sm:text-sm md:text-base lg:text-lg ml-2">
+                                    $ 5
+                                </span>
                             </li>
-                        ))}
-                    </ul>
-                </div>
 
-                {/* EXTRAS Section */}
-                <div className="border-2 border-foreground rounded-xl px-5 py-4 col-span-3 md:col-span-1 bg-background h-fit">
-                    <h3 className="font-bold text-base sm:text-lg md:text-xl lg:text-2xl mb-2 font-bungee">
-                        EXTRAS
-                    </h3>
+                            <li className="flex items-center gap-3">
+                                <span className="text-foreground">•</span>
+                                <span className="flex-1 text-xs sm:text-sm md:text-base lg:text-lg">
+                                    Fried Egg
+                                </span>
+                                <span className=" border-b border-dashed border-gray-300 flex-1"></span>
+                                <span className=" text-right text-xs sm:text-sm md:text-base lg:text-lg ml-2">
+                                    $ 2
+                                </span>
+                            </li>
 
-                    <ul className="space-y-2">
-                        <li className="flex items-center gap-3">
-                            <span className="text-foreground">•</span>
-                            <span className="flex-1 text-xs sm:text-sm md:text-base lg:text-lg">
-                                35g Albacore Fish
-                            </span>
-                            <span className=" border-b border-dashed border-gray-300 flex-1"></span>
-                            <span className=" text-right text-xs sm:text-sm md:text-base lg:text-lg ml-2">
-                                $ 5
-                            </span>
-                        </li>
+                            <li className="flex items-center gap-3">
+                                <span className="text-foreground">•</span>
+                                <span className="flex-1 text-xs sm:text-sm md:text-base lg:text-lg">
+                                    Plantain Chips
+                                </span>
+                                <span className=" border-b border-dashed border-gray-300 flex-1"></span>
+                                <span className=" text-right text-xs sm:text-sm md:text-base lg:text-lg ml-2">
+                                    $ 3
+                                </span>
+                            </li>
 
-                        <li className="flex items-center gap-3">
-                            <span className="text-foreground">•</span>
-                            <span className="flex-1 text-xs sm:text-sm md:text-base lg:text-lg">Fried Egg</span>
-                            <span className=" border-b border-dashed border-gray-300 flex-1"></span>
-                            <span className=" text-right text-xs sm:text-sm md:text-base lg:text-lg ml-2">
-                                $ 2
-                            </span>
-                        </li>
+                            <li className="flex items-center gap-3">
+                                <span className="text-foreground">•</span>
+                                <span className="flex-1 text-xs sm:text-sm md:text-base lg:text-lg">
+                                    Coca Cola
+                                </span>
+                                <span className=" border-b border-dashed border-gray-300 flex-1"></span>
+                                <span className=" text-right text-xs sm:text-sm md:text-base lg:text-lg ml-2">
+                                    $ 3
+                                </span>
+                            </li>
 
-                        <li className="flex items-center gap-3">
-                            <span className="text-foreground">•</span>
-                            <span className="flex-1 text-xs sm:text-sm md:text-base lg:text-lg">
-                                Plantain Chips
-                            </span>
-                            <span className=" border-b border-dashed border-gray-300 flex-1"></span>
-                            <span className=" text-right text-xs sm:text-sm md:text-base lg:text-lg ml-2">
-                                $ 3
-                            </span>
-                        </li>
+                            <li className="flex items-center gap-3">
+                                <span className="text-foreground">•</span>
+                                <span className="flex-1 text-xs sm:text-sm md:text-base lg:text-lg">
+                                    Ripe Plantain
+                                </span>
+                                <span className=" border-b border-dashed border-gray-300 flex-1"></span>
+                                <span className=" text-right text-xs sm:text-sm md:text-base lg:text-lg ml-2">
+                                    $ 2
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
 
-                        <li className="flex items-center gap-3">
-                            <span className="text-foreground">•</span>
-                            <span className="flex-1 text-xs sm:text-sm md:text-base lg:text-lg">Coca Cola</span>
-                            <span className=" border-b border-dashed border-gray-300 flex-1"></span>
-                            <span className=" text-right text-xs sm:text-sm md:text-base lg:text-lg ml-2">
-                                $ 3
-                            </span>
-                        </li>
+                    {/* DELIVERY Section */}
+                    <div className="border-2 border-brand-blue rounded-xl px-5 py-4 bg-background h-auto w-full">
+                        <h3 className="font-bold text-base sm:text-lg md:text-xl lg:text-2xl mb-4 font-bungee">
+                            DELIVERY
+                        </h3>
 
-                        <li className="flex items-center gap-3">
-                            <span className="text-foreground">•</span>
-                            <span className="flex-1 text-xs sm:text-sm md:text-base lg:text-lg">
-                                Ripe Plantain
-                            </span>
-                            <span className=" border-b border-dashed border-gray-300 flex-1"></span>
-                            <span className=" text-right text-xs sm:text-sm md:text-base lg:text-lg ml-2">
-                                $ 2
-                            </span>
-                        </li>
-                    </ul>
-                </div>
+                        <div className="space-y-5">
+                            <div>
+                                <p className="font-semibold text-xs sm:text-sm md:text-base lg:text-lg mb-1 text-foreground">
+                                    Extra Fee:
+                                </p>
+                                <p className="text-xs sm:text-sm md:text-base lg:text-lg text-secondary">
+                                    $1.5 for each km from "Los Guayacos
+                                    Location" to your place
+                                </p>
+                            </div>
 
-                {/* DELIVERY Section */}
-                <div className="border-2 border-brand-blue rounded-xl px-5 py-4 col-span-3 md:col-span-2 bg-background h-fit">
-                    <h3 className="font-bold text-base sm:text-lg md:text-xl lg:text-2xl mb-4 font-bungee">
-                        DELIVERY
-                    </h3>
-
-                    <div className="space-y-5">
-                        <div>
-                            <p className="font-semibold text-xs sm:text-sm md:text-base lg:text-lg mb-1 text-foreground">
-                                Extra Fee:
-                            </p>
-                            <p className="text-xs sm:text-sm md:text-base lg:text-lg text-secondary">
-                                $1.5 for each km from "Los Guayacos Location" to
-                                your place
-                            </p>
-                        </div>
-
-                        <div>
-                            <p className="font-semibold text-xs sm:text-sm md:text-base lg:text-lg mb-2 text-foreground">
-                                Delivery Time:
-                            </p>
-                            <p className="text-xs sm:text-sm md:text-base lg:text-lg text-secondary mb-3">
-                                11:00AM - 13:00PM
-                            </p>
-                            <p className="text-brand-red font-semibold text-xs sm:text-sm md:text-base lg:text-lg">
-                                ASK FOR
-                                <br />
-                                AVAILABILITY
-                            </p>
+                            <div>
+                                <p className="font-semibold text-xs sm:text-sm md:text-base lg:text-lg mb-2 text-foreground">
+                                    Delivery Time:
+                                </p>
+                                <p className="text-xs sm:text-sm md:text-base lg:text-lg text-secondary mb-3">
+                                    11:00AM - 13:00PM
+                                </p>
+                                <p className="text-brand-red font-semibold text-xs sm:text-sm md:text-base lg:text-lg">
+                                    ASK FOR
+                                    <br />
+                                    AVAILABILITY
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 {/* INFO Section */}
                 <div className="border-2 border-brand-blue rounded-xl px-5 py-4 col-span-3 bg-background h-fit">
-                    <h3 className="font-bold text-base sm:text-lg md:text-xl lg:text-2xl mb-2 font-bungee">INFO</h3>
+                    <h3 className="font-bold text-base sm:text-lg md:text-xl lg:text-2xl mb-2 font-bungee">
+                        INFO
+                    </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div>
@@ -238,7 +252,9 @@ export default function MenuPage() {
                             <p className="font-semibold text-xs sm:text-sm md:text-base lg:text-lg mb-2 text-foreground">
                                 Phone:
                             </p>
-                            <p className="text-xs sm:text-sm md:text-base lg:text-lg text-secondary">0433807915</p>
+                            <p className="text-xs sm:text-sm md:text-base lg:text-lg text-secondary">
+                                0433807915
+                            </p>
                         </div>
 
                         <div>
