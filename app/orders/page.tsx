@@ -4,6 +4,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { LayoutList, List } from "lucide-react";
+import useSWR from "swr";
 
 export interface Order {
     id: number;
@@ -63,10 +64,24 @@ export interface Extra {
     description: string;
 }
 
+const fetcher = async (url: string) => {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Failed to fetch orders");
+    return response.json();
+};
+
 export default function OrdersList() {
-    const [orders, setOrders] = useState<Order[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const { data: orders = [], error, isLoading, mutate } = useSWR<Order[]>(
+        "/api/orders",
+        fetcher,
+        {
+            revalidateOnFocus: false,
+            errorRetryCount: 2,
+            errorRetryInterval: 1000,
+            dedupingInterval: 2000,
+        }
+    );
+
     const [searchTerm, setSearchTerm] = useState("");
     const [viewMode, setViewMode] = useState<"detailed" | "compact">(
         "detailed",
@@ -99,10 +114,6 @@ export default function OrdersList() {
     );
 
     useEffect(() => {
-        fetchOrders();
-    }, []);
-
-    useEffect(() => {
         if (typeof window === "undefined") return;
         const mql = window.matchMedia("(max-width: 768px)");
         const apply = () => {
@@ -114,20 +125,6 @@ export default function OrdersList() {
         mql.addEventListener("change", apply);
         return () => mql.removeEventListener("change", apply);
     }, [userSetViewMode]);
-
-    const fetchOrders = async () => {
-        try {
-            setIsLoading(true);
-            const response = await fetch("/api/orders");
-            if (!response.ok) throw new Error("Failed to fetch orders");
-            const data: Order[] = await response.json();
-            setOrders(data);
-        } catch (err) {
-            setError("Failed to load orders. Please try again.");
-        } finally {
-            setIsLoading(false);
-        }
-    };
 
     const getSidesForOrder = (order: Order) => {
         return order.order_item_extras.map((osi) => {
@@ -195,9 +192,10 @@ export default function OrdersList() {
             });
             if (!response.ok) throw new Error("Failed to update order status");
 
-            fetchOrders();
+            // Revalidate data with SWR
+            mutate();
         } catch (err) {
-            setError("Failed to update order status. Please try again.");
+            console.error("Failed to update order status:", err);
         }
     };
 
@@ -506,7 +504,7 @@ export default function OrdersList() {
 
                 {error && (
                     <div className="rounded-lg p-4 mb-6 bg-rose/20 text-brand-red border border-rose/40 font-light text-sm">
-                        {error}
+                        {error.message || "Failed to load orders. Please try again."}
                     </div>
                 )}
 
