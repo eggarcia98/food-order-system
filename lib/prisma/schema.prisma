@@ -27,6 +27,7 @@ model Order {
   order_item_extras OrderItemExtras[]
   order_items       OrderItems[]
   status_id         Int               @default(1)
+  is_info_sent      Boolean           @default(false)
 
   // Relations
   customer Customer? @relation(fields: [customer_id], references: [id], onDelete: Cascade)
