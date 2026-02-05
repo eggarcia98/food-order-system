@@ -66,7 +66,7 @@ export interface Extra {
 
 const fetcher = async (url: string) => {
     const response = await fetch(url);
-    if (!response.ok) throw new Error("Failed to fetch orders");
+    if (!response.ok) throw new Error("Failed to load orders.");
     return response.json();
 };
 

@@ -170,6 +170,10 @@ export default function NewOrderPage() {
     const [filteredSuggestions, setFilteredSuggestions] = useState<any[]>([]);
     const suggestionsRef = useRef<HTMLDivElement>(null);
 
+    const [showNameSuggestions, setShowNameSuggestions] = useState(false);
+    const [filteredNameSuggestions, setFilteredNameSuggestions] = useState<any[]>([]);
+    const nameSearchRef = useRef<HTMLDivElement>(null);
+
     const [nationalitySearch, setNationalitySearch] = useState("");
     const [showNationalitySuggestions, setShowNationalitySuggestions] = useState(false);
     const [filteredNationalities, setFilteredNationalities] = useState<any[]>([]);
@@ -196,6 +200,42 @@ export default function NewOrderPage() {
         setFirstname(customer.first_name || "");
         setLastname(customer.last_name || "");
         setShowSuggestions(false);
+
+        const selectedNationality = nationalityList.find(n => n.id === customer.nationality_id);
+        if (selectedNationality) {
+            setNationalitySearch(selectedNationality.name);
+        }
+    };
+
+    const handleNameSearch = (value: string, field: 'first' | 'last') => {
+        if (field === 'first') {
+            setFirstname(value);
+        } else {
+            setLastname(value);
+        }
+
+        if (value.length > 1) {
+            const filtered = previousCustomers.filter((customer) => {
+                const searchValue = value.toLowerCase();
+                return (
+                    customer.first_name.toLowerCase().includes(searchValue) ||
+                    customer.last_name.toLowerCase().includes(searchValue)
+                );
+            });
+
+            setFilteredNameSuggestions(filtered);
+            setShowNameSuggestions(filtered.length > 0);
+        } else {
+            setShowNameSuggestions(false);
+        }
+    };
+
+    const selectNameSuggestion = (customer) => {
+        setPhoneNumber(customer.phone_number);
+        setNationality({ id: customer.nationality_id });
+        setFirstname(customer.first_name || "");
+        setLastname(customer.last_name || "");
+        setShowNameSuggestions(false);
 
         const selectedNationality = nationalityList.find(n => n.id === customer.nationality_id);
         if (selectedNationality) {
@@ -248,6 +288,22 @@ export default function NewOrderPage() {
                 !nationalityRef.current.contains(event.target as Node)
             ) {
                 setShowNationalitySuggestions(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                nameSearchRef.current &&
+                !nameSearchRef.current.contains(event.target as Node)
+            ) {
+                setShowNameSuggestions(false);
             }
         };
 
@@ -408,26 +464,83 @@ export default function NewOrderPage() {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
+                            <div className="relative">
                                 <label className="block text-sm font-light mb-2 text-text-light">
                                     First Name
                                     <span className="text-brand-red ml-1">
                                         *
                                     </span>
                                 </label>
-                                <input
-                                    type="text"
-                                    required
-                                    value={firstname}
-                                    onChange={(e) =>
-                                        setFirstname(e.target.value)
-                                    }
-                                    className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
-                                    placeholder="John"
-                                />
+                                <div className="relative" ref={nameSearchRef}>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={firstname}
+                                        onChange={(e) =>
+                                            handleNameSearch(e.target.value, 'first')
+                                        }
+                                        onFocus={() => {
+                                            if (
+                                                firstname.length > 1 &&
+                                                filteredNameSuggestions.length > 0
+                                            ) {
+                                                setShowNameSuggestions(true);
+                                            }
+                                        }}
+                                        className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
+                                        placeholder="John"
+                                        autoComplete="off"
+                                    />
+
+                                    {showNameSuggestions &&
+                                        filteredNameSuggestions.length > 0 && (
+                                            <div className="absolute z-10 w-full mt-1 bg-white/95 backdrop-blur-sm border border-soft-pink/20 rounded-lg shadow-lg max-h-60 overflow-auto">
+                                                {filteredNameSuggestions.slice(0, 5).map(
+                                                    (customer, index) => (
+                                                        <button
+                                                            key={index}
+                                                            type="button"
+                                                            onClick={() =>
+                                                                selectNameSuggestion(
+                                                                    customer
+                                                                )
+                                                            }
+                                                            className="w-full px-4 py-3 text-left transition flex justify-between items-center border-b border-soft-pink/10 last:border-b-0 hover:bg-soft-pink/10"
+                                                        >
+                                                            <div>
+                                                                <p className="font-light text-foreground text-sm">
+                                                                    {customer.first_name +
+                                                                        " " +
+                                                                        customer.last_name}
+                                                                </p>
+                                                                <p className="text-xs text-text-light font-light">
+                                                                    {customer.phone_number}
+                                                                </p>
+                                                            </div>
+                                                            <svg
+                                                                className="w-5 h-5 text-brand-red/50"
+                                                                fill="none"
+                                                                stroke="currentColor"
+                                                                viewBox="0 0 24 24"
+                                                            >
+                                                                <path
+                                                                    strokeLinecap="round"
+                                                                    strokeLinejoin="round"
+                                                                    strokeWidth={
+                                                                        2
+                                                                    }
+                                                                    d="M9 5l7 7-7 7"
+                                                                />
+                                                            </svg>
+                                                        </button>
+                                                    )
+                                                )}
+                                            </div>
+                                        )}
+                                </div>
                             </div>
 
-                            <div>
+                            <div className="relative">
                                 <label className="block text-sm font-light mb-2 text-text-light">
                                     Last Name
                                     <span className="text-brand-red ml-1">
@@ -439,10 +552,19 @@ export default function NewOrderPage() {
                                     required
                                     value={lastname}
                                     onChange={(e) =>
-                                        setLastname(e.target.value)
+                                        handleNameSearch(e.target.value, 'last')
                                     }
+                                    onFocus={() => {
+                                        if (
+                                            lastname.length > 1 &&
+                                            filteredNameSuggestions.length > 0
+                                        ) {
+                                            setShowNameSuggestions(true);
+                                        }
+                                    }}
                                     className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
                                     placeholder="Doe"
+                                    autoComplete="off"
                                 />
                             </div>
                         </div>
