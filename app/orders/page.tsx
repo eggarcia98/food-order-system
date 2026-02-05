@@ -351,21 +351,6 @@ export default function OrdersList() {
         return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
     };
 
-    if (isLoading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="text-center">
-                    <object
-                        data="/loading-icon.svg"
-                        type="image/svg+xml"
-                        className="h-12 w-12 mx-auto"
-                    />
-                    <p className="mt-4 text-text-light font-light">Loading orders...</p>
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="min-h-screen py-12 px-4 bg-gradient-to-b from-background via-cream/30 to-background">
             <div className="max-w-6xl mx-auto">
@@ -525,7 +510,16 @@ export default function OrdersList() {
                     </div>
                 )}
 
-                {filteredOrders.length === 0 ? (
+                {isLoading ? (
+                    <div className=" p-12 text-center mt-6">
+                        <object
+                            data="/loading-icon.svg"
+                            type="image/svg+xml"
+                            className="h-12 w-12 mx-auto"
+                        />
+                        <p className="mt-4 text-text-light font-light">Loading orders...</p>
+                    </div>
+                ) : filteredOrders.length === 0 ? (
                     <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-12 text-center">
                         <div className="mb-4 text-brand-red/40">
                             <svg
