@@ -36,6 +36,7 @@ export default function OAuthCallbackPage() {
     }, [searchParams]);
 
     const sendTokensToBackend = async (tokens: Record<string, string>) => {
+            console.log("Response from backend:", (tokens));
         try {
             const response = await fetch(`/api/auth/oauth/${provider}/callback`, {
                 method: "POST",
@@ -46,7 +47,6 @@ export default function OAuthCallbackPage() {
             });
 
             if (!response.ok) {
-                const data = await response.json().catch(() => ({}));
                 window.location.href = "/login";
                 return;
             }
@@ -54,7 +54,6 @@ export default function OAuthCallbackPage() {
             await response.json();
             window.location.href = "/";
         } catch (error) {
-
             window.location.href = "/login";
         }
     };

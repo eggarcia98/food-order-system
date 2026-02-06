@@ -2,22 +2,23 @@ export const runtime = "edge";
 
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(
+    request: Request,
+    ctx: RouteContext<'/api/auth/oauth/[provider]'>,
+) {
     try {
         const authUrl = process.env.AUTH_ENDPOINT;
-
-        console.log("AUTH_ENDPOINT:", authUrl);
+        const { provider } = await ctx.params;
+        console.log("Received request to start OAuth with provider:", provider);
 
         if (!authUrl) {
             return NextResponse.json(
                 { error: "Missing AUTH_ENDPOINT env var" },
-                { status: 500 }
+                { status: 500 },
             );
         }
 
-        console.log("Starting Google OAuth with auth backend:", `${authUrl}/oauth/google`);
-
-        const response = await fetch(`${authUrl}/oauth/google`, {
+        const response = await fetch(`${authUrl}/oauth/${provider}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -28,9 +29,16 @@ export async function GET() {
             const data = await response.json().catch(() => ({}));
             return NextResponse.json(
                 { error: data?.error || "Failed to start OAuth" },
-                { status: response.status }
+                { status: response.status },
             );
         }
+
+        // print cookies for debugging
+        const setCookieHeader = response.headers.get("Set-Cookie");
+        console.log(
+            "Set-Cookie header from auth response HERE:",
+            setCookieHeader,
+        );
 
         const data = await response.json();
         return NextResponse.json(data, { status: 200 });
@@ -38,7 +46,7 @@ export async function GET() {
         console.error("Error starting Google OAuth:", error);
         return NextResponse.json(
             { error: "Failed to start OAuth" },
-            { status: 500 }
+            { status: 500 },
         );
     }
 }

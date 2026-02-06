@@ -2,15 +2,12 @@ export const runtime = "edge";
 
 import { NextResponse } from "next/server";
 
-interface RouteParams {
-    params: {
-        provider: string;
-    };
-}
-
-export async function POST(request: Request) {
+export async function POST(
+    request: Request,
+    ctx: RouteContext<"/api/auth/oauth/[provider]/callback">,
+) {
     try {
-        const { provider } = await request.json();
+        const { provider } = await ctx.params;
         const authUrl = process.env.AUTH_ENDPOINT;
 
         if (!authUrl) {
@@ -29,14 +26,6 @@ export async function POST(request: Request) {
             );
         }
 
-        console.log(`[OAuth ${provider}] Received tokens from frontend`, {
-            keys: Object.keys(body),
-        });
-
-        console.log(
-            `[OAuth ${provider}] Forwarding to auth backend: ${authUrl}/oauth/${provider}/callback`,
-        );
-
         const response = await fetch(`${authUrl}/oauth/${provider}/callback`, {
             method: "POST",
             headers: {
@@ -44,6 +33,7 @@ export async function POST(request: Request) {
             },
             body: JSON.stringify(body),
         });
+
 
         if (!response.ok) {
             const data = await response.json().catch(() => ({}));
@@ -55,7 +45,6 @@ export async function POST(request: Request) {
         }
 
         const data = await response.json();
-        console.log(`[OAuth ${provider}] Auth backend response successful`);
         return NextResponse.json(data, { status: 200 });
     } catch (error) {
         console.error("Error processing OAuth callback:", error);

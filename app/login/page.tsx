@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import SocialLoginButtons from "@/components/SocialLoginButtons";
 import { Link } from "lucide-react";
@@ -15,6 +15,12 @@ export default function LoginPage() {
 
     const [signupPassword, setSignupPassword] = useState("");
     const [signupConfirmPassword, setSignupConfirmPassword] = useState("");
+
+    const [cookies, setCookies] = useState("");
+
+    useEffect(() => {
+        setCookies(document.cookie);
+    }, []);
 
     const handleLoginSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -147,6 +153,8 @@ export default function LoginPage() {
                                 Privacy Policy
                             </a>
                         </p>
+
+                    
                     </div>
                 </div>
             </div>
