@@ -47,14 +47,14 @@ export default function OAuthCallbackPage() {
             });
 
             if (!response.ok) {
-                window.location.href = "/login";
+                // window.location.href = "/login";
                 return;
             }
 
             await response.json();
-            window.location.href = "/";
+            // window.location.href = "/";
         } catch (error) {
-            window.location.href = "/login";
+            // window.location.href = "/login";
         }
     };
 

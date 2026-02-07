@@ -26,26 +26,33 @@ export async function POST(
             );
         }
 
-        const response = await fetch(`${authUrl}/oauth/${provider}/callback`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(body),
-        });
-
-
-        if (!response.ok) {
-            const data = await response.json().catch(() => ({}));
-            console.error(`[OAuth ${provider}] Auth backend error:`, data);
+        // check if body has accessToken and refreshToken
+        if (!body.access_token || !body.refresh_token) {
             return NextResponse.json(
-                { error: data?.error || "OAuth callback failed" },
-                { status: response.status },
+                { error: "Missing accessToken or refreshToken in request body" },
+                { status: 400 },
             );
         }
 
-        const data = await response.json();
-        return NextResponse.json(data, { status: 200 });
+   
+        const nextResponse = NextResponse.json({
+            message: `Successfully processed OAuth callback for provider: ${provider}`,
+        }, { status: 200 });
+
+        nextResponse.cookies.set("access_token", body.access_token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production", // en prod
+            sameSite: "lax",
+            path: "/",
+        });
+        nextResponse.cookies.set("refresh_token", body.refresh_token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production", // en prod
+            sameSite: "lax",
+            path: "/",
+        });
+      
+        return nextResponse;
     } catch (error) {
         console.error("Error processing OAuth callback:", error);
         return NextResponse.json(
