@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+export const runtime = "edge";
 
 const AUTH_ENDPOINT = process.env.AUTH_ENDPOINT || 'http://localhost:8080/api/v1/auth';
 
