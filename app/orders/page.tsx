@@ -4,6 +4,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { LayoutList, List } from "lucide-react";
+import useSWR from "swr";
 
 export interface Order {
     id: number;
@@ -11,9 +12,11 @@ export interface Order {
     customer_id: number;
     comments: string;
     created_at: string;
+    is_info_sent: boolean;
     customer: Customer;
     order_items: OrderItem[];
     order_item_extras: OrderExtraItem[];
+    status_id: number;
     status: any;
 }
 
@@ -62,10 +65,24 @@ export interface Extra {
     description: string;
 }
 
+const fetcher = async (url: string) => {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Failed to load orders.");
+    return response.json();
+};
+
 export default function OrdersList() {
-    const [orders, setOrders] = useState<Order[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const { data: orders = [], error, isLoading, mutate } = useSWR<Order[]>(
+        "/api/orders",
+        fetcher,
+        {
+            revalidateOnFocus: false,
+            errorRetryCount: 2,
+            errorRetryInterval: 1000,
+            dedupingInterval: 2000,
+        }
+    );
+
     const [searchTerm, setSearchTerm] = useState("");
     const [viewMode, setViewMode] = useState<"detailed" | "compact">(
         "detailed",
@@ -98,10 +115,6 @@ export default function OrdersList() {
     );
 
     useEffect(() => {
-        fetchOrders();
-    }, []);
-
-    useEffect(() => {
         if (typeof window === "undefined") return;
         const mql = window.matchMedia("(max-width: 768px)");
         const apply = () => {
@@ -113,20 +126,6 @@ export default function OrdersList() {
         mql.addEventListener("change", apply);
         return () => mql.removeEventListener("change", apply);
     }, [userSetViewMode]);
-
-    const fetchOrders = async () => {
-        try {
-            setIsLoading(true);
-            const response = await fetch("/api/orders");
-            if (!response.ok) throw new Error("Failed to fetch orders");
-            const data: Order[] = await response.json();
-            setOrders(data);
-        } catch (err) {
-            setError("Failed to load orders. Please try again.");
-        } finally {
-            setIsLoading(false);
-        }
-    };
 
     const getSidesForOrder = (order: Order) => {
         return order.order_item_extras.map((osi) => {
@@ -194,10 +193,38 @@ export default function OrdersList() {
             });
             if (!response.ok) throw new Error("Failed to update order status");
 
-            fetchOrders();
+            // Revalidate data with SWR
+            mutate();
         } catch (err) {
-            setError("Failed to update order status. Please try again.");
+            console.error("Failed to update order status:", err);
         }
+    };
+
+    const markInfoAsSent = async (order: Order) => {
+        try {
+            const status_id = order.status_id
+
+            const response = await fetch(`/api/orders/${order.id}/dispatch`, {
+                method: "PUT",
+                body: JSON.stringify({ is_info_sent: true, status_id  }),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            if (!response.ok) throw new Error("Failed to mark info as sent");
+
+            // Revalidate data with SWR
+            mutate();
+        } catch (err) {
+            console.error("Failed to mark info as sent:", err);
+        }
+    };
+
+    const handleInfoClick = (order: Order) => {
+        // Mark as sent in database
+        markInfoAsSent(order);
+        // Open WhatsApp
+        window.open(getWhatsAppLink(order, 'info'), '_blank', 'noopener,noreferrer');
     };
 
     const getMenuItemSummary = (orders: Order[]) => {
@@ -349,21 +376,6 @@ export default function OrdersList() {
 
         return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
     };
-
-    if (isLoading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="text-center">
-                    <object
-                        data="/loading-icon.svg"
-                        type="image/svg+xml"
-                        className="h-12 w-12 mx-auto"
-                    />
-                    <p className="mt-4 text-text-light font-light">Loading orders...</p>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className="min-h-screen py-12 px-4 bg-gradient-to-b from-background via-cream/30 to-background">
@@ -520,11 +532,20 @@ export default function OrdersList() {
 
                 {error && (
                     <div className="rounded-lg p-4 mb-6 bg-rose/20 text-brand-red border border-rose/40 font-light text-sm">
-                        {error}
+                        {error.message || "Failed to load orders. Please try again."}
                     </div>
                 )}
 
-                {filteredOrders.length === 0 ? (
+                {isLoading ? (
+                    <div className=" p-12 text-center mt-6">
+                        <object
+                            data="/loading-icon.svg"
+                            type="image/svg+xml"
+                            className="h-12 w-12 mx-auto"
+                        />
+                        <p className="mt-4 text-text-light font-light">Loading orders...</p>
+                    </div>
+                ) : filteredOrders.length === 0 ? (
                     <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-12 text-center">
                         <div className="mb-4 text-brand-red/40">
                             <svg
@@ -581,18 +602,30 @@ export default function OrdersList() {
                                                     </svg>
                                                     <span className="text-[9px]">Confirm</span>
                                                 </a>
-                                                <a
-                                                    href={getWhatsAppLink(order, 'info')}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="text-green-600 hover:text-green-700 inline-flex items-center gap-1"
-                                                    title="Send Important Information"
-                                                >
-                                                    <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-                                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-                                                    </svg>
-                                                    <span className="text-[9px]">Info</span>
-                                                </a>
+                                                {order.is_info_sent ? (
+                                                    <span
+                                                        className="text-gray-400 inline-flex items-center gap-1 cursor-not-allowed"
+                                                        title="Info already sent"
+                                                        aria-disabled="true"
+                                                    >
+                                                        <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                                                        </svg>
+                                                        <span className="text-[9px]">Info</span>
+                                                    </span>
+                                                ) : (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleInfoClick(order)}
+                                                        className="text-green-600 hover:text-green-700 inline-flex items-center gap-1"
+                                                        title="Send Important Information"
+                                                    >
+                                                        <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                                                        </svg>
+                                                        <span className="text-[9px]">Info</span>
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
 
@@ -804,18 +837,30 @@ export default function OrdersList() {
                                                         </svg>
                                                         <span className="text-[9px]">Confirm</span>
                                                     </a>
-                                                    <a
-                                                        href={getWhatsAppLink(order, 'info')}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="text-green-600 hover:text-green-700 inline-flex items-center gap-1"
-                                                        title="Send Important Information"
-                                                    >
-                                                        <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-                                                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-                                                        </svg>
-                                                        <span className="text-[9px]">Info</span>
-                                                    </a>
+                                                    {order.is_info_sent ? (
+                                                        <span
+                                                            className="text-gray-400 inline-flex items-center gap-1 cursor-not-allowed"
+                                                            title="Info already sent"
+                                                            aria-disabled="true"
+                                                        >
+                                                            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                                                            </svg>
+                                                            <span className="text-[9px]">Info</span>
+                                                        </span>
+                                                    ) : (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleInfoClick(order)}
+                                                            className="text-green-600 hover:text-green-700 inline-flex items-center gap-1"
+                                                            title="Send Important Information"
+                                                        >
+                                                            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                                                            </svg>
+                                                            <span className="text-[9px]">Info</span>
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </div>
                                             <div className="text-right text-xs space-y-1 ml-2">

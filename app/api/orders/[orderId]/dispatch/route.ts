@@ -6,14 +6,16 @@ export const runtime = "edge";
 export async function PUT(_req: Request, { params }) {
     const { orderId } = params;
 
-    // Get status_id from body if needed
-    const { status_id } = await _req.json()
+    console.log("Received request to dispatch order with ID:", orderId);
 
+    // Get status_id from body if needed
+    const {status_id, is_info_sent} = await _req.json()
+    console.log("Received status_id:", status_id, "is_info_sent:", is_info_sent);
     try {
         // Update your order status to "dispatched"
         const updatedOrder = await prisma.order.update({
             where: { id: Number(orderId) },
-            data: { status_id }, // adjust to your field name
+            data: { status_id, is_info_sent }, // adjust to your field name
         });
 
         return NextResponse.json({

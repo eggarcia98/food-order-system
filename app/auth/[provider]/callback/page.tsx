@@ -10,52 +10,33 @@ export default function OAuthCallbackPage() {
     const provider = params.provider as string;
 
     useEffect(() => {
-        const hash = window.location.hash.substring(1);
-        const fragments: Record<string, string> = {};
+        const code = searchParams.get("code");
 
-        if (hash) {
-            const hashParams = new URLSearchParams(hash);
-            hashParams.forEach((value, key) => {
-                fragments[key] = value;
-            });
-        }
-
-        const combined: Record<string, string> = {};
-
-        searchParams.forEach((value, key) => {
-            combined[key] = value;
-        });
-
-        Object.entries(fragments).forEach(([key, value]) => {
-            combined[key] = value;
-        });
-
-        if (Object.keys(combined).length > 0) {
-            sendTokensToBackend(combined);
+        if (code) {
+            sendCodeToBackend(code);
         }
     }, [searchParams]);
 
-    const sendTokensToBackend = async (tokens: Record<string, string>) => {
+    const sendCodeToBackend = async (code: string) => {
         try {
             const response = await fetch(`/api/auth/oauth/${provider}/callback`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(tokens),
+                body: JSON.stringify({ code }),
             });
 
             if (!response.ok) {
-                const data = await response.json().catch(() => ({}));
-                window.location.href = "/login";
+                window.location.href = "/login?error=oauth_failed";
                 return;
             }
 
             await response.json();
             window.location.href = "/";
         } catch (error) {
-
-            window.location.href = "/login";
+            console.error("Error sending code to backend:", error);
+            window.location.href = "/login?error=oauth_failed";
         }
     };
 
