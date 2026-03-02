@@ -18,11 +18,13 @@ const COOKIE_OPTIONS = {
     sameSite: "lax" as const,
 };
 
+const DEFAULT_TIMEOUT_MS = 10_000;
+
 /**
  * POST /api/auth/oauth/:provider/callback
- * Expects { code } in the request body and forwards only that to the configured
- * AUTH_ENDPOINT, then returns the upstream response while setting secure cookies
- * for tokens when present.
+ * - Accepts { code } in the request body
+ * - Forwards the code to the upstream AUTH_ENDPOINT
+ * - Sets token cookies when upstream returns tokens
  */
 export async function POST(
     request: Request,
@@ -30,54 +32,39 @@ export async function POST(
 ) {
     try {
         const { provider } = await ctx.params;
-
         if (!provider || Array.isArray(provider)) {
             return NextResponse.json({ error: "Invalid provider" }, { status: 400 });
         }
 
-        const authUrlRaw = process.env.AUTH_ENDPOINT;
-        if (!authUrlRaw) {
-            return NextResponse.json({ error: "Missing AUTH_ENDPOINT env var" }, { status: 500 });
-        }
-
-        const authUrl = authUrlRaw.replace(/\/+$/, ""); // remove trailing slash
+        const authEndpoint = getAuthEndpoint();
 
         const body = await safeParseJson(request);
-        const code = body?.code;
-        if (!code || typeof code !== "string") {
+        const code = typeof body?.code === "string" ? body.code : null;
+        if (!code) {
             return NextResponse.json({ error: "Missing or invalid code parameter" }, { status: 400 });
         }
 
-        // Set a short timeout for upstream requests
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 10_000);
+        const upstreamResponse = await postCodeToAuthServer({
+            authEndpoint,
+            provider,
+            code,
+            timeoutMs: DEFAULT_TIMEOUT_MS,
+        });
 
-        const upstreamRes = await fetch(`${authUrl}/oauth/${encodeURIComponent(provider)}/callback`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ code }),
-            signal: controller.signal,
-        }).finally(() => clearTimeout(timeout));
+        const text = await upstreamResponse.text();
+        const parsed = parseUpstreamBody(text);
 
-        const text = await upstreamRes.text();
-        let parsed: UpstreamResponse | string = text;
-        try {
-            parsed = JSON.parse(text);
-        } catch {
-            // leave as text
+        if (!upstreamResponse.ok) {
+            return NextResponse.json({ error: "Upstream error", details: parsed }, { status: upstreamResponse.status });
         }
 
-        if (!upstreamRes.ok) {
-            return NextResponse.json({ error: "Upstream error", details: parsed }, { status: upstreamRes.status });
-        }
+        const data = isObject(parsed) && "data" in parsed ? (parsed as UpstreamResponse).data : parsed;
 
-        const data = (parsed && typeof parsed === "object" && "data" in parsed) ? (parsed as UpstreamResponse).data : parsed;
-
-        // If tokens are present, set them as secure cookies and return remaining data
-        const tokens = (data && typeof data === "object" && (data as any).tokens) ? (data as any).tokens as AuthTokens : null;
+        const tokens = extractTokens(data);
         const payload = tokens ? { ...(data as any), tokens: undefined } : data;
 
-        const response = NextResponse.json(payload ?? null, { status: upstreamRes.status });
+        console.log({payload})
+        const response = NextResponse.json(payload ?? null, { status: upstreamResponse.status });
 
         if (tokens) {
             response.cookies.set("accessToken", tokens.accessToken, { ...COOKIE_OPTIONS, maxAge: 60 * 60 * 24 * 7 });
@@ -85,14 +72,62 @@ export async function POST(
         }
 
         return response;
-    } catch (error) {
-        console.error("Error processing OAuth callback:", error);
-        const isAbort = (error as any)?.name === "AbortError";
+    } catch (err) {
+        console.error("Error processing OAuth callback:", err);
+        const isAbort = (err as any)?.name === "AbortError";
         return NextResponse.json(
             { error: isAbort ? "Upstream request timed out" : "Failed to process OAuth callback" },
             { status: 500 },
         );
     }
+}
+
+function getAuthEndpoint(): string {
+    const raw = process.env.AUTH_ENDPOINT;
+    if (!raw) throw new Error("MISSING_AUTH_ENDPOINT");
+    return raw.replace(/\/+$/, "");
+}
+
+async function postCodeToAuthServer(opts: {
+    authEndpoint: string;
+    provider: string;
+    code: string;
+    timeoutMs?: number;
+}) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), opts.timeoutMs ?? DEFAULT_TIMEOUT_MS);
+
+    try {
+        return await fetch(`${opts.authEndpoint}/oauth/${encodeURIComponent(opts.provider)}/callback`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code: opts.code }),
+            signal: controller.signal,
+        });
+    } finally {
+        clearTimeout(timeout);
+    }
+}
+
+function parseUpstreamBody(text: string): UpstreamResponse | string {
+    try {
+        return JSON.parse(text);
+    } catch {
+        return text;
+    }
+}
+
+function extractTokens(data: unknown): AuthTokens | null {
+    if (!isObject(data)) return null;
+    const maybe = (data as any).tokens;
+    if (!maybe || typeof maybe !== "object") return null;
+    const { accessToken, refreshToken } = maybe as AuthTokens;
+    if (typeof accessToken !== "string" || typeof refreshToken !== "string") return null;
+    return { accessToken, refreshToken };
+}
+
+function isObject(value: unknown): value is Record<string, unknown> {
+    return typeof value === "object" && value !== null;
 }
 
 async function safeParseJson(request: Request): Promise<any | null> {

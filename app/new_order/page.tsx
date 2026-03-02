@@ -53,6 +53,9 @@ export default function NewOrderPage() {
         text: string;
     } | null>(null);
 
+    // Authentication state: null = checking, false = not authed, true = authed
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
     const [previousCustomers, setPreviousCustomers] = useState<any[]>([]);
 
     const fetchNationalities = async () => {
@@ -104,6 +107,29 @@ export default function NewOrderPage() {
         fetchExtraItems();
         fetchPreviousCustomers();
         fetchMenuItems();
+    }, []);
+
+    // Check session to decide whether to allow autocomplete features.
+    useEffect(() => {
+        let mounted = true;
+
+        async function checkAuth() {
+            try {
+                const res = await fetch('/api/auth/refreshSession', { method: 'POST', credentials: 'include' });
+                const data = await res.json().catch(() => null);
+                if (!mounted) return;
+                // The refreshSession returns { valid: true, ... } or may include email
+                const valid = data?.valid === true || typeof data?.email === 'string' || typeof data?.data?.email === 'string';
+                setIsAuthenticated(Boolean(valid));
+            } catch (e) {
+                if (!mounted) return;
+                setIsAuthenticated(false);
+            }
+        }
+
+        checkAuth();
+
+        return () => { mounted = false; };
     }, []);
 
     const removeMainItem = (index: number) => {
@@ -182,6 +208,12 @@ export default function NewOrderPage() {
     const handlePhoneNumberChange = (value: string) => {
         setPhoneNumber(value);
 
+        // Autocomplete only available when authenticated
+        if (!isAuthenticated) {
+            setShowSuggestions(false);
+            return;
+        }
+
         if (value.length > 0) {
             const filtered = previousCustomers.filter((customer) =>
                 customer.phone_number.includes(value)
@@ -212,6 +244,11 @@ export default function NewOrderPage() {
             setFirstname(value);
         } else {
             setLastname(value);
+        }
+
+        if (!isAuthenticated) {
+            setShowNameSuggestions(false);
+            return;
         }
 
         if (value.length > 1) {
@@ -245,6 +282,11 @@ export default function NewOrderPage() {
 
     const handleNationalitySearch = (value: string) => {
         setNationalitySearch(value);
+
+        if (!isAuthenticated) {
+            setShowNationalitySuggestions(false);
+            return;
+        }
 
         if (value.length > 0) {
             const filtered = nationalityList.filter((nat) =>
