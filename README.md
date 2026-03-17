@@ -4,7 +4,7 @@ A modern food ordering system built with Next.js, TypeScript, Prisma, and Postgr
 
 ## 🚀 Demo
 
-🔗 **[Live Demo](https://app.losguayacos.com/)** 
+🔗 **[Live Demo](https://preview.food-order-system.pages.dev)** 
 
 Try out the application with the following features:
 - Browse available dishes by nationality
