@@ -2,6 +2,8 @@
 
 import useSWR from "swr";
 
+export const AUTH_SESSION_KEY = "auth-session";
+
 type AuthSession = {
     isAuthenticated: boolean;
     userEmail: string | null;
@@ -37,7 +39,7 @@ const authSessionFetcher = async (): Promise<AuthSession> => {
 
 export function useAuthSession() {
     const { data, isLoading } = useSWR<AuthSession>(
-        "auth-session",
+        AUTH_SESSION_KEY,
         authSessionFetcher,
         {
             revalidateOnFocus: false,
