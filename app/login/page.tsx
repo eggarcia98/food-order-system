@@ -3,12 +3,14 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import SocialLoginButtons from "@/components/SocialLoginButtons";
+import { useAuthSession } from "@/lib/useAuthSession";
 import { Link } from "lucide-react";
 
 type AuthMode = "social" | "login" | "signup";
 
 export default function LoginPage() {
     const router = useRouter();
+    const { isAuthenticated, isSessionLoading } = useAuthSession();
 
     const [loginEmail, setLoginEmail] = useState("");
     const [loginPassword, setLoginPassword] = useState("");
@@ -21,6 +23,12 @@ export default function LoginPage() {
     useEffect(() => {
         setCookies(document.cookie);
     }, []);
+
+    useEffect(() => {
+        if (isAuthenticated === true) {
+            router.replace("/");
+        }
+    }, [isAuthenticated, router]);
 
     const handleLoginSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -44,6 +52,25 @@ export default function LoginPage() {
 
         }
     };
+
+    if (isSessionLoading || isAuthenticated === true) {
+        return (
+            <div className="min-h-[calc(100vh-200px)] flex items-center justify-center p-6">
+                <div className="text-center">
+                    <object
+                        data="/loading-icon.svg"
+                        type="image/svg+xml"
+                        className="h-12 w-12 mx-auto"
+                    />
+                    <p className="mt-4 text-text-light font-light">
+                        {isSessionLoading
+                            ? "Checking session..."
+                            : "You are already logged in. Redirecting..."}
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-[calc(100vh-200px)] flex items-center justify-center p-6">
