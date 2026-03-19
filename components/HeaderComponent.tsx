@@ -3,33 +3,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Menu, X } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useAuthSession } from "@/lib/useAuthSession";
 
 export default function HeaderComponent() {
     const [menuOpen, setMenuOpen] = useState(false);
-    const [userEmail, setUserEmail] = useState<string | null>(null);
+    const { isAuthenticated, isSessionLoading, userEmail } = useAuthSession();
+    const userInitial = (userEmail?.charAt(0) ?? "U").toUpperCase();
 
-    useEffect(() => {
-        let mounted = true;
-
-        async function checkSession() {
-            try {
-                const res = await fetch('/api/auth/refreshSession', { method: 'POST', credentials: 'include' });
-                const data = await res.json().catch(() => null);
-                if (!mounted) return;
-
-                // Try several common locations for email in the response
-                const email = data?.email ?? data?.data?.email ?? data?.user?.email ?? null;
-                if (email && typeof email === 'string') setUserEmail(email);
-            } catch (e) {
-                // silently ignore
-            }
-        }
-
-        checkSession();
-
-        return () => { mounted = false; };
-    }, []);
     return (
         <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-gradient-to-b from-cream/95 to-cream/90 shadow-sm shadow-foreground/5 transition-all duration-300">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
@@ -58,15 +39,17 @@ export default function HeaderComponent() {
                                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-red group-hover:w-full transition-all duration-300"></span>
                             </Link>
                         </li>
-                        <li>
-                            <Link
-                                href="/orders"
-                                className="text-sm font-light text-foreground hover:text-brand-red transition-colors duration-200 relative group"
-                            >
-                                Orders
-                                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-red group-hover:w-full transition-all duration-300"></span>
-                            </Link>
-                        </li>
+                        {isAuthenticated === true && (
+                            <li>
+                                <Link
+                                    href="/orders"
+                                    className="text-sm font-light text-foreground hover:text-brand-red transition-colors duration-200 relative group"
+                                >
+                                    Orders
+                                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-red group-hover:w-full transition-all duration-300"></span>
+                                </Link>
+                            </li>
+                        )}
                     </ul>
                     <Link
                         className="btn-brand-blue px-6 py-2.5 rounded-lg font-light text-sm transition-all duration-200"
@@ -74,40 +57,40 @@ export default function HeaderComponent() {
                     >
                         Order Now
                     </Link>
-                    {userEmail ? (
+                    {isAuthenticated === true ? (
                         <div className="ml-4">
                             <span
-                                title={userEmail}
+                                title={userEmail ?? "Signed in"}
                                 className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-brand-blue text-white text-sm font-medium"
                             >
-                                {userEmail.charAt(0).toUpperCase()}
+                                {userInitial}
                             </span>
                         </div>
-                    ) : (
+                    ) : !isSessionLoading ? (
                         <Link
                             className="px-5 py-2.5 rounded-lg font-light text-sm transition-all duration-200 border border-brand-blue text-brand-blue hover:bg-soft-blue/10"
                             href="/login"
                         >
                             Sign In
                         </Link>
-                    )}
+                    ) : null}
                 </nav>
 
                 <div className="flex md:hidden items-center gap-3">
-                    {userEmail ? (
+                    {isAuthenticated === true ? (
                         <div>
-                            <span title={userEmail} className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-brand-blue text-white text-sm font-medium">
-                                {userEmail.charAt(0).toUpperCase()}
+                            <span title={userEmail ?? "Signed in"} className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-brand-blue text-white text-sm font-medium">
+                                {userInitial}
                             </span>
                         </div>
-                    ) : (
+                    ) : !isSessionLoading ? (
                         <Link
                             className="px-3 py-2 rounded-lg border border-brand-blue text-brand-blue text-sm font-light"
                             href="/login"
                         >
                             Sign In
                         </Link>
-                    )}
+                    ) : null}
                     <button
                         aria-label={menuOpen ? "Close menu" : "Open menu"}
                         aria-expanded={menuOpen}
@@ -141,13 +124,15 @@ export default function HeaderComponent() {
                     >
                         Menu
                     </Link>
-                    <Link
-                        href="/orders"
-                        onClick={() => setMenuOpen(false)}
-                        className="block px-4 py-2.5 text-foreground font-light hover:bg-soft-pink/20 rounded-lg transition-colors duration-200"
-                    >
-                        Orders
-                    </Link>
+                    {isAuthenticated === true && (
+                        <Link
+                            href="/orders"
+                            onClick={() => setMenuOpen(false)}
+                            className="block px-4 py-2.5 text-foreground font-light hover:bg-soft-pink/20 rounded-lg transition-colors duration-200"
+                        >
+                            Orders
+                        </Link>
+                    )}
                 </nav>
             </div>
         </header>

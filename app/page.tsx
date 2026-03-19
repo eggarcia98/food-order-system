@@ -17,9 +17,9 @@ export default function Page() {
             telephone: "+1-XXX-XXX-XXXX",
             address: {
                 "@type": "PostalAddress",
-                addressCountry: "US",
+                addressCountry: "AUSTRALIA",
             },
-            sameAs: [],
+            sameAs: [""],
         };
 
         const script = document.createElement("script");
@@ -27,6 +27,7 @@ export default function Page() {
         script.textContent = JSON.stringify(schemaData);
         document.head.appendChild(script);
 
+        console.log("Page loaded and schema script injected");
         return () => {
             document.head.removeChild(script);
         };

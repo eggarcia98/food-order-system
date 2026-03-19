@@ -3,8 +3,10 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { LayoutList, List } from "lucide-react";
 import useSWR from "swr";
+import { useAuthSession } from "@/lib/useAuthSession";
 
 export interface Order {
     id: number;
@@ -72,8 +74,17 @@ const fetcher = async (url: string) => {
 };
 
 export default function OrdersList() {
+    const router = useRouter();
+    const { isAuthenticated, isSessionLoading } = useAuthSession();
+
+    useEffect(() => {
+        if (isAuthenticated === false) {
+            router.replace("/login");
+        }
+    }, [isAuthenticated, router]);
+
     const { data: orders = [], error, isLoading, mutate } = useSWR<Order[]>(
-        "/api/orders",
+        isAuthenticated === true ? "/api/orders" : null,
         fetcher,
         {
             revalidateOnFocus: false,
@@ -376,6 +387,23 @@ export default function OrdersList() {
 
         return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
     };
+
+    if (isSessionLoading || isAuthenticated !== true) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <object
+                        data="/loading-icon.svg"
+                        type="image/svg+xml"
+                        className="h-12 w-12 mx-auto"
+                    />
+                    <p className="mt-4 text-text-light font-light">
+                        {isSessionLoading ? "Checking session..." : "Redirecting to login..."}
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen py-12 px-4 bg-gradient-to-b from-background via-cream/30 to-background">

@@ -17,11 +17,6 @@ export async function GET() {
             changefreq: "weekly",
             priority: 0.9,
         },
-        {
-            url: "/orders",
-            changefreq: "weekly",
-            priority: 0.8,
-        },
     ];
 
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
