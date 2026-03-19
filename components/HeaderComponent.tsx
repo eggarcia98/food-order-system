@@ -77,7 +77,6 @@ export default function HeaderComponent() {
 
             setMenuOpen(false);
             setUserMenuOpen(false);
-            router.replace("/login");
             router.refresh();
         } catch (error) {
             console.error("Logout failed:", error);
