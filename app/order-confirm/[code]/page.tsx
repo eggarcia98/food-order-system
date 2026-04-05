@@ -206,7 +206,12 @@ export default function OrderConfirmPage(
           </div>
           <h1 className="text-3xl font-light text-foreground mb-2">Order Confirmed!</h1>
           <p className="text-lg text-text-light mb-4">Thank you for confirming your order.</p>
-          <p className="text-sm text-text-light">Order code: <span className="font-medium">{data.order.order_code}</span></p>
+          <p className="text-sm text-text-light mb-6">Order code: <span className="font-medium">{data.order.order_code}</span></p>
+          <div className="bg-soft-blue/10 border border-brand-blue/30 rounded-lg p-4">
+            <p className="text-sm text-foreground">
+              <strong>Need to make changes?</strong> Contact us via WhatsApp for any modifications to your order.
+            </p>
+          </div>
         </section>
 
         <section className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-6">
