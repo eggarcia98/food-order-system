@@ -86,7 +86,8 @@ export default function OrderConfirmPage(
   function getNextSunday(): Date {
     const today = new Date();
     const day = today.getDay();
-    const daysUntilSunday = (7 - day) % 7 || 7; // 0 on Sunday -> 7
+    // If today is Sunday (day === 0), use today; otherwise calculate days until Sunday
+    const daysUntilSunday = day === 0 ? 0 : (7 - day);
     const nextSunday = new Date(today);
     nextSunday.setDate(nextSunday.getDate() + daysUntilSunday);
     return nextSunday;
@@ -233,8 +234,7 @@ export default function OrderConfirmPage(
             </svg>
           </div>
           <h1 className="text-3xl font-light text-foreground mb-2">Order Confirmed!</h1>
-          <p className="text-lg text-text-light mb-4">Thank you for confirming your order.</p>
-          <p className="text-sm text-text-light mb-6">Order code: <span className="font-medium">{data.order.order_code}</span></p>
+          <p className="text-lg text-text-light mb-6">Thank you for confirming your order.</p>
           <div className="bg-soft-blue/10 border border-brand-blue/30 rounded-lg p-4">
             <p className="text-sm text-foreground">
               <strong>Need to make changes?</strong> Contact us via WhatsApp for any modifications to your order.
@@ -296,7 +296,6 @@ export default function OrderConfirmPage(
     <main className="max-w-5xl mx-auto p-6 space-y-8">
       <section className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-6">
         <h1 className="text-3xl font-light text-foreground mb-2">Confirm Your Order</h1>
-        <p className="text-sm text-text-light">Order code: {data.order.order_code}</p>
         <p className="text-sm text-text-light">Link expires: {new Date(data.link.expires_at).toLocaleString()}</p>
       </section>
 
