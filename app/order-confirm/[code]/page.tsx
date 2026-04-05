@@ -55,19 +55,6 @@ type ApiResponse = {
   };
 };
 
-function toDateTimeLocalInputValue(dateIso?: string | null): string {
-  if (!dateIso) return "";
-  const d = new Date(dateIso);
-  if (Number.isNaN(d.getTime())) return "";
-  const pad = (n: number) => String(n).padStart(2, "0");
-  const y = d.getFullYear();
-  const m = pad(d.getMonth() + 1);
-  const day = pad(d.getDate());
-  const hh = pad(d.getHours());
-  const mm = pad(d.getMinutes());
-  return `${y}-${m}-${day}T${hh}:${mm}`;
-}
-
 export default function OrderConfirmPage(
   props: { params: Promise<{ code: string }> },
 ) {
@@ -106,6 +93,21 @@ export default function OrderConfirmPage(
     return `${y}-${m}-${day}T${hh}:${mm}`;
   }
 
+  function toTimeInputValue(dateIso?: string | null): string {
+    if (!dateIso) return "";
+    const d = new Date(dateIso);
+    if (Number.isNaN(d.getTime())) return "";
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+
+  function timeToISOString(timeStr: string, referenceDate: Date): string {
+    const [hours, minutes] = timeStr.split(":").map(Number);
+    const result = new Date(referenceDate);
+    result.setHours(hours, minutes, 0, 0);
+    return result.toISOString();
+  }
+
   useEffect(() => {
     props.params.then((p) => setCode(p.code));
   }, [props.params]);
@@ -140,8 +142,8 @@ export default function OrderConfirmPage(
         const toTime = new Date(nextSunday);
         toTime.setHours(14, 0, 0); // 2:00 PM
         
-        setArrivalFrom(toDateTimeLocalInputValue(fromTime.toISOString()));
-        setArrivalTo(toDateTimeLocalInputValue(toTime.toISOString()));
+        setArrivalFrom(toTimeInputValue(fromTime.toISOString()));
+        setArrivalTo(toTimeInputValue(toTime.toISOString()));
 
         // If link is already used, show the success screen
         if ((body as ApiResponse).link.used_at) {
@@ -173,13 +175,18 @@ export default function OrderConfirmPage(
     setSuccess(null);
 
     try {
+      // Reconstruct full ISO datetime from time values
+      const nextSunday = getNextSunday();
+      const fullArrivalFrom = timeToISOString(arrivalFrom, nextSunday);
+      const fullArrivalTo = timeToISOString(arrivalTo, nextSunday);
+
       const res = await fetch(`/api/orders/confirm/${encodeURIComponent(code)}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           fulfillmentTypeId,
-          arrivalFrom,
-          arrivalTo,
+          arrivalFrom: fullArrivalFrom,
+          arrivalTo: fullArrivalTo,
         }),
       });
 
@@ -357,7 +364,7 @@ export default function OrderConfirmPage(
             <div>
               <label className="block text-sm font-light mb-2 text-text-light">Arrival From</label>
               <input
-                type="datetime-local"
+                type="time"
                 required
                 value={arrivalFrom}
                 onChange={(e) => setArrivalFrom(e.target.value)}
@@ -368,7 +375,7 @@ export default function OrderConfirmPage(
             <div>
               <label className="block text-sm font-light mb-2 text-text-light">Arrival To</label>
               <input
-                type="datetime-local"
+                type="time"
                 required
                 value={arrivalTo}
                 onChange={(e) => setArrivalTo(e.target.value)}
