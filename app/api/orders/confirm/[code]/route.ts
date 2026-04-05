@@ -54,6 +54,10 @@ export async function GET(
       return NextResponse.json({ error: "Confirmation link expired" }, { status: 410 });
     }
 
+    if (link.used_at) {
+      return NextResponse.json({ error: "This confirmation link has already been used" }, { status: 410 });
+    }
+
     const fulfillmentTypes = await db.fulfillmentType.findMany({
       orderBy: { id: "asc" },
     });
@@ -95,6 +99,10 @@ export async function PATCH(
 
     if (isLinkExpired(link.expires_at)) {
       return NextResponse.json({ error: "Confirmation link expired" }, { status: 410 });
+    }
+
+    if (link.used_at) {
+      return NextResponse.json({ error: "This confirmation link has already been used" }, { status: 410 });
     }
 
     const body = await request.json().catch(() => null);
@@ -147,6 +155,12 @@ export async function PATCH(
           },
         },
       },
+    });
+
+    // Mark the confirmation link as used
+    await db.orderConfirmationLink.update({
+      where: { token: code },
+      data: { used_at: new Date() },
     });
 
     return NextResponse.json({ order: updatedOrder, updated: true });

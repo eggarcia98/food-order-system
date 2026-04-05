@@ -82,6 +82,7 @@ export default function OrderConfirmPage(
   const [arrivalFrom, setArrivalFrom] = useState<string>("");
   const [arrivalTo, setArrivalTo] = useState<string>("");
   const [customerNote, setCustomerNote] = useState<string>("");
+  const [confirmed, setConfirmed] = useState(false);
 
   useEffect(() => {
     props.params.then((p) => setCode(p.code));
@@ -157,7 +158,7 @@ export default function OrderConfirmPage(
         if (!prev) return prev;
         return { ...prev, order: body.order };
       });
-      setSuccess("Order updated successfully.");
+      setConfirmed(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to update order");
     } finally {
@@ -183,6 +184,34 @@ export default function OrderConfirmPage(
   }
 
   if (!data) return null;
+
+  if (confirmed) {
+    return (
+      <main className="max-w-5xl mx-auto p-6 space-y-8">
+        <section className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-8 text-center">
+          <div className="mb-6">
+            <svg
+              className="w-16 h-16 text-green-600 mx-auto"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h1 className="text-3xl font-light text-foreground mb-2">Order Confirmed!</h1>
+          <p className="text-lg text-text-light mb-4">Thank you for confirming your order.</p>
+          <p className="text-sm text-text-light mb-8">Order code: <span className="font-medium">{data.order.order_code}</span></p>
+          <a
+            href="/"
+            className="btn-brand-blue px-6 py-3 rounded-lg text-sm font-light inline-block"
+          >
+            Back to Home
+          </a>
+        </section>
+      </main>
+    );
+  }
 
   return (
     <main className="max-w-5xl mx-auto p-6 space-y-8">
