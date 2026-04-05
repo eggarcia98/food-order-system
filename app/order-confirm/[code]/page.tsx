@@ -223,7 +223,7 @@ export default function OrderConfirmPage(
   if (confirmed) {
     return (
       <main className="max-w-5xl mx-auto p-6 space-y-8">
-        <section className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-8 text-center">
+        <section className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition p-8 text-center">
           <div className="mb-6">
             <svg
               className="w-16 h-16 text-green-600 mx-auto"
@@ -243,42 +243,47 @@ export default function OrderConfirmPage(
           </div>
         </section>
 
-        <section className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-6">
+        <section className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition p-6">
           <h2 className="text-xl font-light text-foreground mb-4">Order Details</h2>
 
           <div className="mb-4 text-sm text-text-light">
             <p>Customer: {(data.order.customer?.first_name || "") + " " + (data.order.customer?.last_name || "")}</p>
-            <p>Phone: {data.order.customer?.phone_number || "-"}</p>
             {data.order.comments ? <p>Comments: {data.order.comments}</p> : null}
           </div>
 
-          <div className="space-y-2 mb-4">
-            <h3 className="font-light text-foreground">Items</h3>
-            {data.order.order_items.map((item) => (
-              <div key={`main-${item.id}`} className="flex justify-between border-b border-soft-pink/20 py-2 text-sm">
-                <span>
-                  {item.quantity}x {item.ItemVariant.MenuItem.name} - {item.ItemVariant.variant_name}
-                </span>
-                <span>${(item.quantity * item.unit_price).toFixed(2)}</span>
-              </div>
-            ))}
-
-            {data.order.order_item_extras.length > 0 && (
-              <>
-                <h3 className="font-light text-foreground mt-4">Extras</h3>
-                {data.order.order_item_extras.map((item) => (
-                  <div key={`extra-${item.id}`} className="flex justify-between border-b border-soft-pink/20 py-2 text-sm">
-                    <span>{item.quantity}x {item.MenuExtras.name}</span>
-                    <span>${(item.quantity * item.unit_price).toFixed(2)}</span>
+          <div className="space-y-4">
+            {data.order.order_items.length > 0 && (
+              <div>
+                <h3 className="text-xs uppercase tracking-widest font-light text-foreground mb-4">Dishes</h3>
+                {data.order.order_items.map((item) => (
+                  <div key={`main-${item.id}`} className="flex justify-between text-sm mb-3">
+                    <span className="text-foreground flex-1">
+                      {item.ItemVariant.MenuItem.name} - {item.ItemVariant.variant_name}
+                    </span>
+                    <span className="text-soft-pink/80 font-light ml-2">×{item.quantity}</span>
+                    <span className="text-brand-blue font-light ml-4">${(item.quantity * item.unit_price).toFixed(2)}</span>
                   </div>
                 ))}
-              </>
+              </div>
             )}
 
-            <div className="flex justify-between pt-2 text-lg font-medium border-t border-soft-pink/20">
-              <span>Total</span>
-              <span>${total.toFixed(2)}</span>
-            </div>
+            {data.order.order_item_extras.length > 0 && (
+              <div>
+                <h3 className="text-xs uppercase tracking-widest font-light text-foreground mb-4">Extras</h3>
+                {data.order.order_item_extras.map((item) => (
+                  <div key={`extra-${item.id}`} className="flex justify-between text-sm mb-3">
+                    <span className="text-foreground flex-1">{item.MenuExtras.name}</span>
+                    <span className="text-soft-pink/80 font-light ml-2">×{item.quantity}</span>
+                    <span className="text-brand-blue font-light ml-4">${(item.quantity * item.unit_price).toFixed(2)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="border-t border-soft-pink/20 pt-4 mt-4 flex justify-between items-center">
+            <span className="text-foreground font-light">Total</span>
+            <span className="text-brand-blue font-light">${total.toFixed(2)}</span>
           </div>
 
           {(data.order.arrival_from || data.order.arrival_to) && (
@@ -295,45 +300,56 @@ export default function OrderConfirmPage(
 
   return (
     <main className="max-w-5xl mx-auto p-6 space-y-8">
-      <section className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-6">
+      <section className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition p-6">
         <h1 className="text-3xl font-light text-foreground mb-2">Confirm Your Order</h1>
         <p className="text-sm text-text-light">Link expires: {new Date(data.link.expires_at).toLocaleString()}</p>
       </section>
 
-      <section className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-6">
+      <section className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition p-6">
         <h2 className="text-xl font-light text-foreground mb-4">Order Summary</h2>
 
         <div className="mb-4 text-sm text-text-light">
           <p>Customer: {(data.order.customer?.first_name || "") + " " + (data.order.customer?.last_name || "")}</p>
-          <p>Phone: {data.order.customer?.phone_number || "-"}</p>
           {data.order.comments ? <p>Comments: {data.order.comments}</p> : null}
         </div>
 
-        <div className="space-y-2">
-          {data.order.order_items.map((item) => (
-            <div key={`main-${item.id}`} className="flex justify-between border-b border-soft-pink/20 py-2">
-              <span>
-                {item.quantity}x {item.ItemVariant.MenuItem.name} - {item.ItemVariant.variant_name}
-              </span>
-              <span>${(item.quantity * item.unit_price).toFixed(2)}</span>
+        <div className="space-y-4">
+          {data.order.order_items.length > 0 && (
+            <div>
+              <h3 className="text-xs uppercase tracking-widest font-light text-foreground mb-4">Dishes</h3>
+              {data.order.order_items.map((item) => (
+                <div key={`main-${item.id}`} className="flex justify-between text-sm mb-3">
+                  <span className="text-foreground flex-1">
+                    {item.ItemVariant.MenuItem.name} - {item.ItemVariant.variant_name}
+                  </span>
+                  <span className="text-soft-pink/80 font-light ml-2">×{item.quantity}</span>
+                  <span className="text-brand-blue font-light ml-4">${(item.quantity * item.unit_price).toFixed(2)}</span>
+                </div>
+              ))}
             </div>
-          ))}
+          )}
 
-          {data.order.order_item_extras.map((item) => (
-            <div key={`extra-${item.id}`} className="flex justify-between border-b border-soft-pink/20 py-2">
-              <span>{item.quantity}x Extra: {item.MenuExtras.name}</span>
-              <span>${(item.quantity * item.unit_price).toFixed(2)}</span>
+          {data.order.order_item_extras.length > 0 && (
+            <div>
+              <h3 className="text-xs uppercase tracking-widest font-light text-foreground mb-4">Sides</h3>
+              {data.order.order_item_extras.map((item) => (
+                <div key={`extra-${item.id}`} className="flex justify-between text-sm mb-3">
+                  <span className="text-foreground flex-1">{item.MenuExtras.name}</span>
+                  <span className="text-soft-pink/80 font-light ml-2">×{item.quantity}</span>
+                  <span className="text-brand-blue font-light ml-4">${(item.quantity * item.unit_price).toFixed(2)}</span>
+                </div>
+              ))}
             </div>
-          ))}
+          )}
+        </div>
 
-          <div className="flex justify-between pt-2 text-lg font-medium">
-            <span>Total</span>
-            <span>${total.toFixed(2)}</span>
-          </div>
+        <div className="border-t border-soft-pink/20 pt-4 mt-4 flex justify-between items-center">
+          <span className="text-foreground font-light">Total</span>
+          <span className="text-brand-blue font-light">${total.toFixed(2)}</span>
         </div>
       </section>
 
-      <section className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-6">
+      <section className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition p-6">
         <h2 className="text-xl font-light text-foreground mb-4">Choose Your Arrival Time</h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
