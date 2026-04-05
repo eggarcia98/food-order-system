@@ -81,8 +81,29 @@ export default function OrderConfirmPage(
   const [fulfillmentTypeId, setFulfillmentTypeId] = useState<string>("");
   const [arrivalFrom, setArrivalFrom] = useState<string>("");
   const [arrivalTo, setArrivalTo] = useState<string>("");
-  const [customerNote, setCustomerNote] = useState<string>("");
   const [confirmed, setConfirmed] = useState(false);
+
+  function getNextSunday(): Date {
+    const today = new Date();
+    const day = today.getDay();
+    const daysUntilSunday = (7 - day) % 7 || 7; // 0 on Sunday -> 7
+    const nextSunday = new Date(today);
+    nextSunday.setDate(nextSunday.getDate() + daysUntilSunday);
+    return nextSunday;
+  }
+
+  function toDateTimeLocalInputValue(dateIso?: string | null): string {
+    if (!dateIso) return "";
+    const d = new Date(dateIso);
+    if (Number.isNaN(d.getTime())) return "";
+    const pad = (n: number) => String(n).padStart(2, "0");
+    const y = d.getFullYear();
+    const m = pad(d.getMonth() + 1);
+    const day = pad(d.getDate());
+    const hh = pad(d.getHours());
+    const mm = pad(d.getMinutes());
+    return `${y}-${m}-${day}T${hh}:${mm}`;
+  }
 
   useEffect(() => {
     props.params.then((p) => setCode(p.code));
@@ -108,10 +129,18 @@ export default function OrderConfirmPage(
         setData(body as ApiResponse);
 
         const order = (body as ApiResponse).order;
+        
         setFulfillmentTypeId(order.fulfillment_type?.id ? String(order.fulfillment_type.id) : "");
-        setArrivalFrom(toDateTimeLocalInputValue(order.arrival_from ?? null));
-        setArrivalTo(toDateTimeLocalInputValue(order.arrival_to ?? null));
-        setCustomerNote(order.customer_note ?? "");
+        
+        // Set defaults to next Sunday
+        const nextSunday = getNextSunday();
+        const fromTime = new Date(nextSunday);
+        fromTime.setHours(10, 0, 0); // 10:00 AM
+        const toTime = new Date(nextSunday);
+        toTime.setHours(14, 0, 0); // 2:00 PM
+        
+        setArrivalFrom(toDateTimeLocalInputValue(fromTime.toISOString()));
+        setArrivalTo(toDateTimeLocalInputValue(toTime.toISOString()));
 
         // If link is already used, show the success screen
         if ((body as ApiResponse).link.used_at) {
@@ -150,7 +179,6 @@ export default function OrderConfirmPage(
           fulfillmentTypeId,
           arrivalFrom,
           arrivalTo,
-          customerNote,
         }),
       });
 
@@ -252,12 +280,11 @@ export default function OrderConfirmPage(
             </div>
           </div>
 
-          {data.order.fulfillment_type && (
+          {(data.order.arrival_from || data.order.arrival_to) && (
             <div className="mt-4 pt-4 border-t border-soft-pink/20 text-sm">
-              <p><strong>Fulfillment Type:</strong> {data.order.fulfillment_type.name}</p>
+              {data.order.fulfillment_type && <p><strong>Fulfillment Type:</strong> {data.order.fulfillment_type.name}</p>}
               {data.order.arrival_from && <p><strong>Arrival From:</strong> {new Date(data.order.arrival_from).toLocaleString()}</p>}
               {data.order.arrival_to && <p><strong>Arrival To:</strong> {new Date(data.order.arrival_to).toLocaleString()}</p>}
-              {data.order.customer_note && <p><strong>Note:</strong> {data.order.customer_note}</p>}
             </div>
           )}
         </section>
@@ -307,7 +334,7 @@ export default function OrderConfirmPage(
       </section>
 
       <section className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-6">
-        <h2 className="text-xl font-light text-foreground mb-4">Choose Delivery / Pickup Window</h2>
+        <h2 className="text-xl font-light text-foreground mb-4">Choose Your Arrival Time</h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
@@ -349,16 +376,6 @@ export default function OrderConfirmPage(
                 className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream"
               />
             </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-light mb-2 text-text-light">Customer Note (optional)</label>
-            <textarea
-              value={customerNote}
-              onChange={(e) => setCustomerNote(e.target.value)}
-              rows={3}
-              className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream"
-            />
           </div>
 
           {error ? <p className="text-brand-red text-sm">{error}</p> : null}

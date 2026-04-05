@@ -106,7 +106,6 @@ export async function PATCH(
     const fulfillmentTypeId = Number(body?.fulfillmentTypeId);
     const arrivalFrom = body?.arrivalFrom ? new Date(body.arrivalFrom) : null;
     const arrivalTo = body?.arrivalTo ? new Date(body.arrivalTo) : null;
-    const customerNote = typeof body?.customerNote === "string" ? body.customerNote : null;
 
     if (!Number.isInteger(fulfillmentTypeId) || fulfillmentTypeId <= 0) {
       return NextResponse.json({ error: "Invalid fulfillment type" }, { status: 400 });
@@ -130,7 +129,6 @@ export async function PATCH(
         fulfillment_type_id: fulfillmentTypeId,
         arrival_from: arrivalFrom,
         arrival_to: arrivalTo,
-        customer_note: customerNote,
         customer_confirmed_at: new Date(),
       },
       include: {
