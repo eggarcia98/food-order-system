@@ -135,15 +135,9 @@ export default function OrderConfirmPage(
         
         setFulfillmentTypeId(order.fulfillment_type?.id ? String(order.fulfillment_type.id) : "");
         
-        // Set defaults to next Sunday
-        const nextSunday = getNextSunday();
-        const fromTime = new Date(nextSunday);
-        fromTime.setHours(10, 0, 0); // 10:00 AM
-        const toTime = new Date(nextSunday);
-        toTime.setHours(14, 0, 0); // 2:00 PM
-        
-        setArrivalFrom(toTimeInputValue(fromTime.toISOString()));
-        setArrivalTo(toTimeInputValue(toTime.toISOString()));
+        // Leave time inputs empty (show as --:--)
+        setArrivalFrom("");
+        setArrivalTo("");
 
         // If link is already used, show the success screen
         if ((body as ApiResponse).link.used_at) {
@@ -360,12 +354,18 @@ export default function OrderConfirmPage(
             </select>
           </div>
 
+          <div className="mb-4">
+            <p className="text-lg  text-brand-blue">Please, select your preferred arrival time window</p>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-light mb-2 text-text-light">Arrival From</label>
               <input
                 type="time"
                 required
+                min="10:30"
+                max="16:00"
                 value={arrivalFrom}
                 onChange={(e) => setArrivalFrom(e.target.value)}
                 className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream"
@@ -377,6 +377,8 @@ export default function OrderConfirmPage(
               <input
                 type="time"
                 required
+                min="10:30"
+                max="16:00"
                 value={arrivalTo}
                 onChange={(e) => setArrivalTo(e.target.value)}
                 className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream"
