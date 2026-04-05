@@ -54,10 +54,6 @@ export async function GET(
       return NextResponse.json({ error: "Confirmation link expired" }, { status: 410 });
     }
 
-    if (link.used_at) {
-      return NextResponse.json({ error: "This confirmation link has already been used" }, { status: 410 });
-    }
-
     const fulfillmentTypes = await db.fulfillmentType.findMany({
       orderBy: { id: "asc" },
     });

@@ -112,6 +112,11 @@ export default function OrderConfirmPage(
         setArrivalFrom(toDateTimeLocalInputValue(order.arrival_from ?? null));
         setArrivalTo(toDateTimeLocalInputValue(order.arrival_to ?? null));
         setCustomerNote(order.customer_note ?? "");
+
+        // If link is already used, show the success screen
+        if ((body as ApiResponse).link.used_at) {
+          setConfirmed(true);
+        }
       } catch (e) {
         setError(e instanceof Error ? e.message : "Failed to load data");
       } finally {
@@ -201,13 +206,55 @@ export default function OrderConfirmPage(
           </div>
           <h1 className="text-3xl font-light text-foreground mb-2">Order Confirmed!</h1>
           <p className="text-lg text-text-light mb-4">Thank you for confirming your order.</p>
-          <p className="text-sm text-text-light mb-8">Order code: <span className="font-medium">{data.order.order_code}</span></p>
-          <a
-            href="/"
-            className="btn-brand-blue px-6 py-3 rounded-lg text-sm font-light inline-block"
-          >
-            Back to Home
-          </a>
+          <p className="text-sm text-text-light">Order code: <span className="font-medium">{data.order.order_code}</span></p>
+        </section>
+
+        <section className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-6">
+          <h2 className="text-xl font-light text-foreground mb-4">Order Details</h2>
+
+          <div className="mb-4 text-sm text-text-light">
+            <p>Customer: {(data.order.customer?.first_name || "") + " " + (data.order.customer?.last_name || "")}</p>
+            <p>Phone: {data.order.customer?.phone_number || "-"}</p>
+            {data.order.comments ? <p>Comments: {data.order.comments}</p> : null}
+          </div>
+
+          <div className="space-y-2 mb-4">
+            <h3 className="font-light text-foreground">Items</h3>
+            {data.order.order_items.map((item) => (
+              <div key={`main-${item.id}`} className="flex justify-between border-b border-soft-pink/20 py-2 text-sm">
+                <span>
+                  {item.quantity}x {item.ItemVariant.MenuItem.name} - {item.ItemVariant.variant_name}
+                </span>
+                <span>${(item.quantity * item.unit_price).toFixed(2)}</span>
+              </div>
+            ))}
+
+            {data.order.order_item_extras.length > 0 && (
+              <>
+                <h3 className="font-light text-foreground mt-4">Extras</h3>
+                {data.order.order_item_extras.map((item) => (
+                  <div key={`extra-${item.id}`} className="flex justify-between border-b border-soft-pink/20 py-2 text-sm">
+                    <span>{item.quantity}x {item.MenuExtras.name}</span>
+                    <span>${(item.quantity * item.unit_price).toFixed(2)}</span>
+                  </div>
+                ))}
+              </>
+            )}
+
+            <div className="flex justify-between pt-2 text-lg font-medium border-t border-soft-pink/20">
+              <span>Total</span>
+              <span>${total.toFixed(2)}</span>
+            </div>
+          </div>
+
+          {data.order.fulfillment_type && (
+            <div className="mt-4 pt-4 border-t border-soft-pink/20 text-sm">
+              <p><strong>Fulfillment Type:</strong> {data.order.fulfillment_type.name}</p>
+              {data.order.arrival_from && <p><strong>Arrival From:</strong> {new Date(data.order.arrival_from).toLocaleString()}</p>}
+              {data.order.arrival_to && <p><strong>Arrival To:</strong> {new Date(data.order.arrival_to).toLocaleString()}</p>}
+              {data.order.customer_note && <p><strong>Note:</strong> {data.order.customer_note}</p>}
+            </div>
+          )}
         </section>
       </main>
     );
