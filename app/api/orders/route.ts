@@ -69,7 +69,24 @@ export async function POST(request: Request) {
             },
         });
 
-        return NextResponse.json(order);
+        // Create confirmation link record (expires in 24 hours)
+        // Create confirmation link via Prisma ORM (let DB generate token if configured)
+        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+        const confirmationLink = await prisma.orderConfirmationLink.create({
+            data: {
+                order_id: order.id,
+                expires_at: expiresAt,
+            },
+            select: {
+                id: true,
+                order_id: true,
+                token: true,
+                expires_at: true,
+                created_at: true,
+            },
+        });
+
+        return NextResponse.json({ order, confirmationLink });
     } catch (error) {
 
         return NextResponse.json({ error }, { status: 500 });
