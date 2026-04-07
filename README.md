@@ -56,6 +56,7 @@ Create a `.env` file in the root directory:
 
 ```env
 DATABASE_URL="postgresql://username:password@localhost:5432/food_orders?schema=public"
+BLOCKED_DOMAIN="confirm.losguayacos.com"
 ```
 
 Replace with your PostgreSQL connection string:
@@ -63,6 +64,8 @@ Replace with your PostgreSQL connection string:
 - **Supabase**: Get from Project Settings → Database → Connection String (URI)
 - **Neon**: Copy from your Neon dashboard
 - **Railway**: Copy from your Railway PostgreSQL plugin
+
+`BLOCKED_DOMAIN` controls which host is restricted to the order confirmation flow. Requests to that domain are redirected to `/order-confirm` unless they are already on an order confirmation route.
 
 ### 4. Initialize Database
 
