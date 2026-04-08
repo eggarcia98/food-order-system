@@ -113,10 +113,26 @@ export async function GET() {
                     },
                 },
                 status: true,
+                order_confirmation_link: {
+                    select: {
+                        token: true,
+                    },
+                },
             },
         });
 
-        return NextResponse.json(orders);
+        const blockedDomain = process.env.BLOCKED_DOMAIN?.replace(/\/+$/, "") ?? "";
+        const origin = blockedDomain ? `https://${blockedDomain}` : "";
+
+        const ordersWithConfirmationLink = orders.map((order) => ({
+            ...order,
+            confirmationLinkUrl:
+                origin && order.order_confirmation_link?.token
+                    ? `${origin}/order-confirm/${order.order_confirmation_link.token}`
+                    : null,
+        }));
+
+        return NextResponse.json(ordersWithConfirmationLink);
     } catch (error) {
 
         return NextResponse.json({ error }, { status: 500 });

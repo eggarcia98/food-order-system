@@ -361,7 +361,7 @@ export default function OrderConfirmPage(
               value={fulfillmentTypeId}
               onChange={(e) => setFulfillmentTypeId(e.target.value)}
               required
-              className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream"
+              className="w-full box-border h-12 px-4 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition appearance-none"
             >
               <option value="">Select one</option>
               {data.fulfillmentTypes.map((type) => (
@@ -386,7 +386,7 @@ export default function OrderConfirmPage(
                 max="16:00"
                 value={arrivalFrom}
                 onChange={(e) => setArrivalFrom(e.target.value)}
-                className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream"
+                className="w-full box-border h-12 px-4 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition appearance-none"
               />
             </div>
 
@@ -399,7 +399,7 @@ export default function OrderConfirmPage(
                 max="16:00"
                 value={arrivalTo}
                 onChange={(e) => setArrivalTo(e.target.value)}
-                className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream"
+                className="w-full box-border h-12 px-4 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition appearance-none"
               />
             </div>
           </div>
