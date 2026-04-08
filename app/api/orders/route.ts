@@ -112,6 +112,7 @@ export async function GET() {
                         MenuExtras: true,
                     },
                 },
+                fulfillment_type: true,
                 status: true,
                 order_confirmation_link: {
                     select: {
