@@ -162,6 +162,36 @@ export default function OrderConfirmPage(
     return mainTotal + extraTotal;
   }, [data]);
 
+  const timeOptions = useMemo(() => {
+    const options: Array<{ value: string; label: string }> = [];
+    const startMinutes = 10 * 60 + 30;
+    const endMinutes = 16 * 60;
+
+    for (let minutes = startMinutes; minutes <= endMinutes; minutes += 15) {
+      const hours = Math.floor(minutes / 60);
+      const mins = minutes % 60;
+      const value = `${String(hours).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
+      const label = new Date(`2000-01-01T${value}:00`).toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+      });
+      options.push({ value, label });
+    }
+
+    return options;
+  }, []);
+
+  const arrivalToOptions = useMemo(
+    () => timeOptions.filter((option) => !arrivalFrom || option.value > arrivalFrom),
+    [timeOptions, arrivalFrom],
+  );
+
+  useEffect(() => {
+    if (arrivalTo && arrivalFrom && arrivalTo <= arrivalFrom) {
+      setArrivalTo("");
+    }
+  }, [arrivalFrom, arrivalTo]);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!code) return;
@@ -379,28 +409,36 @@ export default function OrderConfirmPage(
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-light mb-2 text-text-light">Arrival From</label>
-              <input
-                type="time"
+              <select
                 required
-                min="10:30"
-                max="16:00"
                 value={arrivalFrom}
                 onChange={(e) => setArrivalFrom(e.target.value)}
                 className="w-full box-border h-12 px-4 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
-              />
+              >
+                <option value="">Select time</option>
+                {timeOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>
               <label className="block text-sm font-light mb-2 text-text-light">Arrival To</label>
-              <input
-                type="time"
+              <select
                 required
-                min="10:30"
-                max="16:00"
                 value={arrivalTo}
                 onChange={(e) => setArrivalTo(e.target.value)}
                 className="w-full box-border h-12 px-4 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
-              />
+              >
+                <option value="">Select time</option>
+                {arrivalToOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
