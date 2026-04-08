@@ -290,7 +290,7 @@ export default function OrderConfirmPage(
 
           {(data.order.arrival_from || data.order.arrival_to) && (
             <div className="mt-4 pt-4 border-t border-soft-pink/20 text-sm">
-              {data.order.fulfillment_type && <p><strong>Fulfillment Type:</strong> {data.order.fulfillment_type.name}</p>}
+              {data.order.fulfillment_type && <p><strong>Order Type:</strong> {data.order.fulfillment_type.name}</p>}
               {data.order.arrival_from && <p><strong>Arrival From:</strong> {new Date(data.order.arrival_from).toLocaleString()}</p>}
               {data.order.arrival_to && <p><strong>Arrival To:</strong> {new Date(data.order.arrival_to).toLocaleString()}</p>}
             </div>
@@ -356,7 +356,7 @@ export default function OrderConfirmPage(
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-light mb-2 text-text-light">Fulfillment Type</label>
+            <label className="block text-sm font-light mb-2 text-text-light">Order Type</label>
             <select
               value={fulfillmentTypeId}
               onChange={(e) => setFulfillmentTypeId(e.target.value)}
@@ -386,7 +386,7 @@ export default function OrderConfirmPage(
                 max="16:00"
                 value={arrivalFrom}
                 onChange={(e) => setArrivalFrom(e.target.value)}
-                className="w-full box-border h-12 px-4 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition appearance-none"
+                className="w-full box-border h-12 px-4 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
               />
             </div>
 
@@ -399,7 +399,7 @@ export default function OrderConfirmPage(
                 max="16:00"
                 value={arrivalTo}
                 onChange={(e) => setArrivalTo(e.target.value)}
-                className="w-full box-border h-12 px-4 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition appearance-none"
+                className="w-full box-border h-12 px-4 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
               />
             </div>
           </div>
