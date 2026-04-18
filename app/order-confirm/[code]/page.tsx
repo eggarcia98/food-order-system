@@ -68,8 +68,7 @@ export default function OrderConfirmPage(
   const [data, setData] = useState<ApiResponse | null>(null);
 
   const [fulfillmentTypeId, setFulfillmentTypeId] = useState<string>("");
-  const [arrivalFrom, setArrivalFrom] = useState<string>("");
-  const [arrivalTo, setArrivalTo] = useState<string>("");
+  const [approxArrivalTime, setApproxArrivalTime] = useState<string>("");
   const [confirmed, setConfirmed] = useState(false);
 
   function getNextSunday(): Date {
@@ -137,9 +136,8 @@ export default function OrderConfirmPage(
         
         setFulfillmentTypeId(order.fulfillment_type?.id ? String(order.fulfillment_type.id) : "");
         
-        // Leave time inputs empty (show as --:--)
-        setArrivalFrom("");
-        setArrivalTo("");
+        // Leave time input empty
+        setApproxArrivalTime("");
 
         // If link is already used, show the success screen
         if ((body as ApiResponse).link.used_at) {
@@ -165,7 +163,7 @@ export default function OrderConfirmPage(
   const timeOptions = useMemo(() => {
     const options: Array<{ value: string; label: string }> = [];
     const startMinutes = 10 * 60 + 30;
-    const endMinutes = 16 * 60;
+    const endMinutes = 15 * 60 + 45;
 
     for (let minutes = startMinutes; minutes <= endMinutes; minutes += 15) {
       const hours = Math.floor(minutes / 60);
@@ -181,17 +179,6 @@ export default function OrderConfirmPage(
     return options;
   }, []);
 
-  const arrivalToOptions = useMemo(
-    () => timeOptions.filter((option) => !arrivalFrom || option.value > arrivalFrom),
-    [timeOptions, arrivalFrom],
-  );
-
-  useEffect(() => {
-    if (arrivalTo && arrivalFrom && arrivalTo <= arrivalFrom) {
-      setArrivalTo("");
-    }
-  }, [arrivalFrom, arrivalTo]);
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!code) return;
@@ -203,16 +190,15 @@ export default function OrderConfirmPage(
     try {
       // Reconstruct full ISO datetime from time values
       const nextSunday = getNextSunday();
-      const fullArrivalFrom = timeToISOString(arrivalFrom, nextSunday);
-      const fullArrivalTo = timeToISOString(arrivalTo, nextSunday);
+      const fullArrivalTime = timeToISOString(approxArrivalTime, nextSunday);
 
       const res = await fetch(`/api/orders/confirm/${encodeURIComponent(code)}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           fulfillmentTypeId,
-          arrivalFrom: fullArrivalFrom,
-          arrivalTo: fullArrivalTo,
+          arrivalFrom: fullArrivalTime,
+          arrivalTo: fullArrivalTime,
         }),
       });
 
@@ -403,43 +389,24 @@ export default function OrderConfirmPage(
           </div>
 
           <div className="mb-4">
-            <p className="text-lg  text-brand-blue">Please, select your preferred arrival time window</p>
+            <p className="text-lg  text-brand-blue">Please, select your approximate arrival time</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-light mb-2 text-text-light">Arrival From</label>
-              <select
-                required
-                value={arrivalFrom}
-                onChange={(e) => setArrivalFrom(e.target.value)}
-                className="w-full box-border h-12 px-4 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
-              >
-                <option value="">Select time</option>
-                {timeOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-light mb-2 text-text-light">Arrival To</label>
-              <select
-                required
-                value={arrivalTo}
-                onChange={(e) => setArrivalTo(e.target.value)}
-                className="w-full box-border h-12 px-4 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
-              >
-                <option value="">Select time</option>
-                {arrivalToOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div>
+            <label className="block text-sm font-light mb-2 text-text-light">Approximate Arrival Time</label>
+            <select
+              required
+              value={approxArrivalTime}
+              onChange={(e) => setApproxArrivalTime(e.target.value)}
+              className="w-full box-border h-12 px-4 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
+            >
+              <option value="">Select time</option>
+              {timeOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </div>
 
           {error ? <p className="text-brand-red text-sm">{error}</p> : null}
