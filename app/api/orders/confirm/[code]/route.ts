@@ -119,10 +119,6 @@ export async function PATCH(
       return NextResponse.json({ error: "Invalid arrival_to date" }, { status: 400 });
     }
 
-    if (arrivalTo.getTime() <= arrivalFrom.getTime()) {
-      return NextResponse.json({ error: "arrival_to must be greater than arrival_from" }, { status: 400 });
-    }
-
     const updatedOrder = await db.order.update({
       where: { id: link.order_id },
       data: {
