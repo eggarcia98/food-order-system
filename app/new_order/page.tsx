@@ -4,6 +4,14 @@ import AddMainItemModal from "@/components/AddMainItemModal";
 import AddExtraItemModal from "@/components/AddExtraItemModal";
 import { DishToOrderItem } from "@/components/DishToOrderItem";
 import { useAuthSession } from "@/lib/useAuthSession";
+import {
+    MainOrderItem,
+    ExtraOrderItem,
+    calculateMainItemTotal,
+    calculateExtraItemTotal,
+    calculateOrdersGrandTotal,
+    formatCurrency,
+} from "@/lib/order-types";
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 
@@ -35,8 +43,8 @@ export default function NewOrderPage() {
     const [firstname, setFirstname] = useState("");
     const [menuItems, setMenuItems] = useState<any[]>([]);
 
-    const [confirmedMainItems, setConfirmedMainItems] = useState<any[]>([]);
-    const [confirmedExtraItems, setConfirmedExtraItems] = useState<any[]>([]);
+    const [confirmedMainItems, setConfirmedMainItems] = useState<MainOrderItem[]>([]);
+    const [confirmedExtraItems, setConfirmedExtraItems] = useState<ExtraOrderItem[]>([]);
 
     const [nationality, setNationality] = useState({});
     const [nationalityList, setNationalityList] = useState([
@@ -671,12 +679,12 @@ export default function NewOrderPage() {
                                                     {item.item_name} - {item.variant_name}
                                                 </p>
                                                 <p className="text-sm text-text-light">
-                                                    Quantity: {item.quantity} × ${item.price}
+                                                    Quantity: {item.quantity} × {formatCurrency(item.price)}
                                                 </p>
                                             </div>
                                             <div className="flex items-center gap-4">
                                                 <p className="font-semibold text-brand-red">
-                                                    ${(item.quantity * item.price).toFixed(2)}
+                                                    {formatCurrency(calculateMainItemTotal(item))}
                                                 </p>
                                                 <button
                                                     type="button"
@@ -747,12 +755,12 @@ export default function NewOrderPage() {
                                                     {item.name}
                                                 </p>
                                                 <p className="text-sm text-text-light">
-                                                    Quantity: {item.quantity} × ${item.price}
+                                                    Quantity: {item.quantity} × {formatCurrency(item.price)}
                                                 </p>
                                             </div>
                                             <div className="flex items-center gap-4">
                                                 <p className="font-semibold text-brand-red">
-                                                    ${(item.quantity * item.price).toFixed(2)}
+                                                    {formatCurrency(calculateExtraItemTotal(item))}
                                                 </p>
                                                 <button
                                                     type="button"
