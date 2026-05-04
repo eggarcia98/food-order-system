@@ -7,6 +7,13 @@ import { useRouter } from "next/navigation";
 import { LayoutList, List } from "lucide-react";
 import useSWR from "swr";
 import { useAuthSession } from "@/lib/useAuthSession";
+import {
+    formatOrderDate,
+    formatOrderDateShort,
+    formatOrderTime,
+    getSidesForOrder,
+    getWeekDates,
+} from "@/lib/order-utils";
 
 export interface Order {
     id: number;
@@ -109,22 +116,6 @@ export default function OrdersList() {
     const [userSetViewMode, setUserSetViewMode] = useState(false);
     const [expandedOrders, setExpandedOrders] = useState<Set<number>>(new Set());
 
-    const getWeekDates = () => {
-        const now = new Date();
-        const dayOfWeek = now.getDay();
-        const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-
-        const monday = new Date(now);
-        monday.setDate(now.getDate() + diff + 1);
-        monday.setHours(0, 0, 0, 0);
-
-        const sunday = new Date(monday);
-        sunday.setDate(monday.getDate() + 6);
-        sunday.setHours(23, 59, 59, 999);
-
-        return { monday, sunday };
-    };
-
     const { monday: currentMonday, sunday: currentSunday } = getWeekDates();
     const [startDate, setStartDate] = useState(
         currentMonday.toISOString().split("T")[0]
@@ -146,17 +137,6 @@ export default function OrdersList() {
         return () => mql.removeEventListener("change", apply);
     }, [userSetViewMode]);
 
-    const getSidesForOrder = (order: Order) => {
-        return order.order_item_extras.map((osi) => {
-            return {
-                id: osi.MenuExtras.extra_id,
-                name: osi.MenuExtras.name,
-                price: osi.MenuExtras.price,
-                quantity: osi.quantity,
-            };
-        });
-    };
-
     const filteredOrders = orders.filter((order) => {
         const customerName = `${order.customer.first_name} ${order.customer.last_name}`;
 
@@ -177,38 +157,6 @@ export default function OrdersList() {
 
         return matchesSearch && matchesDate;
     });
-
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return date.toLocaleString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-            timeZone: "Australia/Brisbane",
-        });
-    };
-
-    const formatDateShort = (dateString: string) => {
-        const date = new Date(dateString);
-        return date.toLocaleString("en-US", {
-            month: "short",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-            timeZone: "Australia/Brisbane",
-        });
-    };
-
-    const formatTimeOnly = (dateString: string) => {
-        const date = new Date(dateString);
-        return date.toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-            timeZone: "Australia/Brisbane",
-        });
-    };
 
     const updateOrderStatus = async (orderId: number, status_id: number) => {
         try {
@@ -801,14 +749,14 @@ export default function OrdersList() {
                                                 </div>
                                                 <div className="text-sm text-foreground font-light">
                                                     {order.arrival_from && order.arrival_to
-                                                        ? `${formatTimeOnly(order.arrival_from)} - ${formatTimeOnly(order.arrival_to)}`
+                                                        ? `${formatOrderTime(order.arrival_from)} - ${formatOrderTime(order.arrival_to)}`
                                                         : "Not selected"}
                                                 </div>
                                             </div>
 
                                             <div className="text-xs text-text-light pt-2">
                                                 Created:{" "}
-                                                {formatDate(order.created_at)}
+                                                {formatOrderDate(order.created_at)}
                                             </div>
                                         </div>
                                     )}
@@ -842,7 +790,7 @@ export default function OrdersList() {
                                                     {order.customer.last_name}{" "}
                                                     <span className="text-xs text-gray-400 italic">
                                                         (
-                                                        {formatDateShort(
+                                                        {formatOrderDateShort(
                                                             order.created_at,
                                                         )}
                                                         )
@@ -986,7 +934,7 @@ export default function OrdersList() {
                                             <p className="text-foreground">
                                                 <span className="text-text-light">Arrival Time:</span>{" "}
                                                 {order.arrival_from && order.arrival_to
-                                                    ? `${formatTimeOnly(order.arrival_from)} - ${formatTimeOnly(order.arrival_to)}`
+                                                    ? `${formatOrderTime(order.arrival_from)} - ${formatOrderTime(order.arrival_to)}`
                                                     : "Not selected"}
                                             </p>
                                         </div>

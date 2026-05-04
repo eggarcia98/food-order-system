@@ -3,7 +3,7 @@
 import AddMainItemModal from "@/components/AddMainItemModal";
 import AddExtraItemModal from "@/components/AddExtraItemModal";
 import { DishToOrderItem } from "@/components/DishToOrderItem";
-import { Selector } from "@/components/SelectorComponent";
+import { useAuthSession } from "@/lib/useAuthSession";
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 
@@ -27,6 +27,8 @@ interface Side {
 }
 
 export default function NewOrderPage() {
+    const { isAuthenticated } = useAuthSession();
+
     const [phoneNumber, setPhoneNumber] = useState("");
 
     const [lastname, setLastname] = useState("");
@@ -52,9 +54,6 @@ export default function NewOrderPage() {
         type: "success" | "error";
         text: string;
     } | null>(null);
-
-    // Authentication state: null = checking, false = not authed, true = authed
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
     const [previousCustomers, setPreviousCustomers] = useState<any[]>([]);
 
@@ -107,29 +106,6 @@ export default function NewOrderPage() {
         fetchExtraItems();
         fetchPreviousCustomers();
         fetchMenuItems();
-    }, []);
-
-    // Check session to decide whether to allow autocomplete features.
-    useEffect(() => {
-        let mounted = true;
-
-        async function checkAuth() {
-            try {
-                const res = await fetch('/api/auth/refreshSession', { method: 'POST', credentials: 'include' });
-                const data = await res.json().catch(() => null);
-                if (!mounted) return;
-                // The refreshSession returns { valid: true, ... } or may include email
-                const valid = data?.valid === true || typeof data?.email === 'string' || typeof data?.data?.email === 'string';
-                setIsAuthenticated(Boolean(valid));
-            } catch (e) {
-                if (!mounted) return;
-                setIsAuthenticated(false);
-            }
-        }
-
-        checkAuth();
-
-        return () => { mounted = false; };
     }, []);
 
     const removeMainItem = (index: number) => {
