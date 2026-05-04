@@ -3,41 +3,19 @@
 import React, { useCallback, useState } from "react";
 import { OrderModalShell } from "@/components/OrderModalShell";
 import { useQuantityMap } from "@/lib/useQuantityMap";
-
-interface ItemVariant {
-    id: number;
-    item_id: number;
-    variant_name: string;
-    price: number;
-    is_active: boolean;
-    image_url?: string;
-}
-
-interface MenuItem {
-    id: number;
-    category_id: number;
-    name: string;
-    description: string;
-    img_url?: string;
-    item_variants: ItemVariant[];
-    is_active: boolean;
-}
-
-interface SelectedVariant {
-    item_id: number;
-    item_name: string;
-    variant_id: number;
-    variant_name: string;
-    price: number;
-    quantity: number;
-}
+import {
+    MenuItem,
+    ItemVariant,
+    SelectedVariant,
+    AddMainItemModalProps,
+} from "@/lib/domain";
 
 export default function AddMainItemModal({
     open,
     setOpen,
     menuItems,
     setConfirmedMainItems,
-}: any) {
+}: AddMainItemModalProps) {
     const [selectedVariant, setSelectedVariant] =
         React.useState<SelectedVariant | null>(null);
     const [quantity, setQuantity] = React.useState<number>(1);

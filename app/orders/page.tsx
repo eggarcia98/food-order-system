@@ -14,73 +14,15 @@ import {
     getSidesForOrder,
     getWeekDates,
 } from "@/lib/order-utils";
-
-export interface Order {
-    id: number;
-    order_code: string;
-    customer_id: number;
-    comments: string;
-    created_at: string;
-    arrival_from?: string | null;
-    arrival_to?: string | null;
-    customer_confirmed_at?: string | null;
-    fulfillment_type?: {
-        id: number;
-        name: string;
-    } | null;
-    is_info_sent: boolean;
-    customer: Customer;
-    order_items: OrderItem[];
-    order_item_extras: OrderExtraItem[];
-    status_id: number;
-    status: any;
-    confirmationLinkUrl?: string | null;
-}
-
-export interface Customer {
-    id: number;
-    first_name: string;
-    last_name: string;
-    phone_number: string;
-    nationality_id: number;
-}
-
-export interface OrderItem {
-    id: number;
-    order_id: number;
-    quantity: number;
-    variant_id: number;
-    ItemVariant: ItemVariant;
-}
-
-export interface ItemVariant {
-    id: number;
-    variant_name: string;
-    price: number;
-    img?: string;
-    extras?: string;
-    MenuItem?: {
-        id: number;
-        name: string;
-        category_id: number | null;
-    };
-}
-
-export interface OrderExtraItem {
-    id: number;
-    order_id: number;
-    extra_id: number;
-    quantity: number;
-    MenuExtras: Extra;
-}
-
-export interface Extra {
-    extra_id: number;
-    name: string;
-    cost: number;
-    price: number;
-    description: string;
-}
+import {
+    Order,
+    Customer,
+    OrderItem,
+    ItemVariant,
+    OrderExtraItem,
+    MenuExtra,
+    OrderStatus,
+} from "@/lib/domain";
 
 const fetcher = async (url: string) => {
     const response = await fetch(url);

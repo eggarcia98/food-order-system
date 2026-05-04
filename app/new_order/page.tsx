@@ -12,6 +12,12 @@ import {
     calculateOrdersGrandTotal,
     formatCurrency,
 } from "@/lib/order-types";
+import {
+    MenuItem,
+    ExtraItem,
+    Customer,
+    Nationality,
+} from "@/lib/domain";
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 
@@ -41,20 +47,20 @@ export default function NewOrderPage() {
 
     const [lastname, setLastname] = useState("");
     const [firstname, setFirstname] = useState("");
-    const [menuItems, setMenuItems] = useState<any[]>([]);
+    const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
 
     const [confirmedMainItems, setConfirmedMainItems] = useState<MainOrderItem[]>([]);
     const [confirmedExtraItems, setConfirmedExtraItems] = useState<ExtraOrderItem[]>([]);
 
     const [nationality, setNationality] = useState({});
-    const [nationalityList, setNationalityList] = useState([
+    const [nationalityList, setNationalityList] = useState<Nationality[]>([
         { id: 1, name: "Ecuadorian" },
     ]);
 
     const [openAddMainItemModal, setOpenAddMainItemModal] = useState(false);
     const [openAddExtraItemModal, setOpenAddExtraItemModal] = useState(false);
 
-    const [extraItems, setExtraItems] = useState<any[]>([]);
+    const [extraItems, setExtraItems] = useState<ExtraItem[]>([]);
 
     const [comments, setComments] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,7 +69,7 @@ export default function NewOrderPage() {
         text: string;
     } | null>(null);
 
-    const [previousCustomers, setPreviousCustomers] = useState<any[]>([]);
+    const [previousCustomers, setPreviousCustomers] = useState<Customer[]>([]);
 
     const fetchNationalities = async () => {
         try {
@@ -177,16 +183,16 @@ export default function NewOrderPage() {
     };
 
     const [showSuggestions, setShowSuggestions] = useState(false);
-    const [filteredSuggestions, setFilteredSuggestions] = useState<any[]>([]);
+    const [filteredSuggestions, setFilteredSuggestions] = useState<Customer[]>([]);
     const suggestionsRef = useRef<HTMLDivElement>(null);
 
     const [showNameSuggestions, setShowNameSuggestions] = useState(false);
-    const [filteredNameSuggestions, setFilteredNameSuggestions] = useState<any[]>([]);
+    const [filteredNameSuggestions, setFilteredNameSuggestions] = useState<Customer[]>([]);
     const nameSearchRef = useRef<HTMLDivElement>(null);
 
     const [nationalitySearch, setNationalitySearch] = useState("");
     const [showNationalitySuggestions, setShowNationalitySuggestions] = useState(false);
-    const [filteredNationalities, setFilteredNationalities] = useState<any[]>([]);
+    const [filteredNationalities, setFilteredNationalities] = useState<Nationality[]>([]);
     const nationalityRef = useRef<HTMLDivElement>(null);
 
     const handlePhoneNumberChange = (value: string) => {
@@ -210,7 +216,7 @@ export default function NewOrderPage() {
         }
     };
 
-    const selectSuggestion = (customer) => {
+    const selectSuggestion = (customer: Customer) => {
         setPhoneNumber(customer.phone_number);
         setNationality({ id: customer.nationality_id });
         setFirstname(customer.first_name || "");
@@ -251,7 +257,7 @@ export default function NewOrderPage() {
         }
     };
 
-    const selectNameSuggestion = (customer) => {
+    const selectNameSuggestion = (customer: Customer) => {
         setPhoneNumber(customer.phone_number);
         setNationality({ id: customer.nationality_id });
         setFirstname(customer.first_name || "");
@@ -285,7 +291,7 @@ export default function NewOrderPage() {
         }
     };
 
-    const selectNationality = (selectedNat) => {
+    const selectNationality = (selectedNat: Nationality) => {
         setNationalitySearch(selectedNat.name);
         setNationality({ id: selectedNat.id });
         setShowNationalitySuggestions(false);

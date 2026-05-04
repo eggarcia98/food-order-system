@@ -3,39 +3,13 @@
 import React, { useCallback, useEffect } from "react";
 import { OrderModalShell } from "@/components/OrderModalShell";
 import { useQuantityMap } from "@/lib/useQuantityMap";
-
-interface ItemVariant {
-    id: number;
-    item_id: number;
-    variant_name: string;
-    price: number;
-    is_active: boolean;
-    image_url?: string;
-}
-
-interface MenuItem {
-    id: number;
-    category_id: number;
-    name: string;
-    description: string;
-    item_variants: ItemVariant[];
-}
-
-interface SelectedVariant {
-    item_id: number;
-    item_name: string;
-    variant_id: number;
-    variant_name: string;
-    price: number;
-    quantity: number;
-}
-
-interface SideItem {
-    id: number;
-    name: string;
-    price?: number;
-    quantity?: number;
-}
+import {
+    MenuItem,
+    ItemVariant,
+    SelectedVariant,
+    SideItem,
+    AddItemModalProps,
+} from "@/lib/domain";
 
 export default function AddItemModal({
     open,
@@ -43,14 +17,14 @@ export default function AddItemModal({
     sides,
     menuItems,
     setConfirmedOrderList,
-}: any) {
+}: AddItemModalProps) {
     const [selectedVariant, setSelectedVariant] =
         React.useState<SelectedVariant | null>(null);
-    const [sidesSelected, setSidesSelected] = React.useState<any>([]);
+    const [sidesSelected, setSidesSelected] = React.useState<SideItem[]>([]);
     const [quantity, setQuantity] = React.useState<number>(1);
     const [expandedCategory, setExpandedCategory] = React.useState<number | null>(null);
 
-    const sideIds = sides.map((s: SideItem) => s.id);
+    const sideIds = sides.map((s) => s.id);
     const { quantities: sideQuantities, increment, decrement, reset: resetSideQuantities } = useQuantityMap(
         sideIds,
         0,
@@ -58,8 +32,8 @@ export default function AddItemModal({
 
     useEffect(() => {
         const updatedSides = sides
-            .filter((side: SideItem) => sideQuantities[side.id] > 0)
-            .map((side: SideItem) => ({
+            .filter((side) => sideQuantities[side.id] > 0)
+            .map((side) => ({
                 id: side.id,
                 name: side.name,
                 quantity: sideQuantities[side.id],
@@ -101,7 +75,7 @@ export default function AddItemModal({
 
     const confirmOrderItem = useCallback(() => {
         if (!selectedVariant) return;
-        setConfirmedOrderList((prev: any) => [
+        setConfirmedOrderList((prev) => [
             ...prev,
             {
                 variant: selectedVariant,

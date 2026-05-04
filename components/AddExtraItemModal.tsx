@@ -3,21 +3,15 @@
 import React, { useCallback } from "react";
 import { OrderModalShell } from "@/components/OrderModalShell";
 import { useQuantityMap } from "@/lib/useQuantityMap";
-
-interface ExtraItem {
-    extra_id: number;
-    name: string;
-    price: number;
-    is_active: boolean;
-}
+import { ExtraItem, AddExtraItemModalProps } from "@/lib/domain";
 
 export default function AddExtraItemModal({
     open,
     setOpen,
     extraItems,
     setConfirmedExtraItems,
-}: any) {
-    const extraIds = extraItems.map((e: ExtraItem) => e.extra_id);
+}: AddExtraItemModalProps) {
+    const extraIds = extraItems.map((e) => e.extra_id);
     const { quantities, increment, decrement, reset } = useQuantityMap(
         extraIds,
         0,
@@ -25,8 +19,8 @@ export default function AddExtraItemModal({
 
     const handleConfirm = useCallback(() => {
         const selectedExtras = extraItems
-            .filter((extra: ExtraItem) => quantities[extra.extra_id] > 0)
-            .map((extra: ExtraItem) => ({
+            .filter((extra) => quantities[extra.extra_id] > 0)
+            .map((extra) => ({
                 extra_id: extra.extra_id,
                 name: extra.name,
                 quantity: quantities[extra.extra_id],
@@ -56,7 +50,7 @@ export default function AddExtraItemModal({
                     </h3>
                 </div>
                 <div className="flex flex-col gap-2">
-                    {extraItems.map((extra: ExtraItem) => (
+                    {extraItems.map((extra) => (
                         <div
                             key={extra.extra_id}
                             className="flex justify-between items-center border-b p-2 px-3 text-sm border-brand"
