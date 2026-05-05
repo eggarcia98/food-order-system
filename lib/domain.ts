@@ -111,10 +111,10 @@ export interface Order {
     order_code: string;
     customer_id: number;
     comments: string;
-    created_at: string;
-    arrival_from?: string | null;
-    arrival_to?: string | null;
-    customer_confirmed_at?: string | null;
+    created_at: Date;
+    arrival_from?: Date | null;
+    arrival_to?: Date | null;
+    customer_confirmed_at?: Date | null;
     fulfillment_type?: FulfillmentType | null;
     is_info_sent: boolean;
     customer: Customer;
@@ -170,4 +170,31 @@ export interface CreateOrderRequest {
 export interface CreateOrderResponse {
     id: number;
     order_code: string;
+}
+
+// ============ Order Confirmation ============
+export interface ConfirmationLink {
+    id: number;
+    token: string;
+    order_id: number;
+    expires_at: Date;
+    used_at: Date | null;
+    created_at: Date;
+}
+
+export interface ConfirmationRequest {
+    fulfillmentTypeId: number;
+    arrivalFrom: string;
+    arrivalTo: string;
+}
+
+export interface ConfirmationResponse {
+    order: Order;
+    fulfillmentTypes?: FulfillmentType[];
+    link?: {
+        token: string;
+        expires_at: Date;
+        used_at: Date | null;
+    };
+    updated?: boolean;
 }

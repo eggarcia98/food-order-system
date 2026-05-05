@@ -2,7 +2,6 @@
 
 import React, { useCallback, useState } from "react";
 import { OrderModalShell } from "@/components/OrderModalShell";
-import { useQuantityMap } from "@/lib/useQuantityMap";
 import {
     MenuItem,
     ItemVariant,
@@ -48,6 +47,7 @@ export default function AddMainItemModal({
         setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
 
     const toggleCategory = (categoryId: number) => {
+
         if (expandedCategory === categoryId) {
             setExpandedCategory(null);
         } else {

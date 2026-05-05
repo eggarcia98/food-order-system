@@ -685,7 +685,7 @@ export default function NewOrderPage() {
                                                     {item.item_name} - {item.variant_name}
                                                 </p>
                                                 <p className="text-sm text-text-light">
-                                                    Quantity: {item.quantity} × {formatCurrency(item.price)}
+                                                    Quantity: {item.quantity} × {formatCurrency(Number(item.price))}
                                                 </p>
                                             </div>
                                             <div className="flex items-center gap-4">
@@ -761,7 +761,7 @@ export default function NewOrderPage() {
                                                     {item.name}
                                                 </p>
                                                 <p className="text-sm text-text-light">
-                                                    Quantity: {item.quantity} × {formatCurrency(item.price)}
+                                                    Quantity: {item.quantity} × {formatCurrency(Number(item.price))}
                                                 </p>
                                             </div>
                                             <div className="flex items-center gap-4">
