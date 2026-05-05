@@ -15,6 +15,7 @@ export default function SocialLoginButtons() {
                 throw new Error("Invalid OAuth response");
             }
 
+            // Redirect to the Supabase OAuth Interface -> Provider
             window.location.href = data.url;
         } catch (error) {
             console.error("Google login failed:", error);
