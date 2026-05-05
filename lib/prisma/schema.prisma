@@ -194,7 +194,7 @@ model view_log {
 }
 
 model order_confirmation_link {
-  id         Int       @id
+  id         Int       @id @default(autoincrement())
   order_id   Int
   token      String    @unique(map: "uq_order_confirmation_link_token") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   expires_at DateTime  @db.Timestamp(6)
