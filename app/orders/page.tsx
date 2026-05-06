@@ -16,12 +16,7 @@ import {
 } from "@/lib/order-utils";
 import {
     Order,
-    Customer,
     OrderItem,
-    ItemVariant,
-    OrderExtraItem,
-    MenuExtra,
-    OrderStatus,
 } from "@/lib/domain";
 
 const fetcher = async (url: string) => {
@@ -388,11 +383,10 @@ export default function OrdersList() {
                                     setUserSetViewMode(true);
                                     setViewMode("detailed");
                                 }}
-                                className={`px-4 py-2.5 text-sm font-light transition flex items-center gap-2 ${
-                                    viewMode === "detailed"
+                                className={`px-4 py-2.5 text-sm font-light transition flex items-center gap-2 ${viewMode === "detailed"
                                         ? "bg-soft-blue/30 text-brand-blue"
                                         : "text-text-light hover:bg-soft-blue/10"
-                                }`}
+                                    }`}
                                 title="Detailed View"
                             >
                                 <LayoutList className="w-4 h-4" />
@@ -406,11 +400,10 @@ export default function OrdersList() {
                                     setUserSetViewMode(true);
                                     setViewMode("compact");
                                 }}
-                                className={`px-4 py-2.5 text-sm font-light transition border-l border-soft-pink/30 flex items-center gap-2 ${
-                                    viewMode === "compact"
+                                className={`px-4 py-2.5 text-sm font-light transition border-l border-soft-pink/30 flex items-center gap-2 ${viewMode === "compact"
                                         ? "bg-rose/30 text-brand-red"
                                         : "text-text-light hover:bg-rose/10"
-                                }`}
+                                    }`}
                                 title="Compact View"
                             >
                                 <List className="w-4 h-4" />
@@ -671,25 +664,25 @@ export default function OrdersList() {
 
                                             {getSidesForOrder(order).length >
                                                 0 && (
-                                                <div>
-                                                    <div className="text-xs text-text-light uppercase tracking-wide mb-1">
-                                                        Extras
+                                                    <div>
+                                                        <div className="text-xs text-text-light uppercase tracking-wide mb-1">
+                                                            Extras
+                                                        </div>
+                                                        <div className="text-sm text-foreground font-light">
+                                                            {getSidesForOrder(
+                                                                order,
+                                                            ).map((side) => (
+                                                                <div
+                                                                    key={side.id}
+                                                                    className="py-1"
+                                                                >
+                                                                    • {side.name} ×
+                                                                    {side.quantity}
+                                                                </div>
+                                                            ))}
+                                                        </div>
                                                     </div>
-                                                    <div className="text-sm text-foreground font-light">
-                                                        {getSidesForOrder(
-                                                            order,
-                                                        ).map((side) => (
-                                                            <div
-                                                                key={side.id}
-                                                                className="py-1"
-                                                            >
-                                                                • {side.name} ×
-                                                                {side.quantity}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            )}
+                                                )}
 
                                             {order.comments && (
                                                 <div>
@@ -719,8 +712,8 @@ export default function OrdersList() {
                                                 </div>
                                                 <div className="text-sm text-foreground font-light">
                                                     {order.arrival_from &&
-                                                    order.arrival_to
-                                                        ? `${formatOrderTime(""+order.arrival_from)} - ${formatOrderTime(""+order.arrival_to)}`
+                                                        order.arrival_to
+                                                        ? `${formatOrderTime("" + order.arrival_from)} - ${formatOrderTime("" + order.arrival_to)}`
                                                         : "Not selected"}
                                                 </div>
                                             </div>
@@ -923,14 +916,14 @@ export default function OrdersList() {
                                                     Arrival Time:
                                                 </span>{" "}
                                                 {order.arrival_from &&
-                                                order.arrival_to
-                                                    ? `${formatOrderTime(""+order.arrival_from)} - ${formatOrderTime(""+order.arrival_to)}`
+                                                    order.arrival_to
+                                                    ? `${formatOrderTime("" + order.arrival_from)} - ${formatOrderTime("" + order.arrival_to)}`
                                                     : "Not selected"}
                                             </p>
                                         </div>
 
                                         {order.status.id === 5 ||
-                                        order.status.id === 6 ? (
+                                            order.status.id === 6 ? (
                                             <div className="px-3 py-2 font-light rounded-lg text-center text-sm text-green-600 bg-green-50 border border-green-200">
                                                 Done
                                             </div>
