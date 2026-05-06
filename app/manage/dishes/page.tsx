@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useMemo, useState } from "react";
 import { useAuthSession } from "@/lib/useAuthSession";
-import type { MenuItem, ItemVariant } from "@/lib/domain";
+import type { MenuCategory, MenuItem, ItemVariant } from "@/lib/domain";
 
 interface EditingState {
   type: "none" | "dish" | "variant";
@@ -36,27 +36,24 @@ export default function DishManagementPage() {
   });
 
   useEffect(() => {
-    fetchDishes();
+    fetchMenuData();
   }, []);
 
-  useEffect(() => {
-    if (loading || activeCategory !== "all") return;
-
-    const firstCategory = [...new Set(dishes.map((dish) => dish.category_id).filter((categoryId) => categoryId !== null && categoryId !== undefined))]
-      .sort((left, right) => left - right)[0];
-
-    if (typeof firstCategory === "number") {
-      setActiveCategory(firstCategory);
-    }
-  }, [activeCategory, dishes, loading]);
-
-  const fetchDishes = async () => {
+  const fetchMenuData = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/menu_items");
-      if (!res.ok) throw new Error("Failed to fetch dishes");
-      const data = await res.json();
-      setDishes(data);
+      const [dishesResponse] = await Promise.all([
+        fetch("/api/menu_items"),
+      ]);
+
+
+      if (!dishesResponse.ok) throw new Error("Failed to fetch dishes");
+
+      const dishesData = await dishesResponse.json();
+      setDishes(dishesData);
+
+      console.log("Fetched dishes:", {dishesData});
+
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch dishes");
@@ -71,25 +68,20 @@ export default function DishManagementPage() {
   };
 
   const categoryPages = useMemo(() => {
-    const categories = new Map<number | null, MenuItem[]>();
-
-    for (const dish of dishes) {
-      const current = categories.get(dish.category_id) ?? [];
-      current.push(dish);
-      categories.set(dish.category_id, current);
-    }
-
-    return [...categories.entries()]
-      .map(([categoryId, items]) => ({
-        categoryId,
-        label: categoryId === null ? "Uncategorized" : `Category ${categoryId}`,
-        items: items.sort((left, right) => left.name.localeCompare(right.name)),
-      }))
+    return dishes
+      .slice()
       .sort((left, right) => {
-        if (left.categoryId === null) return 1;
-        if (right.categoryId === null) return -1;
-        return left.categoryId - right.categoryId;
-      });
+        if (left.id !== right.id) {
+          return left.id - right.id;
+        }
+
+        return left.name.localeCompare(right.name);
+      })
+      .map((dish) => ({
+        id: dish.id,
+        label: dish.name,
+        itemCount: dishes.filter((d) => d.id === dish.id).length,
+      }));
   }, [dishes]);
 
   const filteredDishes = useMemo(() => {
@@ -104,16 +96,7 @@ export default function DishManagementPage() {
 
         return matchesQuery && matchesCategory;
       })
-      .sort((left, right) => {
-        const leftCategory = left.category_id ?? Number.MAX_SAFE_INTEGER;
-        const rightCategory = right.category_id ?? Number.MAX_SAFE_INTEGER;
-
-        if (leftCategory !== rightCategory) {
-          return leftCategory - rightCategory;
-        }
-
-        return left.name.localeCompare(right.name);
-      });
+      .sort((left, right) => left.name.localeCompare(right.name));
   }, [activeCategory, dishes, searchQuery]);
 
   // CREATE: Add new dish
@@ -143,7 +126,7 @@ export default function DishManagementPage() {
       setDishFormData({ name: "", description: "" });
       setShowAddDish(false);
       setError(null);
-      fetchDishes();
+      fetchMenuData();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create dish");
     }
@@ -175,7 +158,7 @@ export default function DishManagementPage() {
       showSuccess("Dish updated successfully!");
       setEditing({ type: "none" });
       setError(null);
-      fetchDishes();
+      fetchMenuData();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to update dish");
     }
@@ -195,7 +178,7 @@ export default function DishManagementPage() {
 
       showSuccess(`Dish ${!isActive ? "enabled" : "disabled"}`);
       setError(null);
-      fetchDishes();
+      fetchMenuData();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to update dish");
     }
@@ -225,7 +208,7 @@ export default function DishManagementPage() {
       showSuccess("Variant created!");
       setVariantFormData({ name: "", price: "" });
       setError(null);
-      fetchDishes();
+      fetchMenuData();
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Failed to create variant",
@@ -257,7 +240,7 @@ export default function DishManagementPage() {
       setEditing({ type: "none" });
       setVariantFormData({ name: "", price: "" });
       setError(null);
-      fetchDishes();
+      fetchMenuData();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to update variant");
     }
@@ -277,7 +260,7 @@ export default function DishManagementPage() {
 
       showSuccess(`Variant ${!isActive ? "enabled" : "disabled"}`);
       setError(null);
-      fetchDishes();
+      fetchMenuData();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to update variant");
     }
@@ -367,7 +350,7 @@ export default function DishManagementPage() {
           <div className="mt-6 flex gap-3 overflow-x-auto pb-1">
             <button
               type="button"
-              onClick={() => setActiveCategory("all")}
+              onClick={() => setSearchQuery("")}
               className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition ${
                 activeCategory === "all"
                   ? "bg-brand-blue text-white shadow-sm"
@@ -380,9 +363,9 @@ export default function DishManagementPage() {
               <button
                 key={page.label}
                 type="button"
-                onClick={() => setActiveCategory(page.categoryId ?? "all")}
+                onClick={() => setSearchQuery(page.label)}
                 className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition ${
-                  activeCategory === page.categoryId
+                  activeCategory === page.id
                     ? "bg-brand-blue text-white shadow-sm"
                     : "bg-white text-foreground ring-1 ring-black/5 hover:bg-[#f6f1eb]"
                 }`}
@@ -478,16 +461,16 @@ export default function DishManagementPage() {
                     <button
                       key={page.label}
                       type="button"
-                      onClick={() => setActiveCategory(page.categoryId ?? "all")}
+                      onClick={() => setActiveCategory(page.id)}
                       className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left transition ${
-                        activeCategory === page.categoryId
+                        activeCategory === page.id
                           ? "bg-brand-blue text-white shadow-sm"
                           : "bg-[#faf7f2] text-foreground hover:bg-[#f4ede4]"
                       }`}
                     >
                       <span className="font-medium">{page.label}</span>
-                      <span className={`text-xs ${activeCategory === page.categoryId ? "text-white/80" : "text-text-light"}`}>
-                        {page.items.length}
+                      <span className={`text-xs ${activeCategory === page.id ? "text-white/80" : "text-text-light"}`}>
+                        {page.itemCount}
                       </span>
                     </button>
                   ))
@@ -499,10 +482,10 @@ export default function DishManagementPage() {
 
             <div className="grid gap-6">
               {filteredDishes.map((dish) => (
-              <div
-                key={dish.id}
-                className="rounded-3xl bg-white/85 p-6 shadow-[0_18px_60px_rgba(31,26,23,0.08)] ring-1 ring-black/5"
-              >
+                <div
+                  key={dish.id}
+                  className="rounded-3xl bg-white/85 p-6 shadow-[0_18px_60px_rgba(31,26,23,0.08)] ring-1 ring-black/5"
+                >
                 {/* Dish Header */}
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div className="flex-1 space-y-3">
@@ -551,9 +534,7 @@ export default function DishManagementPage() {
                           <h3 className="text-xl font-bold font-bungee text-foreground">
                             {dish.name}
                           </h3>
-                          <span className="rounded-full bg-[#f7f3ee] px-3 py-1 text-xs font-medium text-text-light">
-                            Category {dish.category_id ?? "none"}
-                          </span>
+                        
                           <span
                             className={`rounded-full px-3 py-1 text-xs font-medium ${
                               dish.is_active ?? true

@@ -25,6 +25,11 @@ export interface MenuItem {
     is_active: boolean;
 }
 
+export interface MenuCategory {
+    category_id: number;
+    category_name: string;
+}
+
 export interface SelectedVariant {
     item_id: number;
     item_name: string;
