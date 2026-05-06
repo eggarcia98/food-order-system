@@ -3,7 +3,7 @@
 import { useEffect, useId, useMemo, useState } from "react";
 import { useAuthSession } from "@/lib/useAuthSession";
 import type { MenuCategory, MenuItem, ItemVariant } from "@/lib/domain";
-import CrudDishCard from "@/components/manage/CrudDishCard";
+import CrudDishCard from "@/components/manage/ManagementDishCard";
 
 
 
