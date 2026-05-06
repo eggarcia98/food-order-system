@@ -1,6 +1,7 @@
 import { useState } from "react";
 import EditMainDish from "./EditMainDish";
 import MainDishComponent from "./MainDishComponent";
+import VariantDishComponent from "./VariantDishComponent";
 
 interface EditingState {
     type: "none" | "dish" | "variant";
@@ -129,134 +130,7 @@ export default function ManagementDishCard({ dish }) {
 
 
             {/* Variants Section */}
-            {dish.item_variants && (
-                <div className="mt-6 border-t border-black/5 pt-6">
-                    <p className="mb-4 text-sm font-bold text-foreground">
-                        Variants ({dish.item_variants.length})
-                    </p>
-
-
-
-                    {/* Variants List */}
-                    {dish.item_variants.length === 0 ? (
-                        <p className="text-sm text-light">No variants</p>
-                    ) : (
-                        <div className="space-y-2">
-                            {dish.item_variants.map((variant) => (
-                                <div
-                                    key={`${variant.id}-${variant.name}`}
-                                    className="flex flex-col gap-3 rounded-2xl bg-[#f8fafc] p-4 ring-1 ring-black/5 sm:flex-row sm:items-center sm:justify-between"
-                                >
-                                    {editing.type === "variant" &&
-                                        editing.variantId === variant.id ?
-                                        (
-                                            <div className="flex-1 grid gap-2 md:grid-cols-[minmax(0,1fr)_120px_auto_auto]"
-                                                key={`${variant.id}`}
-                                            >
-                                                `${variant.id}-${variant.name}`
-                                                <input
-                                                    type="text"
-                                                    value={variantFormData.name}
-                                                    onChange={(e) =>
-                                                        setVariantFormData({
-                                                            ...variantFormData,
-                                                            name: e.target.value,
-                                                        })
-                                                    }
-                                                    className="input-brand rounded-2xl border-0 bg-white text-sm"
-                                                />
-                                                <input
-                                                    type="number"
-                                                    value={variantFormData.price}
-                                                    onChange={(e) =>
-                                                        setVariantFormData({
-                                                            ...variantFormData,
-                                                            price: e.target.value,
-                                                        })
-                                                    }
-                                                    step="0.01"
-                                                    className="input-brand rounded-2xl border-0 bg-white text-sm"
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        handleUpdateVariant(variant.id)
-                                                    }
-                                                    className="rounded-2xl bg-brand-blue px-4 py-2 text-sm font-medium text-white"
-                                                >
-                                                    Save
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setEditing({ type: "none" })}
-                                                    className="rounded-2xl bg-[#f7f3ee] px-4 py-2 text-sm font-medium text-foreground"
-                                                >
-                                                    Cancel
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <div key={`${variant.id}-${variant.name}`}>
-                                                <div className="flex-1"
-                                                >
-                                                    `${variant.id}-${variant.name}`
-                                                    <p className="text-sm font-medium text-foreground">
-                                                        {variant.variant_name ||
-                                                            `Variant ${variant.id}`}
-                                                    </p>
-                                                    <p className="text-sm text-light">
-                                                        ${variant.price}
-                                                    </p>
-                                                </div>
-                                                <div className="flex flex-wrap items-center gap-2">
-                                                    <span
-                                                        className={`rounded-full px-2.5 py-1 text-xs font-medium ${variant.is_active ?? true
-                                                            ? "bg-[#eef5ff] text-brand-blue"
-                                                            : "bg-[#faf0ef] text-brand-red"
-                                                            }`}
-                                                    >
-                                                        {variant.is_active ?? true
-                                                            ? "Active"
-                                                            : "Inactive"}
-                                                    </span>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => {
-                                                            setVariantFormData({
-                                                                name: variant.variant_name || "",
-                                                                price: String(variant.price),
-                                                            });
-                                                            setEditing({
-                                                                type: "variant",
-                                                                variantId: variant.id,
-                                                            });
-                                                        }}
-                                                        className="text-xs font-medium text-brand-blue hover:text-accent-blue"
-                                                    >
-                                                        Edit
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() =>
-                                                            handleToggleVariant(
-                                                                variant.id,
-                                                                variant.is_active ?? true,
-                                                            )
-                                                        }
-                                                        className="text-xs font-medium text-brand-red hover:text-rose"
-                                                    >
-                                                        {variant.is_active ?? true
-                                                            ? "Disable"
-                                                            : "Enable"}
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        )}
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            )}
+            <VariantDishComponent itemVariants={dish.item_variants} />
         </div>
     );
 }   
