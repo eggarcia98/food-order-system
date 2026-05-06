@@ -122,7 +122,7 @@ export default function DishManagementPage() {
   };
 
   // UPDATE: Edit dish
- 
+
 
   // UPDATE: Toggle dish status
   const handleToggleDish = async (id: number, isActive: boolean) => {
@@ -146,7 +146,7 @@ export default function DishManagementPage() {
 
 
 
- 
+
 
   // UPDATE: Toggle variant status
   const handleToggleVariant = async (variantId: number, isActive: boolean) => {
@@ -249,7 +249,7 @@ export default function DishManagementPage() {
             </div>
           </div>
 
-          <div className="mt-6 flex gap-3 overflow-x-auto pb-1">
+          <div className="lg:hidden flex mt-6 gap-3 overflow-x-auto pb-1 ">
             <button
               type="button"
               onClick={() => setSearchQuery("")}
@@ -299,13 +299,13 @@ export default function DishManagementPage() {
             <p className="text-light">No dishes match your search or category filter.</p>
           </div>
         ) : (
-          <div className="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
-            <aside className="rounded-3xl bg-white/80 p-5 shadow-[0_18px_60px_rgba(31,26,23,0.06)] ring-1 ring-black/5 lg:sticky lg:top-6 lg:self-start">
+          <div className="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)] ">
+            <aside className="rounded-3xl bg-white/80 p-5 shadow-[0_18px_60px_rgba(31,26,23,0.06)] ring-1 ring-black/5 lg:sticky lg:top-6 lg:self-start hidden lg:block ">
               <div className="flex items-center justify-between">
                 <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-text-light">Category pages</h2>
                 <span className="rounded-full bg-[#f7f3ee] px-2.5 py-1 text-xs text-text-light">{categoryPages.length}</span>
               </div>
-              <div className="mt-4 space-y-2">
+              <div className="mt-4 space-y-2 ">
                 {categoryPages.length > 0 ? (
                   categoryPages.map((page) => (
                     <button
