@@ -152,6 +152,13 @@ export default function HeaderComponent() {
                                         <p className="text-xs text-text-light font-light">Signed in as</p>
                                         <p className="text-sm text-foreground truncate">{userEmail ?? "User"}</p>
                                     </div>
+                                    <Link
+                                        href="/manage/dishes"
+                                        onClick={() => setUserMenuOpen(false)}
+                                        className="w-full block px-4 py-3 text-foreground font-light hover:bg-soft-pink/20 transition-colors duration-200"
+                                    >
+                                        Manage Dishes
+                                    </Link>
                                     <button
                                         type="button"
                                         onClick={handleLogout}
@@ -196,6 +203,16 @@ export default function HeaderComponent() {
                                         <p className="text-xs text-text-light font-light">Signed in as</p>
                                         <p className="text-sm text-foreground truncate">{userEmail ?? "User"}</p>
                                     </div>
+                                    <Link
+                                        href="/manage/dishes"
+                                        onClick={() => {
+                                            setUserMenuOpen(false);
+                                            setMenuOpen(false);
+                                        }}
+                                        className="w-full block px-4 py-3 text-foreground font-light hover:bg-soft-pink/20 transition-colors duration-200"
+                                    >
+                                        Manage Dishes
+                                    </Link>
                                     <button
                                         type="button"
                                         onClick={handleLogout}
