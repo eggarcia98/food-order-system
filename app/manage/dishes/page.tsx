@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { useAuthSession } from "@/lib/useAuthSession";
 import type { MenuItem, ItemVariant } from "@/lib/domain";
 
@@ -18,6 +18,12 @@ export default function DishManagementPage() {
   const [editing, setEditing] = useState<EditingState>({ type: "none" });
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState<number | "all">("all");
+  const dishNameInputId = useId();
+  const dishDescriptionInputId = useId();
+  const variantNameInputId = useId();
+  const variantPriceInputId = useId();
 
   // Form states
   const [dishFormData, setDishFormData] = useState({
@@ -32,6 +38,17 @@ export default function DishManagementPage() {
   useEffect(() => {
     fetchDishes();
   }, []);
+
+  useEffect(() => {
+    if (loading || activeCategory !== "all") return;
+
+    const firstCategory = [...new Set(dishes.map((dish) => dish.category_id).filter((categoryId) => categoryId !== null && categoryId !== undefined))]
+      .sort((left, right) => left - right)[0];
+
+    if (typeof firstCategory === "number") {
+      setActiveCategory(firstCategory);
+    }
+  }, [activeCategory, dishes, loading]);
 
   const fetchDishes = async () => {
     try {
@@ -52,6 +69,52 @@ export default function DishManagementPage() {
     setSuccessMsg(msg);
     setTimeout(() => setSuccessMsg(null), 3000);
   };
+
+  const categoryPages = useMemo(() => {
+    const categories = new Map<number | null, MenuItem[]>();
+
+    for (const dish of dishes) {
+      const current = categories.get(dish.category_id) ?? [];
+      current.push(dish);
+      categories.set(dish.category_id, current);
+    }
+
+    return [...categories.entries()]
+      .map(([categoryId, items]) => ({
+        categoryId,
+        label: categoryId === null ? "Uncategorized" : `Category ${categoryId}`,
+        items: items.sort((left, right) => left.name.localeCompare(right.name)),
+      }))
+      .sort((left, right) => {
+        if (left.categoryId === null) return 1;
+        if (right.categoryId === null) return -1;
+        return left.categoryId - right.categoryId;
+      });
+  }, [dishes]);
+
+  const filteredDishes = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+
+    return dishes
+      .filter((dish) => {
+        const matchesQuery =
+          query.length === 0 || dish.name.toLowerCase().includes(query);
+        const matchesCategory =
+          activeCategory === "all" || dish.category_id === activeCategory;
+
+        return matchesQuery && matchesCategory;
+      })
+      .sort((left, right) => {
+        const leftCategory = left.category_id ?? Number.MAX_SAFE_INTEGER;
+        const rightCategory = right.category_id ?? Number.MAX_SAFE_INTEGER;
+
+        if (leftCategory !== rightCategory) {
+          return leftCategory - rightCategory;
+        }
+
+        return left.name.localeCompare(right.name);
+      });
+  }, [activeCategory, dishes, searchQuery]);
 
   // CREATE: Add new dish
   const handleCreateDish = async (e: React.FormEvent) => {
@@ -254,63 +317,123 @@ export default function DishManagementPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-200px)] bg-background p-6">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-extrabold tracking-wider font-bungee text-foreground">
-            Manage Dishes
-          </h1>
-          <button
-            onClick={() => {
-              setShowAddDish(!showAddDish);
-              setDishFormData({ name: "", description: "" });
-            }}
-            className="btn-brand-blue px-6 py-2 rounded-lg font-medium transition-all duration-200"
-          >
-            {showAddDish ? "Cancel" : "Create Dish"}
-          </button>
-        </div>
+    <div className="min-h-[calc(100vh-200px)] bg-[linear-gradient(180deg,#fbf8f3_0%,#fffdf8_100%)] px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl space-y-6">
+        <section className="rounded-3xl bg-white/80 p-6 shadow-[0_18px_60px_rgba(31,26,23,0.08)] ring-1 ring-black/5 backdrop-blur-sm">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-2xl space-y-2">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-blue/70">
+                Menu administration
+              </p>
+              <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl font-bungee">
+                Manage Dishes
+              </h1>
+              <p className="text-sm leading-6 text-light">
+                Search by dish name, switch between category pages, and keep the menu tidy without the heavy borders.
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                setShowAddDish(!showAddDish);
+                setDishFormData({ name: "", description: "" });
+              }}
+              className="inline-flex items-center justify-center rounded-full bg-brand-blue px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:opacity-95"
+            >
+              {showAddDish ? "Cancel" : "Create Dish"}
+            </button>
+          </div>
+
+          <div className="mt-6 grid gap-4 lg:grid-cols-[minmax(0,1fr)_240px]">
+            <div className="rounded-2xl bg-[#faf7f2] px-4 py-3 ring-1 ring-black/5">
+              <label htmlFor="dish-search" className="mb-2 block text-sm font-medium text-foreground">
+                Search dishes
+              </label>
+              <input
+                id="dish-search"
+                type="search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search by dish name"
+                className="input-brand w-full rounded-2xl border-0 bg-white/90 px-4 py-3 shadow-sm outline-none ring-1 ring-black/5 transition placeholder:text-text-light focus:ring-2 focus:ring-brand-blue/30"
+              />
+            </div>
+            <div className="rounded-2xl bg-[#faf7f2] px-4 py-3 ring-1 ring-black/5">
+              <p className="text-sm font-medium text-foreground">Results</p>
+              <p className="mt-1 text-2xl font-semibold text-brand-blue">{filteredDishes.length}</p>
+              <p className="text-xs text-text-light">of {dishes.length} dishes shown</p>
+            </div>
+          </div>
+
+          <div className="mt-6 flex gap-3 overflow-x-auto pb-1">
+            <button
+              type="button"
+              onClick={() => setActiveCategory("all")}
+              className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition ${
+                activeCategory === "all"
+                  ? "bg-brand-blue text-white shadow-sm"
+                  : "bg-white text-foreground ring-1 ring-black/5 hover:bg-[#f6f1eb]"
+              }`}
+            >
+              All
+            </button>
+            {categoryPages.map((page) => (
+              <button
+                key={page.label}
+                type="button"
+                onClick={() => setActiveCategory(page.categoryId ?? "all")}
+                className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition ${
+                  activeCategory === page.categoryId
+                    ? "bg-brand-blue text-white shadow-sm"
+                    : "bg-white text-foreground ring-1 ring-black/5 hover:bg-[#f6f1eb]"
+                }`}
+              >
+                {page.label}
+              </button>
+            ))}
+          </div>
+        </section>
 
         {/* Alerts */}
         {error && (
-          <div className="mb-6 p-4 bg-light-pink border-2 border-brand-red rounded-lg">
-            <p className="text-brand-red font-medium">{error}</p>
+          <div className="rounded-2xl bg-[#fff5f5] px-4 py-3 text-brand-red ring-1 ring-brand-red/10">
+            <p className="font-medium">{error}</p>
           </div>
         )}
         {successMsg && (
-          <div className="mb-6 p-4 bg-soft-blue border-2 border-accent-blue rounded-lg">
-            <p className="text-brand-blue font-medium">{successMsg}</p>
+          <div className="rounded-2xl bg-[#f5f8ff] px-4 py-3 text-brand-blue ring-1 ring-brand-blue/10">
+            <p className="font-medium">{successMsg}</p>
           </div>
         )}
 
         {/* CREATE Form */}
         {showAddDish && (
-          <div className="mb-8 p-6 bg-cream border-3 border-brand rounded-lg shadow-lg">
-            <h2 className="text-xl font-bold font-bungee text-foreground mb-4">
+          <div className="rounded-3xl bg-white/85 p-6 shadow-[0_18px_60px_rgba(31,26,23,0.08)] ring-1 ring-black/5">
+            <h2 className="mb-4 text-xl font-bold font-bungee text-foreground">
               Create New Dish
             </h2>
-            <form onSubmit={handleCreateDish} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
+            <form onSubmit={handleCreateDish} className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <label htmlFor={dishNameInputId} className="block text-sm font-medium text-foreground">
                   Dish Name *
                 </label>
                 <input
+                  id={dishNameInputId}
                   type="text"
                   value={dishFormData.name}
                   onChange={(e) =>
                     setDishFormData({ ...dishFormData, name: e.target.value })
                   }
                   placeholder="Enter dish name"
-                  className="input-brand w-full rounded-lg"
+                  className="input-brand w-full rounded-2xl border-0 bg-[#faf7f2]"
                   required
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
+              <div className="space-y-2">
+                <label htmlFor={dishDescriptionInputId} className="block text-sm font-medium text-foreground">
                   Description
                 </label>
                 <textarea
+                  id={dishDescriptionInputId}
                   value={dishFormData.description}
                   onChange={(e) =>
                     setDishFormData({
@@ -320,12 +443,12 @@ export default function DishManagementPage() {
                   }
                   placeholder="Enter dish description"
                   rows={3}
-                  className="input-brand w-full rounded-lg"
+                  className="input-brand w-full rounded-2xl border-0 bg-[#faf7f2]"
                 />
               </div>
               <button
                 type="submit"
-                className="w-full btn-brand-blue py-3 rounded-lg font-medium transition-all duration-200"
+                className="md:col-span-2 inline-flex w-full items-center justify-center rounded-full bg-brand-blue py-3 font-medium text-white transition hover:opacity-95"
               >
                 Create Dish
               </button>
@@ -335,23 +458,54 @@ export default function DishManagementPage() {
 
         {/* READ: Dishes List */}
         {loading ? (
-          <div className="text-center py-12">
+          <div className="rounded-3xl bg-white/70 py-12 text-center shadow-[0_18px_60px_rgba(31,26,23,0.06)] ring-1 ring-black/5">
             <p className="text-light">Loading dishes...</p>
           </div>
-        ) : dishes.length === 0 ? (
-          <div className="text-center py-12 bg-cream border-3 border-brand rounded-lg">
-            <p className="text-light">No dishes yet. Create your first!</p>
+        ) : filteredDishes.length === 0 ? (
+          <div className="rounded-3xl bg-white/70 py-12 text-center shadow-[0_18px_60px_rgba(31,26,23,0.06)] ring-1 ring-black/5">
+            <p className="text-light">No dishes match your search or category filter.</p>
           </div>
         ) : (
-          <div className="grid gap-6">
-            {dishes.map((dish) => (
+          <div className="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
+            <aside className="rounded-3xl bg-white/80 p-5 shadow-[0_18px_60px_rgba(31,26,23,0.06)] ring-1 ring-black/5 lg:sticky lg:top-6 lg:self-start">
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-text-light">Category pages</h2>
+                <span className="rounded-full bg-[#f7f3ee] px-2.5 py-1 text-xs text-text-light">{categoryPages.length}</span>
+              </div>
+              <div className="mt-4 space-y-2">
+                {categoryPages.length > 0 ? (
+                  categoryPages.map((page) => (
+                    <button
+                      key={page.label}
+                      type="button"
+                      onClick={() => setActiveCategory(page.categoryId ?? "all")}
+                      className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left transition ${
+                        activeCategory === page.categoryId
+                          ? "bg-brand-blue text-white shadow-sm"
+                          : "bg-[#faf7f2] text-foreground hover:bg-[#f4ede4]"
+                      }`}
+                    >
+                      <span className="font-medium">{page.label}</span>
+                      <span className={`text-xs ${activeCategory === page.categoryId ? "text-white/80" : "text-text-light"}`}>
+                        {page.items.length}
+                      </span>
+                    </button>
+                  ))
+                ) : (
+                  <p className="text-sm text-text-light">No category pages available yet.</p>
+                )}
+              </div>
+            </aside>
+
+            <div className="grid gap-6">
+              {filteredDishes.map((dish) => (
               <div
                 key={dish.id}
-                className="bg-cream border-3 border-brand rounded-lg shadow-lg p-6"
+                className="rounded-3xl bg-white/85 p-6 shadow-[0_18px_60px_rgba(31,26,23,0.08)] ring-1 ring-black/5"
               >
                 {/* Dish Header */}
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex-1">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="flex-1 space-y-3">
                     {editing.type === "dish" && editing.dishId === dish.id ? (
                       <div className="space-y-3">
                         <input
@@ -363,7 +517,7 @@ export default function DishManagementPage() {
                               name: e.target.value,
                             })
                           }
-                          className="input-brand w-full rounded-lg text-sm"
+                          className="input-brand w-full rounded-2xl border-0 bg-[#faf7f2] text-sm"
                         />
                         <textarea
                           value={dishFormData.description}
@@ -374,18 +528,18 @@ export default function DishManagementPage() {
                             })
                           }
                           rows={2}
-                          className="input-brand w-full rounded-lg text-sm"
+                          className="input-brand w-full rounded-2xl border-0 bg-[#faf7f2] text-sm"
                         />
                         <div className="flex gap-2">
                           <button
                             onClick={() => handleUpdateDish(dish.id)}
-                            className="flex-1 btn-brand-blue py-2 rounded-lg text-sm font-medium"
+                            className="flex-1 rounded-full bg-brand-blue py-2 text-sm font-medium text-white"
                           >
                             Save
                           </button>
                           <button
                             onClick={() => setEditing({ type: "none" })}
-                            className="flex-1 bg-soft-pink text-brand-red py-2 rounded-lg text-sm font-medium border border-rose"
+                            className="flex-1 rounded-full bg-[#f7f3ee] py-2 text-sm font-medium text-foreground"
                           >
                             Cancel
                           </button>
@@ -393,14 +547,24 @@ export default function DishManagementPage() {
                       </div>
                     ) : (
                       <>
-                        <h3 className="text-xl font-bold font-bungee text-foreground">
-                          {dish.name}
-                        </h3>
-                        {dish.description && (
-                          <p className="text-light mt-2">
-                            {dish.description}
-                          </p>
-                        )}
+                        <div className="flex flex-wrap items-center gap-3">
+                          <h3 className="text-xl font-bold font-bungee text-foreground">
+                            {dish.name}
+                          </h3>
+                          <span className="rounded-full bg-[#f7f3ee] px-3 py-1 text-xs font-medium text-text-light">
+                            Category {dish.category_id ?? "none"}
+                          </span>
+                          <span
+                            className={`rounded-full px-3 py-1 text-xs font-medium ${
+                              dish.is_active ?? true
+                                ? "bg-[#eef8f4] text-[#2c7a5a]"
+                                : "bg-[#faf0ef] text-brand-red"
+                            }`}
+                          >
+                            {dish.is_active ?? true ? "Active" : "Inactive"}
+                          </span>
+                        </div>
+                        {dish.description && <p className="max-w-3xl text-sm leading-6 text-light">{dish.description}</p>}
                         <button
                           onClick={() => {
                             setDishFormData({
@@ -409,7 +573,7 @@ export default function DishManagementPage() {
                             });
                             setEditing({ type: "dish", dishId: dish.id });
                           }}
-                          className="text-sm text-brand-blue hover:text-accent-blue font-medium mt-2"
+                          className="text-sm font-medium text-brand-blue hover:text-accent-blue"
                         >
                           Edit Dish
                         </button>
@@ -420,10 +584,10 @@ export default function DishManagementPage() {
                     onClick={() =>
                       handleToggleDish(dish.id, dish.is_active ?? true)
                     }
-                    className={`px-4 py-2 rounded-lg font-medium text-cream transition-all duration-200 ${
+                    className={`rounded-full px-4 py-2 font-medium transition-all duration-200 ${
                       dish.is_active ?? true
-                        ? "btn-brand-red hover:bg-rose"
-                        : "bg-soft-blue text-brand-blue border border-accent-blue"
+                        ? "bg-[#fdf0ef] text-brand-red"
+                        : "bg-[#eef5ff] text-brand-blue"
                     }`}
                   >
                     {dish.is_active ?? true ? "Disable" : "Enable"}
@@ -432,15 +596,20 @@ export default function DishManagementPage() {
 
                 {/* Variants Section */}
                 {dish.item_variants && (
-                  <div className="mt-6 pt-6 border-t border-soft-pink">
-                    <p className="text-sm font-bold text-foreground mb-4">
+                  <div className="mt-6 border-t border-black/5 pt-6">
+                    <p className="mb-4 text-sm font-bold text-foreground">
                       Variants ({dish.item_variants.length})
                     </p>
 
                     {/* Add Variant Form */}
-                    <div className="mb-4 p-4 bg-soft-pink border border-rose rounded-lg">
-                      <div className="grid grid-cols-3 gap-2 mb-2">
+                    <div className="mb-4 rounded-2xl bg-[#faf7f2] p-4 ring-1 ring-black/5">
+                      <div className="grid gap-2 md:grid-cols-[minmax(0,1.2fr)_120px_auto]">
+                        <div className="space-y-2">
+                          <label htmlFor={`${variantNameInputId}-${dish.id}`} className="block text-xs font-medium text-text-light">
+                            Variant name
+                          </label>
                         <input
+                          id={`${variantNameInputId}-${dish.id}`}
                           type="text"
                           value={variantFormData.name}
                           onChange={(e) =>
@@ -450,9 +619,15 @@ export default function DishManagementPage() {
                             })
                           }
                           placeholder="Variant name"
-                          className="input-brand rounded-lg text-sm"
+                          className="input-brand rounded-2xl border-0 bg-white text-sm"
                         />
+                        </div>
+                        <div className="space-y-2">
+                          <label htmlFor={`${variantPriceInputId}-${dish.id}`} className="block text-xs font-medium text-text-light">
+                            Price
+                          </label>
                         <input
+                          id={`${variantPriceInputId}-${dish.id}`}
                           type="number"
                           value={variantFormData.price}
                           onChange={(e) =>
@@ -463,13 +638,15 @@ export default function DishManagementPage() {
                           }
                           placeholder="Price"
                           step="0.01"
-                          className="input-brand rounded-lg text-sm"
+                          className="input-brand rounded-2xl border-0 bg-white text-sm"
                         />
+                        </div>
                         <button
+                          type="button"
                           onClick={() => {
                             handleCreateVariant(dish.id);
                           }}
-                          className="btn-brand-blue rounded-lg text-sm font-medium"
+                          className="rounded-2xl bg-brand-blue px-4 py-3 text-sm font-medium text-white"
                         >
                           Add Variant
                         </button>
@@ -484,11 +661,11 @@ export default function DishManagementPage() {
                         {dish.item_variants.map((variant) => (
                           <div
                             key={variant.id}
-                            className="flex justify-between items-center p-3 bg-soft-blue border border-accent-blue rounded-lg"
+                            className="flex flex-col gap-3 rounded-2xl bg-[#f8fafc] p-4 ring-1 ring-black/5 sm:flex-row sm:items-center sm:justify-between"
                           >
                             {editing.type === "variant" &&
                             editing.variantId === variant.id ? (
-                              <div className="flex-1 flex gap-2">
+                              <div className="flex-1 grid gap-2 md:grid-cols-[minmax(0,1fr)_120px_auto_auto]">
                                 <input
                                   type="text"
                                   value={variantFormData.name}
@@ -498,7 +675,7 @@ export default function DishManagementPage() {
                                       name: e.target.value,
                                     })
                                   }
-                                  className="flex-1 input-brand rounded-lg text-sm"
+                                  className="input-brand rounded-2xl border-0 bg-white text-sm"
                                 />
                                 <input
                                   type="number"
@@ -510,19 +687,21 @@ export default function DishManagementPage() {
                                     })
                                   }
                                   step="0.01"
-                                  className="w-20 input-brand rounded-lg text-sm"
+                                  className="input-brand rounded-2xl border-0 bg-white text-sm"
                                 />
                                 <button
+                                  type="button"
                                   onClick={() =>
                                     handleUpdateVariant(variant.id)
                                   }
-                                  className="px-3 btn-brand-blue rounded-lg text-sm font-medium"
+                                  className="rounded-2xl bg-brand-blue px-4 py-2 text-sm font-medium text-white"
                                 >
                                   Save
                                 </button>
                                 <button
+                                  type="button"
                                   onClick={() => setEditing({ type: "none" })}
-                                  className="px-3 bg-soft-pink text-brand-red rounded-lg text-sm font-medium border border-rose"
+                                  className="rounded-2xl bg-[#f7f3ee] px-4 py-2 text-sm font-medium text-foreground"
                                 >
                                   Cancel
                                 </button>
@@ -538,12 +717,12 @@ export default function DishManagementPage() {
                                     ${variant.price}
                                   </p>
                                 </div>
-                                <div className="flex items-center gap-2">
+                                <div className="flex flex-wrap items-center gap-2">
                                   <span
-                                    className={`text-xs px-2 py-1 rounded font-medium ${
+                                    className={`rounded-full px-2.5 py-1 text-xs font-medium ${
                                       variant.is_active ?? true
-                                        ? "bg-soft-blue text-brand-blue border border-accent-blue"
-                                        : "bg-light-pink text-brand-red border border-rose"
+                                        ? "bg-[#eef5ff] text-brand-blue"
+                                        : "bg-[#faf0ef] text-brand-red"
                                     }`}
                                   >
                                     {variant.is_active ?? true
@@ -551,6 +730,7 @@ export default function DishManagementPage() {
                                       : "Inactive"}
                                   </span>
                                   <button
+                                    type="button"
                                     onClick={() => {
                                       setVariantFormData({
                                         name: variant.variant_name || "",
@@ -561,18 +741,19 @@ export default function DishManagementPage() {
                                         variantId: variant.id,
                                       });
                                     }}
-                                    className="text-xs text-brand-blue hover:text-accent-blue font-medium"
+                                    className="text-xs font-medium text-brand-blue hover:text-accent-blue"
                                   >
                                     Edit
                                   </button>
                                   <button
+                                    type="button"
                                     onClick={() =>
                                       handleToggleVariant(
                                         variant.id,
                                         variant.is_active ?? true,
                                       )
                                     }
-                                    className="text-xs text-brand-red hover:text-rose font-medium"
+                                    className="text-xs font-medium text-brand-red hover:text-rose"
                                   >
                                     {variant.is_active ?? true
                                       ? "Disable"
@@ -589,6 +770,7 @@ export default function DishManagementPage() {
                 )}
               </div>
             ))}
+            </div>
           </div>
         )}
       </div>
