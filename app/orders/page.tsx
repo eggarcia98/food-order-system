@@ -720,7 +720,7 @@ export default function OrdersList() {
                                                 <div className="text-sm text-foreground font-light">
                                                     {order.arrival_from &&
                                                     order.arrival_to
-                                                        ? `${formatOrderTime(order.arrival_from)} - ${formatOrderTime(order.arrival_to)}`
+                                                        ? `${formatOrderTime(""+order.arrival_from)} - ${formatOrderTime(""+order.arrival_to)}`
                                                         : "Not selected"}
                                                 </div>
                                             </div>
@@ -728,7 +728,7 @@ export default function OrdersList() {
                                             <div className="text-xs text-text-light pt-2">
                                                 Created:{" "}
                                                 {formatOrderDate(
-                                                    order.created_at,
+                                                    "" + order.created_at
                                                 )}
                                             </div>
                                         </div>
@@ -761,7 +761,7 @@ export default function OrdersList() {
                                                     <span className="text-xs text-gray-400 italic">
                                                         (
                                                         {formatOrderDateShort(
-                                                            order.created_at,
+                                                            "" + order.created_at
                                                         )}
                                                         )
                                                     </span>
@@ -924,7 +924,7 @@ export default function OrdersList() {
                                                 </span>{" "}
                                                 {order.arrival_from &&
                                                 order.arrival_to
-                                                    ? `${formatOrderTime(order.arrival_from)} - ${formatOrderTime(order.arrival_to)}`
+                                                    ? `${formatOrderTime(""+order.arrival_from)} - ${formatOrderTime(""+order.arrival_to)}`
                                                     : "Not selected"}
                                             </p>
                                         </div>
