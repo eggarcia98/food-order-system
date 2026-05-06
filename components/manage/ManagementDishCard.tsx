@@ -53,10 +53,6 @@ export default function ManagementDishCard({ dish }) {
         // }
     };
 
-    function handleToggleDish(id: any, arg1: any): void {
-        throw new Error("Function not implemented.");
-    }
-
     // CREATE: Add variant
     const handleCreateVariant = async (dishId: number) => {
         // if (!variantFormData.name.trim() || !variantFormData.price.trim()) {
@@ -129,23 +125,8 @@ export default function ManagementDishCard({ dish }) {
             className="rounded-3xl bg-white/85 p-6 shadow-[0_18px_60px_rgba(31,26,23,0.08)] ring-1 ring-black/5"
         >
             {/* Dish Header */}
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                <div className="flex-1 space-y-3">
-                    <MainDishComponent dish={dish} setMainDishFormData={setDishFormData} />
-                </div>
-               
-                <button
-                    onClick={() =>
-                        handleToggleDish(dish.id, dish.is_active ?? true)
-                    }
-                    className={`rounded-full px-4 py-2 font-medium transition-all duration-200 ${dish.is_active ?? true
-                        ? "bg-[#fdf0ef] text-brand-red"
-                        : "bg-[#eef5ff] text-brand-blue"
-                        }`}
-                >
-                    {dish.is_active ?? true ? "Disable" : "Enable"}
-                </button>
-            </div>
+            <MainDishComponent dish={dish} setMainDishFormData={setDishFormData} />
+
 
             {/* Variants Section */}
             {dish.item_variants && (
