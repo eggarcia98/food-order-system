@@ -3,7 +3,21 @@
 import AddMainItemModal from "@/components/AddMainItemModal";
 import AddExtraItemModal from "@/components/AddExtraItemModal";
 import { DishToOrderItem } from "@/components/DishToOrderItem";
-import { Selector } from "@/components/SelectorComponent";
+import { useAuthSession } from "@/lib/useAuthSession";
+import {
+    MainOrderItem,
+    ExtraOrderItem,
+    calculateMainItemTotal,
+    calculateExtraItemTotal,
+    calculateOrdersGrandTotal,
+    formatCurrency,
+} from "@/lib/order-types";
+import {
+    MenuItem,
+    ExtraItem,
+    Customer,
+    Nationality,
+} from "@/lib/domain";
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 
@@ -27,24 +41,26 @@ interface Side {
 }
 
 export default function NewOrderPage() {
+    const { isAuthenticated } = useAuthSession();
+
     const [phoneNumber, setPhoneNumber] = useState("");
 
     const [lastname, setLastname] = useState("");
     const [firstname, setFirstname] = useState("");
-    const [menuItems, setMenuItems] = useState<any[]>([]);
+    const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
 
-    const [confirmedMainItems, setConfirmedMainItems] = useState<any[]>([]);
-    const [confirmedExtraItems, setConfirmedExtraItems] = useState<any[]>([]);
+    const [confirmedMainItems, setConfirmedMainItems] = useState<MainOrderItem[]>([]);
+    const [confirmedExtraItems, setConfirmedExtraItems] = useState<ExtraOrderItem[]>([]);
 
     const [nationality, setNationality] = useState({});
-    const [nationalityList, setNationalityList] = useState([
+    const [nationalityList, setNationalityList] = useState<Nationality[]>([
         { id: 1, name: "Ecuadorian" },
     ]);
 
     const [openAddMainItemModal, setOpenAddMainItemModal] = useState(false);
     const [openAddExtraItemModal, setOpenAddExtraItemModal] = useState(false);
 
-    const [extraItems, setExtraItems] = useState<any[]>([]);
+    const [extraItems, setExtraItems] = useState<ExtraItem[]>([]);
 
     const [comments, setComments] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -53,10 +69,7 @@ export default function NewOrderPage() {
         text: string;
     } | null>(null);
 
-    // Authentication state: null = checking, false = not authed, true = authed
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-
-    const [previousCustomers, setPreviousCustomers] = useState<any[]>([]);
+    const [previousCustomers, setPreviousCustomers] = useState<Customer[]>([]);
 
     const fetchNationalities = async () => {
         try {
@@ -107,29 +120,6 @@ export default function NewOrderPage() {
         fetchExtraItems();
         fetchPreviousCustomers();
         fetchMenuItems();
-    }, []);
-
-    // Check session to decide whether to allow autocomplete features.
-    useEffect(() => {
-        let mounted = true;
-
-        async function checkAuth() {
-            try {
-                const res = await fetch('/api/auth/refreshSession', { method: 'POST', credentials: 'include' });
-                const data = await res.json().catch(() => null);
-                if (!mounted) return;
-                // The refreshSession returns { valid: true, ... } or may include email
-                const valid = data?.valid === true || typeof data?.email === 'string' || typeof data?.data?.email === 'string';
-                setIsAuthenticated(Boolean(valid));
-            } catch (e) {
-                if (!mounted) return;
-                setIsAuthenticated(false);
-            }
-        }
-
-        checkAuth();
-
-        return () => { mounted = false; };
     }, []);
 
     const removeMainItem = (index: number) => {
@@ -193,16 +183,16 @@ export default function NewOrderPage() {
     };
 
     const [showSuggestions, setShowSuggestions] = useState(false);
-    const [filteredSuggestions, setFilteredSuggestions] = useState<any[]>([]);
+    const [filteredSuggestions, setFilteredSuggestions] = useState<Customer[]>([]);
     const suggestionsRef = useRef<HTMLDivElement>(null);
 
     const [showNameSuggestions, setShowNameSuggestions] = useState(false);
-    const [filteredNameSuggestions, setFilteredNameSuggestions] = useState<any[]>([]);
+    const [filteredNameSuggestions, setFilteredNameSuggestions] = useState<Customer[]>([]);
     const nameSearchRef = useRef<HTMLDivElement>(null);
 
     const [nationalitySearch, setNationalitySearch] = useState("");
     const [showNationalitySuggestions, setShowNationalitySuggestions] = useState(false);
-    const [filteredNationalities, setFilteredNationalities] = useState<any[]>([]);
+    const [filteredNationalities, setFilteredNationalities] = useState<Nationality[]>([]);
     const nationalityRef = useRef<HTMLDivElement>(null);
 
     const handlePhoneNumberChange = (value: string) => {
@@ -226,7 +216,7 @@ export default function NewOrderPage() {
         }
     };
 
-    const selectSuggestion = (customer) => {
+    const selectSuggestion = (customer: Customer) => {
         setPhoneNumber(customer.phone_number);
         setNationality({ id: customer.nationality_id });
         setFirstname(customer.first_name || "");
@@ -267,7 +257,7 @@ export default function NewOrderPage() {
         }
     };
 
-    const selectNameSuggestion = (customer) => {
+    const selectNameSuggestion = (customer: Customer) => {
         setPhoneNumber(customer.phone_number);
         setNationality({ id: customer.nationality_id });
         setFirstname(customer.first_name || "");
@@ -301,7 +291,7 @@ export default function NewOrderPage() {
         }
     };
 
-    const selectNationality = (selectedNat) => {
+    const selectNationality = (selectedNat: Nationality) => {
         setNationalitySearch(selectedNat.name);
         setNationality({ id: selectedNat.id });
         setShowNationalitySuggestions(false);
@@ -695,12 +685,12 @@ export default function NewOrderPage() {
                                                     {item.item_name} - {item.variant_name}
                                                 </p>
                                                 <p className="text-sm text-text-light">
-                                                    Quantity: {item.quantity} × ${item.price}
+                                                    Quantity: {item.quantity} × {formatCurrency(Number(item.price))}
                                                 </p>
                                             </div>
                                             <div className="flex items-center gap-4">
                                                 <p className="font-semibold text-brand-red">
-                                                    ${(item.quantity * item.price).toFixed(2)}
+                                                    {formatCurrency(calculateMainItemTotal(item))}
                                                 </p>
                                                 <button
                                                     type="button"
@@ -771,12 +761,12 @@ export default function NewOrderPage() {
                                                     {item.name}
                                                 </p>
                                                 <p className="text-sm text-text-light">
-                                                    Quantity: {item.quantity} × ${item.price}
+                                                    Quantity: {item.quantity} × {formatCurrency(Number(item.price))}
                                                 </p>
                                             </div>
                                             <div className="flex items-center gap-4">
                                                 <p className="font-semibold text-brand-red">
-                                                    ${(item.quantity * item.price).toFixed(2)}
+                                                    {formatCurrency(calculateExtraItemTotal(item))}
                                                 </p>
                                                 <button
                                                     type="button"

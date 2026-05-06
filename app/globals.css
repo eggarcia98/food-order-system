@@ -59,6 +59,9 @@ p {
 .bg-brand-red { background-color: var(--color-brand-red); }
 .bg-cream { background-color: var(--color-cream); }
 .bg-soft-pink { background-color: var(--color-soft-pink); }
+.bg-soft-blue { background-color: var(--color-soft-blue); }
+.bg-rose { background-color: var(--color-rose); }
+.bg-accent-blue { background-color: var(--color-accent-blue); }
 
 @layer utilities {
   .font-bungee { font-family: var(--font-bungee); }
@@ -78,6 +81,8 @@ p {
 .text-brand-red { color: var(--color-brand-red); }
 .text-foreground { color: var(--color-foreground); }
 .text-light { color: var(--color-text-light); }
+.text-cream { color: var(--color-cream); }
+.text-rose { color: var(--color-rose); }
 
 .btn-brand-blue { 
   background-color: var(--color-brand-blue); 
@@ -123,6 +128,8 @@ p {
 .border-brand { border-color: var(--color-border); }
 .border-brand-blue { border-color: var(--color-brand-blue); }
 .border-b-brand-red { border-bottom-color: var(--color-brand-red); }
+.border-accent-blue { border-color: var(--color-accent-blue); }
+.border-rose { border-color: var(--color-rose); }
 .ring-brand-blue { box-shadow: 0 0 0 3px rgba(123, 168, 209, 0.12); }
 
 .suggestion { background-color: transparent; }

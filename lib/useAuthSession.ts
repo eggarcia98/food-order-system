@@ -1,34 +1,21 @@
 "use client";
 
 import useSWR from "swr";
+import { normalizeAuthSession, parseJsonSafely, type AuthSessionState } from "@/lib/auth";
 
 export const AUTH_SESSION_KEY = "auth-session";
 
-type AuthSession = {
-    isAuthenticated: boolean;
-    userEmail: string | null;
-};
-
-const getEmailFromSession = (data: any): string | null => {
-    const email = data?.email ?? data?.data?.email ?? data?.user?.email ?? null;
-    return typeof email === "string" ? email : null;
-};
-
-const authSessionFetcher = async (): Promise<AuthSession> => {
+const authSessionFetcher = async (): Promise<AuthSessionState> => {
     try {
         const response = await fetch("/api/auth/refreshSession", {
             method: "POST",
             credentials: "include",
         });
 
-        const data = await response.json().catch(() => null);
-        const userEmail = getEmailFromSession(data);
+        const text = await response.text();
+        const data = text.length > 0 ? parseJsonSafely(text) : null;
 
-        return {
-            isAuthenticated:
-                response.ok && (data?.valid === true || userEmail !== null),
-            userEmail,
-        };
+        return normalizeAuthSession(response.ok, data);
     } catch {
         return {
             isAuthenticated: false,
@@ -38,7 +25,7 @@ const authSessionFetcher = async (): Promise<AuthSession> => {
 };
 
 export function useAuthSession() {
-    const { data, isLoading } = useSWR<AuthSession>(
+    const { data, isLoading } = useSWR<AuthSessionState>(
         AUTH_SESSION_KEY,
         authSessionFetcher,
         {

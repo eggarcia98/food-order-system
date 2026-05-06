@@ -1,42 +1,20 @@
-type VariantInfo = {
-    item_id: number;
-    item_name: string;
-    variant_id: number;
-    variant_name: string;
-    price: number;
-    quantity: number;
-};
-
-type SideInfo = {
-    id: number;
-    name: string;
-    price?: number;
-    quantity?: number;
-};
-
-type OrderEntry = {
-    variant: VariantInfo;
-    quantity: number;
-    sides: SideInfo[];
-};
+import {
+    OrderEntry,
+    OrderSide,
+    MainOrderItem,
+    calculateOrderEntryTotal,
+    formatCurrency,
+} from '@/lib/order-types';
 
 export const DishToOrderItem = ({
     orderList,
     removeItemFromOrder,
 }: {
-    orderList: any[];
+    orderList: OrderEntry[];
     removeItemFromOrder: (index: number) => void;
 }) => {
-    const getTotal = (item: OrderEntry) => {
-        const itemQty = item.quantity ?? item.variant.quantity ?? 1;
-        const sidesTotal = (item.sides || []).reduce(
-            (acc: number, side) => acc + (side.price || 0) * (side.quantity || 0),
-            0,
-        );
-        return item.variant.price * itemQty + sidesTotal;
-    };
 
-    const renderSides = (sides: SideInfo[]) => {
+    const renderSides = (sides: OrderSide[]) => {
         if (!sides || sides.length === 0) return null;
         return (
             <p className="text-sm mt-1 text-secondary">
@@ -75,7 +53,7 @@ export const DishToOrderItem = ({
                             </p>
 
                             <p className="text-sm text-brand-red">
-                                ${item.variant.price.toFixed(2)} ×{" "}
+                                {formatCurrency(item.variant.price)} ×{" "}
                                 {item.quantity ?? item.variant.quantity ?? 1}
                             </p>
                             {renderSides(item.sides)}
@@ -84,7 +62,7 @@ export const DishToOrderItem = ({
 
                     <div className="flex items-center gap-3 mt-3 sm:mt-0">
                         <p className="font-semibold text-foreground">
-                            ${getTotal(item).toFixed(2)}
+                            {formatCurrency(calculateOrderEntryTotal(item))}
                         </p>
 
                         <button

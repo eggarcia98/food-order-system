@@ -1,14 +1,21 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import {
+  fetchConfirmationData,
+  confirmOrder,
+} from "@/lib/services/confirmation-service";
+import {
+  validateConfirmationCode,
+  validateConfirmationRequest,
+  parseRequestBody,
+} from "@/lib/validation/confirmation-validation";
+import type { ConfirmationResponse } from "@/lib/domain";
 
 export const runtime = "edge";
 
-const db = prisma as any;
-
-function isLinkExpired(expiresAt: Date) {
-  return expiresAt.getTime() < Date.now();
-}
-
+/**
+ * GET /api/orders/confirm/[code]
+ * Fetch order confirmation data with fulfillment options
+ */
 export async function GET(
   _request: Request,
   ctx: RouteContext<"/api/orders/confirm/[code]">,
@@ -16,63 +23,29 @@ export async function GET(
   try {
     const { code } = await ctx.params;
 
-    if (!code || Array.isArray(code)) {
-      return NextResponse.json({ error: "Invalid confirmation code" }, { status: 400 });
+    if (!validateConfirmationCode(code)) {
+      return NextResponse.json(
+        { error: "Invalid confirmation code" },
+        { status: 400 },
+      );
     }
 
-    const link = await db.orderConfirmationLink.findUnique({
-      where: { token: code },
-      include: {
-        order: {
-          include: {
-            customer: true,
-            order_items: {
-              include: {
-                ItemVariant: {
-                  include: {
-                    MenuItem: true,
-                  },
-                },
-              },
-            },
-            order_item_extras: {
-              include: {
-                MenuExtras: true,
-              },
-            },
-            fulfillment_type: true,
-          },
-        },
-      },
-    });
-
-    if (!link) {
-      return NextResponse.json({ error: "Confirmation link not found" }, { status: 404 });
-    }
-
-    if (isLinkExpired(link.expires_at)) {
-      return NextResponse.json({ error: "Confirmation link expired" }, { status: 410 });
-    }
-
-    const fulfillmentTypes = await db.fulfillmentType.findMany({
-      orderBy: { id: "asc" },
-    });
+    const data = await fetchConfirmationData(code);
 
     return NextResponse.json({
-      order: link.order,
-      fulfillmentTypes,
-      link: {
-        token: link.token,
-        expires_at: link.expires_at,
-        used_at: link.used_at,
-      },
-    });
+      order: data.order,
+      fulfillmentTypes: data.fulfillmentTypes,
+      link: data.link,
+    } as ConfirmationResponse);
   } catch (error) {
-    console.error("Error loading confirmation page data:", error);
-    return NextResponse.json({ error: "Failed to load confirmation data" }, { status: 500 });
+    return handleError(error);
   }
 }
 
+/**
+ * PATCH /api/orders/confirm/[code]
+ * Confirm order with fulfillment details and arrival times
+ */
 export async function PATCH(
   request: Request,
   ctx: RouteContext<"/api/orders/confirm/[code]">,
@@ -80,82 +53,45 @@ export async function PATCH(
   try {
     const { code } = await ctx.params;
 
-    if (!code || Array.isArray(code)) {
-      return NextResponse.json({ error: "Invalid confirmation code" }, { status: 400 });
+    if (!validateConfirmationCode(code)) {
+      return NextResponse.json(
+        { error: "Invalid confirmation code" },
+        { status: 400 },
+      );
     }
 
-    const link = await db.orderConfirmationLink.findUnique({
-      where: { token: code },
-      select: { order_id: true, expires_at: true },
-    });
+    const body = await parseRequestBody(request);
+    const validatedRequest = validateConfirmationRequest(body);
 
-    if (!link) {
-      return NextResponse.json({ error: "Confirmation link not found" }, { status: 404 });
-    }
+    const order = await confirmOrder(code, validatedRequest);
 
-    if (isLinkExpired(link.expires_at)) {
-      return NextResponse.json({ error: "Confirmation link expired" }, { status: 410 });
-    }
-
-    if (link.used_at) {
-      return NextResponse.json({ error: "This confirmation link has already been used" }, { status: 410 });
-    }
-
-    const body = await request.json().catch(() => null);
-
-    const fulfillmentTypeId = Number(body?.fulfillmentTypeId);
-    const arrivalFrom = body?.arrivalFrom ? new Date(body.arrivalFrom) : null;
-    const arrivalTo = body?.arrivalTo ? new Date(body.arrivalTo) : null;
-
-    if (!Number.isInteger(fulfillmentTypeId) || fulfillmentTypeId <= 0) {
-      return NextResponse.json({ error: "Invalid fulfillment type" }, { status: 400 });
-    }
-
-    if (!arrivalFrom || Number.isNaN(arrivalFrom.getTime())) {
-      return NextResponse.json({ error: "Invalid arrival_from date" }, { status: 400 });
-    }
-
-    if (!arrivalTo || Number.isNaN(arrivalTo.getTime())) {
-      return NextResponse.json({ error: "Invalid arrival_to date" }, { status: 400 });
-    }
-
-    const updatedOrder = await db.order.update({
-      where: { id: link.order_id },
-      data: {
-        fulfillment_type_id: fulfillmentTypeId,
-        arrival_from: arrivalFrom,
-        arrival_to: arrivalTo,
-        customer_confirmed_at: new Date(),
-      },
-      include: {
-        customer: true,
-        fulfillment_type: true,
-        order_items: {
-          include: {
-            ItemVariant: {
-              include: {
-                MenuItem: true,
-              },
-            },
-          },
-        },
-        order_item_extras: {
-          include: {
-            MenuExtras: true,
-          },
-        },
-      },
-    });
-
-    // Mark the confirmation link as used
-    await db.orderConfirmationLink.update({
-      where: { token: code },
-      data: { used_at: new Date() },
-    });
-
-    return NextResponse.json({ order: updatedOrder, updated: true });
+    return NextResponse.json(
+      { order, updated: true } as ConfirmationResponse,
+    );
   } catch (error) {
-    console.error("Error updating order confirmation:", error);
-    return NextResponse.json({ error: "Failed to update order" }, { status: 500 });
+    return handleError(error);
   }
 }
+
+/**
+ * Centralized error handling for confirmation routes
+ */
+function handleError(error: unknown): NextResponse {
+  if (error instanceof Error) {
+    const status = (error as any).status || 500;
+    const isExpected = [400, 404, 410].includes(status);
+
+    if (!isExpected) {
+      console.error("Confirmation error:", error);
+    }
+
+    return NextResponse.json({ error: error.message }, { status });
+  }
+
+  console.error("Unknown error:", error);
+  return NextResponse.json(
+    { error: "Internal server error" },
+    { status: 500 },
+  );
+}
+

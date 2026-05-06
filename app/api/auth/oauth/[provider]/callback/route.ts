@@ -1,22 +1,11 @@
 export const runtime = "edge";
 
 import { NextResponse } from "next/server";
-
-interface AuthTokens {
-    accessToken: string;
-    refreshToken: string;
-}
-
-interface UpstreamResponse<T = unknown> {
-    data?: T;
-    [k: string]: any;
-}
-
-const COOKIE_OPTIONS = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax" as const,
-};
+import {
+    AUTH_COOKIE_OPTIONS,
+    extractAuthTokens,
+    parseJsonSafely,
+} from "@/lib/auth";
 
 const DEFAULT_TIMEOUT_MS = 10_000;
 
@@ -39,7 +28,7 @@ export async function POST(
         const authEndpoint = getAuthEndpoint();
 
         const body = await safeParseJson(request);
-        const code = typeof body?.code === "string" ? body.code : null;
+        const code = isObject(body) && typeof body.code === "string" ? body.code : null;
         if (!code) {
             return NextResponse.json({ error: "Missing or invalid code parameter" }, { status: 400 });
         }
@@ -52,23 +41,42 @@ export async function POST(
         });
 
         const text = await upstreamResponse.text();
-        const parsed = parseUpstreamBody(text);
+        const parsed = parseJsonSafely(text);
 
         if (!upstreamResponse.ok) {
-            return NextResponse.json({ error: "Upstream error", details: parsed }, { status: upstreamResponse.status });
+            return NextResponse.json(
+                { error: "Upstream error", details: parsed },
+                { status: upstreamResponse.status },
+            );
         }
 
-        const data = isObject(parsed) && "data" in parsed ? (parsed as UpstreamResponse).data : parsed;
+        const data =
+            isObject(parsed) && "data" in parsed
+                ? (parsed as Record<string, unknown>).data
+                : parsed;
 
-        const tokens = extractTokens(data);
-        const payload = tokens ? { ...(data as any), tokens: undefined } : data;
+        const tokens = extractAuthTokens(data);
+        const payload =
+            tokens && isObject(data)
+                ? (() => {
+                      const { tokens: _tokens, ...rest } = data;
+                      return rest;
+                  })()
+                : data;
 
-        console.log({payload})
-        const response = NextResponse.json(payload ?? null, { status: upstreamResponse.status });
+        const response = NextResponse.json(payload ?? null, {
+            status: upstreamResponse.status,
+        });
 
         if (tokens) {
-            response.cookies.set("accessToken", tokens.accessToken, { ...COOKIE_OPTIONS, maxAge: 60 * 60 * 24 * 7 });
-            response.cookies.set("refreshToken", tokens.refreshToken, { ...COOKIE_OPTIONS, maxAge: 60 * 60 * 24 * 30 });
+            response.cookies.set("accessToken", tokens.accessToken, {
+                ...AUTH_COOKIE_OPTIONS,
+                maxAge: 60 * 60 * 24 * 7,
+            });
+            response.cookies.set("refreshToken", tokens.refreshToken, {
+                ...AUTH_COOKIE_OPTIONS,
+                maxAge: 60 * 60 * 24 * 30,
+            });
         }
 
         return response;
@@ -109,28 +117,11 @@ async function postCodeToAuthServer(opts: {
     }
 }
 
-function parseUpstreamBody(text: string): UpstreamResponse | string {
-    try {
-        return JSON.parse(text);
-    } catch {
-        return text;
-    }
-}
-
-function extractTokens(data: unknown): AuthTokens | null {
-    if (!isObject(data)) return null;
-    const maybe = (data as any).tokens;
-    if (!maybe || typeof maybe !== "object") return null;
-    const { accessToken, refreshToken } = maybe as AuthTokens;
-    if (typeof accessToken !== "string" || typeof refreshToken !== "string") return null;
-    return { accessToken, refreshToken };
-}
-
 function isObject(value: unknown): value is Record<string, unknown> {
     return typeof value === "object" && value !== null;
 }
 
-async function safeParseJson(request: Request): Promise<any | null> {
+async function safeParseJson(request: Request): Promise<unknown | null> {
     try {
         return await request.json();
     } catch {

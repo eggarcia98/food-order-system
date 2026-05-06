@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@prisma/client";
 export const runtime = "edge";
 
 interface OrderItem {
@@ -26,7 +27,7 @@ interface Extra {
 
 export async function POST(request: Request) {
     try {
-        const { client, comments, ...rest} = await request.json();
+        const { client, comments, ...rest } = await request.json();
 
         const OrderItem: OrderItem = rest;
 
@@ -52,14 +53,14 @@ export async function POST(request: Request) {
                         variant_id: orderItem.variant_id,
                         quantity: orderItem.quantity,
                         unit_price: orderItem.price,
-                    })),    
+                    })),
                 },
                 order_item_extras: {
                     create: OrderItem.extraItems.map((extraItem: Extra) => ({
                         extra_id: extraItem.extra_id,
                         quantity: extraItem.quantity,
                         unit_price: extraItem.price,
-                    })),    
+                    })),
                 },
                 comments,
             },
@@ -72,11 +73,13 @@ export async function POST(request: Request) {
         // Create confirmation link record (expires in 24 hours)
         // Create confirmation link via Prisma ORM (let DB generate token if configured)
         const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-        const confirmationLink = await prisma.orderConfirmationLink.create({
+        const confirmationLink = await prisma.order_confirmation_link.create({
+            // Use unchecked create input to set scalar FK directly without requiring `id`.
+            // This avoids TypeScript mismatch when the generated input type expects id.
             data: {
                 order_id: order.id,
                 expires_at: expiresAt,
-            },
+            } as Prisma.order_confirmation_linkUncheckedCreateInput,
             select: {
                 id: true,
                 order_id: true,
@@ -88,7 +91,7 @@ export async function POST(request: Request) {
 
         return NextResponse.json({ order, confirmationLink });
     } catch (error) {
-
+        console.error("Error creating order:", error);
         return NextResponse.json({ error }, { status: 500 });
     }
 }
@@ -122,20 +125,20 @@ export async function GET() {
             },
         });
 
-        const blockedDomain = process.env.BLOCKED_DOMAIN?.replace(/\/+$/, "") ?? "";
+        const blockedDomain =
+            process.env.BLOCKED_DOMAIN?.replace(/\/+$/, "") ?? "";
         const origin = blockedDomain ? `https://${blockedDomain}` : "";
 
         const ordersWithConfirmationLink = orders.map((order) => ({
             ...order,
             confirmationLinkUrl:
-                origin && order.order_confirmation_link?.token
-                    ? `${origin}/order-confirm/${order.order_confirmation_link.token}`
+                origin && order.order_confirmation_link[0]?.token
+                    ? `${origin}/order-confirm/${order.order_confirmation_link[0].token}`
                     : null,
         }));
 
         return NextResponse.json(ordersWithConfirmationLink);
     } catch (error) {
-
         return NextResponse.json({ error }, { status: 500 });
     }
 }
