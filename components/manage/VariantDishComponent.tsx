@@ -1,3 +1,5 @@
+"use client";
+
 import VariantDishItem from "./VariantDishItem";
 
 export default function VariantDishComponent({ itemVariants }) {

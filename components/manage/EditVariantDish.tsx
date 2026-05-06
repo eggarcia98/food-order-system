@@ -1,4 +1,6 @@
-export default function EditVariantDish({ itemVariant, setVariantFormData, variantFormData, setEditMode}) {
+"use client";
+
+export default function EditVariantDish({ itemVariant, setVariantFormData, variantFormData, setEditMode }) {
 
     const handleUpdateVariant = async () => {
 

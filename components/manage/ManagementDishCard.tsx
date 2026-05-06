@@ -1,5 +1,6 @@
+"use client";
+
 import { useState } from "react";
-import EditMainDish from "./EditMainDish";
 import MainDishComponent from "./MainDishComponent";
 import VariantDishComponent from "./VariantDishComponent";
 
