@@ -7,9 +7,19 @@ import EditMainDish from "./EditMainDish";
 export default function MainDishComponent({ dish, setMainDishFormData }) {
     const [editMode, setEditMode] = useState(false);
 
-    function handleToggleDish(): void {
-        throw new Error("Function not implemented.");
-    }
+    const handleToggleDish = async (): Promise<void> => {
+        try {
+            const res = await fetch(`/api/dish/toggleStatus`, {
+                method: "PUT",
+                body: JSON.stringify({ id: dish.id, is_active: !dish.is_active }),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+        } catch (err) {
+            console.error("Error toggling dish:", err);
+        }
+    };
 
     if (editMode) {
         return (
