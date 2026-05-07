@@ -46,8 +46,8 @@ export default function EditMainDish({ dish, setEditMode }) {
     };
 
     return (
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center w-full">
-            <div className="flex flex-row gap-4 items-center">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex-1 flex flex-row gap-4 items-center">
                 <div className="relative h-20 w-20 rounded-lg overflow-hidden bg-[#f3f2ef] ring-1 ring-black/5">
                     {previewUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
@@ -72,8 +72,8 @@ export default function EditMainDish({ dish, setEditMode }) {
                         }} />
                     </label>
                 </div>
-                <div className="flex-1 space-y-3">
-                    <div className="flex flex-wrap items-center gap-3">
+                <div className="min-w-0 flex-1 space-y-3">
+                    <div className="inline-flex max-w-full items-center gap-1">
                         <input
                             type="text"
                             value={dishFormData.name}
@@ -84,10 +84,10 @@ export default function EditMainDish({ dish, setEditMode }) {
                                 })
                             }
                             placeholder="Dish name"
-                            className="bg-transparent text-xl  font-guayacos text-foreground"
+                            className="min-w-0 bg-transparent text-xl font-guayacos text-foreground outline-none"
                         />
 
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M12 20h9" />
                             <path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4 12.5-12.5z" />
                         </svg>
@@ -104,10 +104,11 @@ export default function EditMainDish({ dish, setEditMode }) {
                                 })
                             }
                             placeholder="Short description"
-                            className="max-w-3xl w-full bg-transparent font-guayacos text-sm leading-6 text-light placeholder:text-text-light outline-none"
+                                className="max-w-3xl w-full bg-transparent pr-7 font-guayacos text-sm leading-6 text-light placeholder:text-text-light outline-none"
                         />
-                        <button type="button" className="absolute right-0 bottom-0 text-text-light p-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <button type="button" className="absolute right-0 bottom-0 p-1 text-text-light">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M12 20h9" />
                                 <path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4 12.5-12.5z" />
                             </svg>
                         </button>
@@ -121,7 +122,7 @@ export default function EditMainDish({ dish, setEditMode }) {
                 </div>
             </div>
 
-            <div className="flex gap-2 mt-3 sm:mt-0">
+            <div className="flex flex-wrap gap-2 sm:mt-0">
                 <button
                     onClick={() => handleUpdateDish(dish.id)}
                     className="rounded-full bg-foreground text-white px-4 py-2 text-sm font-medium"
