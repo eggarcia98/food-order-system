@@ -104,7 +104,7 @@ export default function EditMainDish({ dish, setEditMode }) {
 
 
                     <div className="relative">
-                        <input
+                        <textarea
                             value={dishFormData.description}
                             onChange={(e) =>
                                 setDishFormData({
@@ -113,7 +113,9 @@ export default function EditMainDish({ dish, setEditMode }) {
                                 })
                             }
                             placeholder="Short description"
-                            className="max-w-3xl w-full bg-transparent pr-7 font-guayacos text-sm leading-6 text-light placeholder:text-text-light outline-none border-b border-gray-300"
+                            rows={1}
+                            wrap="off"
+                            className="max-w-3xl w-full resize-none overflow-x-auto whitespace-nowrap bg-transparent pr-7 font-guayacos text-sm leading-6 text-light placeholder:text-text-light outline-none border-b border-gray-300 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
                         />
                         <button type="button" className="absolute right-0 bottom-0 p-1 text-text-light">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor">
