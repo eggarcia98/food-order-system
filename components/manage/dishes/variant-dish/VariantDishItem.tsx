@@ -11,8 +11,18 @@ export default function VariantDishItem({ itemVariant }) {
         price: "",
     });
 
-    const handleToggleVariant = (): void => {
-
+    const handleToggleVariantDishStatus = async (): Promise<void> => {
+ try {
+            const res = await fetch(`/api/dish/variant/toggleStatus`, {
+                method: "PUT",
+                body: JSON.stringify({ id: itemVariant.id, is_active: !itemVariant.is_active }),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+        } catch (err) {
+            console.error("Error toggling dish:", err);
+        }
     }
 
     if (editMode)
@@ -65,7 +75,7 @@ export default function VariantDishItem({ itemVariant }) {
                     <button
                         type="button"
                         onClick={() =>
-                            handleToggleVariant()
+                            handleToggleVariantDishStatus()
                         }
                         className="text-xs font-medium text-brand-red hover:text-rose"
                     >

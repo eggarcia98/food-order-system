@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import MainDishComponent from "./MainDishComponent";
-import VariantDishComponent from "./VariantDishComponent";
+import MainDishComponent from "./main-dish/MainDishComponent";
+import VariantDishComponent from "./variant-dish/VariantDishComponent";
 
 interface EditingState {
     type: "none" | "dish" | "variant";
