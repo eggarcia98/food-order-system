@@ -84,7 +84,7 @@ export default function EditMainDish({ dish, setEditMode }) {
                                 })
                             }
                             placeholder="Dish name"
-                            className="bg-transparent text-xl font-bold font-bungee text-foreground "
+                            className="bg-transparent text-xl  font-guayacos text-foreground"
                         />
 
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -104,7 +104,7 @@ export default function EditMainDish({ dish, setEditMode }) {
                                 })
                             }
                             placeholder="Short description"
-                            className="max-w-3xl text-sm leading-6 text-light placeholder:text-text-light outline-none w-full bg-transparent"
+                            className="max-w-3xl w-full bg-transparent font-guayacos text-sm leading-6 text-light placeholder:text-text-light outline-none"
                         />
                         <button type="button" className="absolute right-0 bottom-0 text-text-light p-1">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
