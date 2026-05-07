@@ -29,7 +29,7 @@ export default function MainDishComponent({ dish, setMainDishFormData }) {
 
     return (
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="flex-1 flex flex-col gap-4 sm:flex-row sm:gap-4 sm:items-center">
+            <div className="flex-1 flex flex-row gap-4 items-center">
                 {dish.img_url && (
                     <img
                         src={dish.img_url}
