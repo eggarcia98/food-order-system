@@ -300,7 +300,7 @@ export default function DishManagementPage() {
           <div className="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)] ">
             <aside className="rounded-3xl bg-white/80 p-5 shadow-[0_18px_60px_rgba(31,26,23,0.06)] ring-1 ring-black/5 lg:sticky lg:top-6 lg:self-start hidden lg:block ">
               <div className="flex items-center justify-between">
-                <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-text-light">Category pages</h2>
+                <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-text-light">Category</h2>
                 <span className="rounded-full bg-[#f7f3ee] px-2.5 py-1 text-xs text-text-light">{categoryPages.length}</span>
               </div>
               <div className="mt-4 space-y-2 ">

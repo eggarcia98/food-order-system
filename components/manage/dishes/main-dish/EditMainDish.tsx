@@ -13,6 +13,15 @@ export default function EditMainDish({ dish, setEditMode }) {
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(dish?.img_url || null);
 
+
+    const getEditIcon = () => {
+        return (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M12 20h9" />
+                <path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4 12.5-12.5z" />
+            </svg>
+        )
+    }
     const handleUpdateDish = async (dishId) => {
         try {
             let payload: any = { ...dishFormData };
@@ -84,7 +93,7 @@ export default function EditMainDish({ dish, setEditMode }) {
                                 })
                             }
                             placeholder="Dish name"
-                            className="min-w-0 bg-transparent text-xl font-guayacos text-foreground outline-none"
+                            className="min-w-0 bg-transparent text-xl font-guayacos text-foreground outline-none border-b border-gray-300"
                         />
 
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -104,9 +113,9 @@ export default function EditMainDish({ dish, setEditMode }) {
                                 })
                             }
                             placeholder="Short description"
-                                className="max-w-3xl w-full bg-transparent pr-7 font-guayacos text-sm leading-6 text-light placeholder:text-text-light outline-none"
+                            className="max-w-3xl w-full bg-transparent pr-7 font-guayacos text-sm leading-6 text-light placeholder:text-text-light outline-none border-b border-gray-300"
                         />
-                            <button type="button" className="absolute right-0 bottom-0 p-1 text-text-light">
+                        <button type="button" className="absolute right-0 bottom-0 p-1 text-text-light">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                 <path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M12 20h9" />
                                 <path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4 12.5-12.5z" />
