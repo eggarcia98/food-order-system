@@ -69,7 +69,7 @@ model OrderItemExtras {
 
 model MenuItems {
   id            Int           @id @default(autoincrement())
-  category_id   Int?
+  category_id   Int?          @default(1)
   name          String        @db.VarChar(100)
   description   String?
   img_url       String?

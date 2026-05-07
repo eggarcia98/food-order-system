@@ -3,7 +3,7 @@
 import { useEffect, useId, useMemo, useState } from "react";
 import { useAuthSession } from "@/lib/useAuthSession";
 import type { MenuCategory, MenuItem, ItemVariant } from "@/lib/domain";
-import CrudDishCard from "@/components/manage/ManagementDishCard";
+import CrudDishCard from "@/components/manage/dishes/ManagementDishCard";
 
 
 
@@ -40,8 +40,6 @@ export default function DishManagementPage() {
 
       const dishesData = await dishesResponse.json();
       setDishes(dishesData);
-
-      console.log("Fetched dishes:", { dishesData });
 
       setError(null);
     } catch (err) {
@@ -311,7 +309,7 @@ export default function DishManagementPage() {
                     <button
                       key={page.id}
                       type="button"
-                      onClick={() => setActiveCategory(page.id)}
+                      onClick={() => setSearchQuery(page.label)}
                       className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left transition ${activeCategory === page.id
                         ? "bg-brand-blue text-white shadow-sm"
                         : "bg-[#faf7f2] text-foreground hover:bg-[#f4ede4]"
