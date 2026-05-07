@@ -7,7 +7,7 @@ import EditMainDish from "./EditMainDish";
 export default function MainDishComponent({ dish, setMainDishFormData }) {
     const [editMode, setEditMode] = useState(false);
 
-    const handleToggleDish = async (): Promise<void> => {
+    const handleToggleMainDishStatus = async (): Promise<void> => {
         try {
             const res = await fetch(`/api/dish/toggleStatus`, {
                 method: "PUT",
@@ -65,7 +65,7 @@ export default function MainDishComponent({ dish, setMainDishFormData }) {
                     : "bg-[#eef5ff] text-brand-blue"
                     }`}
                 onClick={() =>
-                    handleToggleDish()
+                    handleToggleMainDishStatus()
                 }
             >
                 {dish.is_active ?? true ? "Disable" : "Enable"}
