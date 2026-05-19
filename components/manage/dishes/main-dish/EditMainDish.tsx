@@ -1,8 +1,22 @@
 "use client";
 
 import { useState } from "react";
+import type { MenuItem } from "@/lib/domain";
 
-export default function EditMainDish({ dish, setEditMode }) {
+interface EditMainDishProps {
+    dish: MenuItem;
+    setEditMode: (editMode: boolean) => void;
+}
+
+type DishUpdatePayload = {
+    name: string;
+    description: string;
+    img_url: string;
+    is_active: boolean;
+    img_data?: string;
+};
+
+export default function EditMainDish({ dish, setEditMode }: EditMainDishProps) {
     const [dishFormData, setDishFormData] = useState({
         name: dish?.name || "",
         description: dish?.description || "",
@@ -14,17 +28,9 @@ export default function EditMainDish({ dish, setEditMode }) {
     const [previewUrl, setPreviewUrl] = useState<string | null>(dish?.img_url || null);
 
 
-    const getEditIcon = () => {
-        return (
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M12 20h9" />
-                <path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4 12.5-12.5z" />
-            </svg>
-        )
-    }
-    const handleUpdateDish = async (dishId) => {
+    const handleUpdateDish = async (dishId: number) => {
         try {
-            let payload: any = { ...dishFormData };
+            const payload: DishUpdatePayload = { ...dishFormData };
 
             if (imageFile) {
                 // convert to data URL for now (small images only). Backend can handle img_data if supported.

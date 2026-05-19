@@ -1,29 +1,9 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { normalizeAuthSession, parseJsonSafely } from "@/lib/auth";
+import { requireAuth } from "@/lib/api/auth";
+import { HttpError, jsonError, parseJsonBody, parsePositiveInt } from "@/lib/api/http";
 
 export const runtime = "edge";
-
-/**
- * Verify user is authenticated
- * Returns error response if not authenticated
- */
-async function verifyAuth(request: Request): Promise<string | null> {
-  try {
-    const cookieHeader = request.headers.get("cookie") || "";
-    const authTokenMatch = cookieHeader.match(/auth_token=([^;]+)/);
-
-    if (!authTokenMatch) {
-      return null;
-    }
-
-    // In a real setup, verify the token with your auth endpoint
-    // For now, checking if token exists is sufficient
-    return authTokenMatch[1];
-  } catch {
-    return null;
-  }
-}
 
 /**
  * PATCH /api/menu_items/[id]
@@ -35,45 +15,45 @@ export async function PATCH(
   ctx: RouteContext<"/api/menu_items/[id]">,
 ) {
   try {
-    // Verify authentication
-    const authToken = await verifyAuth(request);
-    if (!authToken) {
-      return NextResponse.json(
-        { error: "Unauthorized - Authentication required" },
-        { status: 401 },
-      );
-    }
+    requireAuth(request);
 
     const { id } = await ctx.params;
-    const itemId = parseInt(id as string, 10);
+    const itemId = parsePositiveInt(id, "menu item ID");
 
-    if (!Number.isInteger(itemId) || itemId <= 0) {
-      return NextResponse.json(
-        { error: "Invalid menu item ID" },
-        { status: 400 },
-      );
-    }
-
-    const body = await request.json();
+    const body = await parseJsonBody<Record<string, unknown>>(request);
     const { name, description, is_active, img_url } = body;
 
-    // Validate input
-    if (typeof name !== "string" || name.trim().length === 0) {
-      return NextResponse.json(
-        { error: "Invalid name provided" },
-        { status: 400 },
-      );
+    const updateData: Record<string, unknown> = {};
+
+    if (name !== undefined) {
+      if (typeof name !== "string" || name.trim().length === 0) {
+        throw new HttpError("Invalid name provided", 400);
+      }
+      updateData.name = name.trim();
     }
 
-    // Update the menu item
+    if (description !== undefined) {
+      updateData.description = description ? String(description).trim() : null;
+    }
+
+    if (is_active !== undefined) {
+      if (typeof is_active !== "boolean") {
+        throw new HttpError("is_active must be a boolean", 400);
+      }
+      updateData.is_active = is_active;
+    }
+
+    if (img_url !== undefined) {
+      updateData.img_url = img_url ? String(img_url).trim() : null;
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      throw new HttpError("No fields to update", 400);
+    }
+
     const updatedItem = await prisma.menuItems.update({
       where: { id: itemId },
-      data: {
-        name: name.trim(),
-        description: description ? String(description).trim() : undefined,
-        is_active: typeof is_active === "boolean" ? is_active : undefined,
-        img_url: img_url ? String(img_url).trim() : undefined,
-      },
+      data: updateData,
       include: {
         item_variants: true,
       },
@@ -91,11 +71,7 @@ export async function PATCH(
       );
     }
 
-    console.error("Error updating menu item:", error);
-    return NextResponse.json(
-      { error: "Failed to update menu item" },
-      { status: 500 },
-    );
+    return jsonError(error, "Failed to update menu item");
   }
 }
 
@@ -109,26 +85,12 @@ export async function POST(
   ctx: RouteContext<"/api/menu_items/[id]">,
 ) {
   try {
-    // Verify authentication
-    const authToken = await verifyAuth(request);
-    if (!authToken) {
-      return NextResponse.json(
-        { error: "Unauthorized - Authentication required" },
-        { status: 401 },
-      );
-    }
+    requireAuth(request);
 
     const { id } = await ctx.params;
-    const itemId = parseInt(id as string, 10);
+    const itemId = parsePositiveInt(id, "menu item ID");
 
-    if (!Number.isInteger(itemId) || itemId <= 0) {
-      return NextResponse.json(
-        { error: "Invalid menu item ID" },
-        { status: 400 },
-      );
-    }
-
-    const body = await request.json();
+    const body = await parseJsonBody<Record<string, unknown>>(request);
     const { variant_name, price, is_active } = body;
 
     // Validate variant data
@@ -159,10 +121,6 @@ export async function POST(
 
     return NextResponse.json(variant);
   } catch (error) {
-    console.error("Error creating variant:", error);
-    return NextResponse.json(
-      { error: "Failed to create variant" },
-      { status: 500 },
-    );
+    return jsonError(error, "Failed to create variant");
   }
 }

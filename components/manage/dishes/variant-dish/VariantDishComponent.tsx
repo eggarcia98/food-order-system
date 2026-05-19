@@ -1,8 +1,13 @@
 "use client";
 
 import VariantDishItem from "./VariantDishItem";
+import type { ItemVariant } from "@/lib/domain";
 
-export default function VariantDishComponent({ itemVariants }) {
+interface VariantDishComponentProps {
+    itemVariants: ItemVariant[];
+}
+
+export default function VariantDishComponent({ itemVariants }: VariantDishComponentProps) {
     if (!itemVariants || itemVariants.length === 0)
         return <p className="text-sm text-light">No variants</p>;
 
@@ -16,7 +21,7 @@ export default function VariantDishComponent({ itemVariants }) {
                 {itemVariants.map((itemVariant) => (
                     <VariantDishItem
                         itemVariant={itemVariant}
-                        key={`${itemVariant.id}-${itemVariant.name}`} />
+                        key={`${itemVariant.id}-${itemVariant.variant_name}`} />
                 ))}
             </div>
 

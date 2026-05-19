@@ -1,20 +1,9 @@
 export const runtime = "edge";
 
 import { prisma } from "@/lib/prisma";
+import { requireAuth } from "@/lib/api/auth";
+import { getString, jsonError, parseJsonBody } from "@/lib/api/http";
 import { NextResponse } from "next/server";
-
-/**
- * Verify user is authenticated
- */
-async function verifyAuth(request: Request): Promise<string | null> {
-  try {
-    const cookieHeader = request.headers.get("cookie") || "";
-    const authTokenMatch = cookieHeader.match(/auth_token=([^;]+)/);
-    return authTokenMatch ? authTokenMatch[1] : null;
-  } catch {
-    return null;
-  }
-}
 
 /**
  * GET /api/menu_items
@@ -33,7 +22,7 @@ export async function GET() {
 
         return NextResponse.json(items);
     } catch (error) {
-        return NextResponse.json({ error }, { status: 500 });
+        return jsonError(error, "Failed to fetch menu items");
     }
 }
 
@@ -44,29 +33,13 @@ export async function GET() {
  */
 export async function POST(request: Request) {
     try {
-        // Verify authentication
-        const authToken = await verifyAuth(request);
-        if (!authToken) {
-            return NextResponse.json(
-                { error: "Unauthorized - Authentication required" },
-                { status: 401 },
-            );
-        }
-
-        const body = await request.json();
+        requireAuth(request);
+        const body = await parseJsonBody<Record<string, unknown>>(request);
         const { name, description, category_id, img_url, is_active } = body;
-
-        // Validate input
-        if (typeof name !== "string" || name.trim().length === 0) {
-            return NextResponse.json(
-                { error: "Menu item name is required" },
-                { status: 400 },
-            );
-        }
 
         const newItem = await prisma.menuItems.create({
             data: {
-                name: name.trim(),
+                name: getString(name, "Menu item name"),
                 description: description ? String(description).trim() : undefined,
                 category_id: category_id ? parseInt(String(category_id), 10) : undefined,
                 img_url: img_url ? String(img_url).trim() : undefined,
@@ -79,10 +52,6 @@ export async function POST(request: Request) {
 
         return NextResponse.json(newItem, { status: 201 });
     } catch (error) {
-        console.error("Error creating menu item:", error);
-        return NextResponse.json(
-            { error: "Failed to create menu item" },
-            { status: 500 },
-        );
+        return jsonError(error, "Failed to create menu item");
     }
 }

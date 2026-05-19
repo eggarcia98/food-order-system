@@ -1,98 +1,19 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { Prisma } from "@prisma/client/edge";
+import { jsonError, parseJsonBody } from "@/lib/api/http";
+import {
+    createOrderWithConfirmation,
+    validateCreateOrderPayload,
+} from "@/lib/services/order-service";
 export const runtime = "edge";
-
-interface OrderItem {
-    mainItems: MenuItem[];
-    extraItems: Extra[];
-}
-
-interface MenuItem {
-    item_id: number;
-    item_name: string;
-    variant_id: number;
-    variant_name: string;
-    price: number;
-    // img?: string;
-    quantity: number;
-}
-
-interface Extra {
-    extra_id: number;
-    name: string;
-    price: number;
-    quantity: number;
-}
 
 export async function POST(request: Request) {
     try {
-        const { client, comments, ...rest } = await request.json();
-
-        const OrderItem: OrderItem = rest;
-
-        const order = await prisma.order.create({
-            data: {
-                customer: {
-                    connectOrCreate: {
-                        where: {
-                            phone_number: client.phoneNumber,
-                        },
-                        create: {
-                            first_name: client.firstName,
-                            last_name: client.lastName,
-                            nationality_id: client?.nationality?.id,
-                            phone_number: client.phoneNumber,
-                            // email: client.email,
-                        },
-                    },
-                },
-                order_code: `ORD-BRI${Date.now()}`,
-                order_items: {
-                    create: OrderItem.mainItems.map((orderItem: MenuItem) => ({
-                        variant_id: orderItem.variant_id,
-                        quantity: orderItem.quantity,
-                        unit_price: orderItem.price,
-                    })),
-                },
-                order_item_extras: {
-                    create: OrderItem.extraItems.map((extraItem: Extra) => ({
-                        extra_id: extraItem.extra_id,
-                        quantity: extraItem.quantity,
-                        unit_price: extraItem.price,
-                    })),
-                },
-                comments,
-            },
-            include: {
-                // client: true,
-                // dishes: true,
-            },
-        });
-
-        // Create confirmation link record (expires in 24 hours)
-        // Create confirmation link via Prisma ORM (let DB generate token if configured)
-        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-        const confirmationLink = await prisma.order_confirmation_link.create({
-            // Use unchecked create input to set scalar FK directly without requiring `id`.
-            // This avoids TypeScript mismatch when the generated input type expects id.
-            data: {
-                order_id: order.id,
-                expires_at: expiresAt,
-            } as Prisma.order_confirmation_linkUncheckedCreateInput,
-            select: {
-                id: true,
-                order_id: true,
-                token: true,
-                expires_at: true,
-                created_at: true,
-            },
-        });
-
-        return NextResponse.json({ order, confirmationLink });
+        const body = await parseJsonBody(request);
+        const payload = validateCreateOrderPayload(body);
+        return NextResponse.json(await createOrderWithConfirmation(payload));
     } catch (error) {
-        console.error("Error creating order:", error);
-        return NextResponse.json({ error }, { status: 500 });
+        return jsonError(error, "Error creating order");
     }
 }
 
@@ -139,6 +60,6 @@ export async function GET() {
 
         return NextResponse.json(ordersWithConfirmationLink);
     } catch (error) {
-        return NextResponse.json({ error }, { status: 500 });
+        return jsonError(error, "Failed to fetch orders");
     }
 }

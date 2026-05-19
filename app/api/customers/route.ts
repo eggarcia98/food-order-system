@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { jsonError } from "@/lib/api/http";
 export const runtime = "edge";
 
 export async function GET() {
@@ -12,9 +13,6 @@ export async function GET() {
 
         return NextResponse.json(customers);
     } catch (error) {
-        return NextResponse.json(
-            { error },
-            { status: 500 }
-        );
+        return jsonError(error, "Failed to fetch customers");
     }
 }

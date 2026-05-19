@@ -1,16 +1,34 @@
-// app/api/orders/[orderId]/dispatch/route.ts
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma"; // or your db connection
+import { prisma } from "@/lib/prisma";
+import { HttpError, jsonError, parseJsonBody, parsePositiveInt } from "@/lib/api/http";
 export const runtime = "edge";
 
-export async function PUT(_req: Request, { params }) {
-    const { orderId } = params;
-
-    const {status_id, is_info_sent} = await _req.json()
+export async function PUT(
+    request: Request,
+    ctx: RouteContext<"/api/orders/[orderId]/dispatch">,
+) {
     try {
+        const { orderId } = await ctx.params;
+        const id = parsePositiveInt(orderId, "order ID");
+        const body = await parseJsonBody<Record<string, unknown>>(request);
+        const data: { status_id?: number; is_info_sent?: boolean } = {};
+
+        if (body.status_id !== undefined) {
+            data.status_id = parsePositiveInt(body.status_id, "status ID");
+        }
+        if (body.is_info_sent !== undefined) {
+            if (typeof body.is_info_sent !== "boolean") {
+                throw new HttpError("is_info_sent must be a boolean", 400);
+            }
+            data.is_info_sent = body.is_info_sent;
+        }
+        if (Object.keys(data).length === 0) {
+            throw new HttpError("No fields to update", 400);
+        }
+
         const updatedOrder = await prisma.order.update({
-            where: { id: Number(orderId) },
-            data: { status_id, is_info_sent }, 
+            where: { id },
+            data,
         });
 
         return NextResponse.json({
@@ -18,10 +36,6 @@ export async function PUT(_req: Request, { params }) {
             order: updatedOrder,
         });
     } catch (error) {
-        console.error("Error updating order status:", error);
-        return NextResponse.json(
-            { error: "Failed to update order status" },
-            { status: 500 }
-        );
+        return jsonError(error, "Failed to update order status");
     }
 }

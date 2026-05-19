@@ -59,7 +59,8 @@ export async function POST(
         const payload =
             tokens && isObject(data)
                 ? (() => {
-                      const { tokens: _tokens, ...rest } = data;
+                      const { tokens: _ignoredTokens, ...rest } = data;
+                      void _ignoredTokens;
                       return rest;
                   })()
                 : data;
@@ -82,7 +83,7 @@ export async function POST(
         return response;
     } catch (err) {
         console.error("Error processing OAuth callback:", err);
-        const isAbort = (err as any)?.name === "AbortError";
+        const isAbort = err instanceof Error && err.name === "AbortError";
         return NextResponse.json(
             { error: isAbort ? "Upstream request timed out" : "Failed to process OAuth callback" },
             { status: 500 },

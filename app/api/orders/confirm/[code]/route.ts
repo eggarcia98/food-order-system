@@ -8,7 +8,7 @@ import {
   validateConfirmationRequest,
   parseRequestBody,
 } from "@/lib/validation/confirmation-validation";
-import type { ConfirmationResponse } from "@/lib/domain";
+import { getErrorStatus } from "@/lib/api/http";
 
 export const runtime = "edge";
 
@@ -36,7 +36,7 @@ export async function GET(
       order: data.order,
       fulfillmentTypes: data.fulfillmentTypes,
       link: data.link,
-    } as ConfirmationResponse);
+    });
   } catch (error) {
     return handleError(error);
   }
@@ -66,7 +66,7 @@ export async function PATCH(
     const order = await confirmOrder(code, validatedRequest);
 
     return NextResponse.json(
-      { order, updated: true } as ConfirmationResponse,
+      { order, updated: true },
     );
   } catch (error) {
     return handleError(error);
@@ -78,7 +78,7 @@ export async function PATCH(
  */
 function handleError(error: unknown): NextResponse {
   if (error instanceof Error) {
-    const status = (error as any).status || 500;
+    const status = getErrorStatus(error) || 500;
     const isExpected = [400, 404, 410].includes(status);
 
     if (!isExpected) {
@@ -94,4 +94,3 @@ function handleError(error: unknown): NextResponse {
     { status: 500 },
   );
 }
-

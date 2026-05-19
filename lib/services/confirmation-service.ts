@@ -4,7 +4,8 @@
  */
 
 import { prisma } from "@/lib/prisma";
-import type { Order, FulfillmentType } from "@/lib/domain";
+import type { FulfillmentType } from "@/lib/domain";
+import { HttpError } from "@/lib/api/http";
 
 interface ConfirmationLinkData {
     token: string;
@@ -19,11 +20,31 @@ interface ConfirmationRequestBody {
     arrivalTo: string;
 }
 
-interface OrderWithDetails extends Order {
-    customer: any;
-    fulfillment_type: FulfillmentType | null;
-    order_items: any[];
-    order_item_extras: any[];
+type OrderWithDetails = Awaited<ReturnType<typeof fetchOrderById>>;
+
+async function fetchOrderById(orderId: number) {
+    return prisma.order.findUniqueOrThrow({
+        where: { id: orderId },
+        include: {
+            customer: true,
+            fulfillment_type: true,
+            order_items: {
+                include: {
+                    ItemVariant: {
+                        include: {
+                            MenuItem: true,
+                        },
+                    },
+                },
+            },
+            order_item_extras: {
+                include: {
+                    MenuExtras: true,
+                },
+            },
+            status: true,
+        },
+    });
 }
 
 /**
@@ -41,9 +62,7 @@ export async function getConfirmationLink(
     code: string,
 ): Promise<ConfirmationLinkData> {
     if (!code || Array.isArray(code)) {
-        const error = new Error("Invalid confirmation code");
-        (error as any).status = 400;
-        throw error;
+        throw new HttpError("Invalid confirmation code", 400);
     }
 
     const link = await prisma.order_confirmation_link.findUnique({
@@ -57,21 +76,15 @@ export async function getConfirmationLink(
     });
 
     if (!link) {
-        const error = new Error("Confirmation link not found");
-        (error as any).status = 404;
-        throw error;
+        throw new HttpError("Confirmation link not found", 404);
     }
 
     if (isLinkExpired(link.expires_at)) {
-        const error = new Error("Confirmation link expired");
-        (error as any).status = 410;
-        throw error;
+        throw new HttpError("Confirmation link expired", 410);
     }
 
     if (link.used_at) {
-        const error = new Error("This confirmation link has already been used");
-        (error as any).status = 410;
-        throw error;
+        throw new HttpError("This confirmation link has already been used", 410);
     }
 
     return link;
@@ -91,49 +104,29 @@ export async function fetchConfirmationData(code: string): Promise<{
 }> {
     const link = await prisma.order_confirmation_link.findUnique({
         where: { token: code },
-        include: {
-            order: {
-                include: {
-                    customer: true,
-                    order_items: {
-                        include: {
-                            ItemVariant: {
-                                include: {
-                                    MenuItem: true,
-                                },
-                            },
-                        },
-                    },
-                    order_item_extras: {
-                        include: {
-                            MenuExtras: true,
-                        },
-                    },
-                    fulfillment_type: true,
-                    status: true
-                },
-            },
+        select: {
+            token: true,
+            expires_at: true,
+            used_at: true,
+            order_id: true,
         },
     });
 
     if (!link) {
-        const error = new Error("Confirmation link not found");
-        (error as any).status = 404;
-        throw error;
+        throw new HttpError("Confirmation link not found", 404);
     }
 
     if (isLinkExpired(link.expires_at)) {
-        const error = new Error("Confirmation link expired");
-        (error as any).status = 410;
-        throw error;
+        throw new HttpError("Confirmation link expired", 410);
     }
 
     const fulfillmentTypes = await prisma.fulfillmentType.findMany({
         orderBy: { id: "asc" },
     });
+    const order = await fetchOrderById(link.order_id);
 
     return {
-        order: link.order,
+        order,
         fulfillmentTypes,
         link: {
             token: link.token,
@@ -158,44 +151,21 @@ export async function confirmOrder(
     const arrivalTo = new Date(body.arrivalTo);
 
     if (Number.isNaN(arrivalFrom.getTime())) {
-        const error = new Error("Invalid arrival_from date");
-        (error as any).status = 400;
-        throw error;
+        throw new HttpError("Invalid arrival_from date", 400);
     }
 
     if (Number.isNaN(arrivalTo.getTime())) {
-        const error = new Error("Invalid arrival_to date");
-        (error as any).status = 400;
-        throw error;
+        throw new HttpError("Invalid arrival_to date", 400);
     }
 
     // Update order
-    const updatedOrder = await prisma.order.update({
+    await prisma.order.update({
         where: { id: link.order_id },
         data: {
             fulfillment_type_id: body.fulfillmentTypeId,
             arrival_from: arrivalFrom,
             arrival_to: arrivalTo,
             customer_confirmed_at: new Date(),
-        },
-        include: {
-            customer: true,
-            fulfillment_type: true,
-            order_items: {
-                include: {
-                    ItemVariant: {
-                        include: {
-                            MenuItem: true,
-                        },
-                    },
-                },
-            },
-            order_item_extras: {
-                include: {
-                    MenuExtras: true,
-                },
-            },
-            status: true
         },
     });
 
@@ -205,5 +175,5 @@ export async function confirmOrder(
         data: { used_at: new Date() },
     });
 
-    return updatedOrder;
+    return fetchOrderById(link.order_id);
 }

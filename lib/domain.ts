@@ -136,7 +136,7 @@ export interface AddMainItemModalProps {
     setOpen: (open: boolean) => void;
     menuItems: MenuItem[];
     setConfirmedMainItems: (
-        updater: (prev: any[]) => any[]
+        updater: (prev: import("@/lib/order-types").MainOrderItem[]) => import("@/lib/order-types").MainOrderItem[]
     ) => void;
 }
 
@@ -145,7 +145,7 @@ export interface AddExtraItemModalProps {
     setOpen: (open: boolean) => void;
     extraItems: ExtraItem[];
     setConfirmedExtraItems: (
-        updater: (prev: any[]) => any[]
+        updater: (prev: import("@/lib/order-types").ExtraOrderItem[]) => import("@/lib/order-types").ExtraOrderItem[]
     ) => void;
 }
 
@@ -155,7 +155,7 @@ export interface AddItemModalProps {
     sides: SideItem[];
     menuItems: MenuItem[];
     setConfirmedOrderList: (
-        updater: (prev: any[]) => any[]
+        updater: (prev: import("@/lib/order-types").OrderEntry[]) => import("@/lib/order-types").OrderEntry[]
     ) => void;
 }
 
@@ -167,8 +167,8 @@ export interface CreateOrderRequest {
         nationality: { id: number };
         phoneNumber: string;
     };
-    mainItems: any[];
-    extraItems: any[];
+    mainItems: import("@/lib/order-types").MainOrderItem[];
+    extraItems: import("@/lib/order-types").ExtraOrderItem[];
     comments: string;
 }
 

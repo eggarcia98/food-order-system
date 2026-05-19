@@ -1,13 +1,4 @@
-/**
- * Order Confirmation Validation
- * Validates request inputs and parameters
- */
-
-interface ConfirmationRequestBody {
-  fulfillmentTypeId?: any;
-  arrivalFrom?: any;
-  arrivalTo?: any;
-}
+import { HttpError, isRecord } from "@/lib/api/http";
 
 /**
  * Validates confirmation code parameter
@@ -25,15 +16,13 @@ export function validateConfirmationCode(
  * Validates request body for order confirmation
  * Returns normalized values or throws with status code
  */
-export function validateConfirmationRequest(body: any): {
+export function validateConfirmationRequest(body: unknown): {
   fulfillmentTypeId: number;
   arrivalFrom: string;
   arrivalTo: string;
 } {
-  if (!body) {
-    const error = new Error("Request body is required");
-    (error as any).status = 400;
-    throw error;
+  if (!isRecord(body)) {
+    throw new HttpError("Request body is required", 400);
   }
 
   // Validate fulfillmentTypeId
@@ -42,29 +31,23 @@ export function validateConfirmationRequest(body: any): {
     !Number.isInteger(fulfillmentTypeId) ||
     fulfillmentTypeId <= 0
   ) {
-    const error = new Error("Invalid fulfillment type");
-    (error as any).status = 400;
-    throw error;
+    throw new HttpError("Invalid fulfillment type", 400);
   }
 
   // Validate arrivalFrom
   if (!body?.arrivalFrom) {
-    const error = new Error("arrival_from is required");
-    (error as any).status = 400;
-    throw error;
+    throw new HttpError("arrival_from is required", 400);
   }
 
   // Validate arrivalTo
   if (!body?.arrivalTo) {
-    const error = new Error("arrival_to is required");
-    (error as any).status = 400;
-    throw error;
+    throw new HttpError("arrival_to is required", 400);
   }
 
   return {
     fulfillmentTypeId,
-    arrivalFrom: body.arrivalFrom,
-    arrivalTo: body.arrivalTo,
+    arrivalFrom: String(body.arrivalFrom),
+    arrivalTo: String(body.arrivalTo),
   };
 }
 
@@ -73,12 +56,10 @@ export function validateConfirmationRequest(body: any): {
  */
 export async function parseRequestBody(
   request: Request,
-): Promise<any> {
+): Promise<unknown> {
   try {
     return await request.json();
   } catch {
-    const error = new Error("Invalid JSON in request body");
-    (error as any).status = 400;
-    throw error;
+    throw new HttpError("Invalid JSON in request body", 400);
   }
 }

@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useId, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAuthSession } from "@/lib/useAuthSession";
-import type { MenuCategory, MenuItem, ItemVariant } from "@/lib/domain";
+import type { MenuItem } from "@/lib/domain";
 import CrudDishCard from "@/components/manage/dishes/ManagementDishCard";
 
 
@@ -58,17 +58,26 @@ export default function DishManagementPage() {
     return dishes
       .slice()
       .sort((left, right) => {
-        if (left.id !== right.id) {
-          return left.id - right.id;
+        if (left.category_id !== right.category_id) {
+          return left.category_id - right.category_id;
         }
 
         return left.name.localeCompare(right.name);
       })
-      .map((dish) => ({
-        id: dish.id,
-        label: dish.name,
-        itemCount: dishes.filter((d) => d.id === dish.id).length,
-      }));
+      .reduce<Array<{ id: number; label: string; itemCount: number }>>((pages, dish) => {
+        const existing = pages.find((page) => page.id === dish.category_id);
+        if (existing) {
+          existing.itemCount += 1;
+          return pages;
+        }
+
+        pages.push({
+          id: dish.category_id,
+          label: `Category ${dish.category_id}`,
+          itemCount: 1,
+        });
+        return pages;
+      }, []);
   }, [dishes]);
 
   const filteredDishes = useMemo(() => {
@@ -99,8 +108,8 @@ export default function DishManagementPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          // name: dishFormData.name,
-          // description: dishFormData.description,
+          name: dishFormData.name,
+          description: dishFormData.description,
           is_active: true,
         }),
         credentials: "include",
@@ -250,7 +259,10 @@ export default function DishManagementPage() {
           <div className="lg:hidden flex mt-6 gap-3 overflow-x-auto pb-1 ">
             <button
               type="button"
-              onClick={() => setSearchQuery("")}
+              onClick={() => {
+                setActiveCategory("all");
+                setSearchQuery("");
+              }}
               className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition ${activeCategory === "all"
                 ? "bg-brand-blue text-white shadow-sm"
                 : "bg-white text-foreground ring-1 ring-black/5 hover:bg-[#f6f1eb]"
@@ -262,7 +274,7 @@ export default function DishManagementPage() {
               <button
                 key={page.id}
                 type="button"
-                onClick={() => setSearchQuery(page.label)}
+                onClick={() => setActiveCategory(page.id)}
                 className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition ${activeCategory === page.id
                   ? "bg-brand-blue text-white shadow-sm"
                   : "bg-white text-foreground ring-1 ring-black/5 hover:bg-[#f6f1eb]"
@@ -309,7 +321,7 @@ export default function DishManagementPage() {
                     <button
                       key={page.id}
                       type="button"
-                      onClick={() => setSearchQuery(page.label)}
+                      onClick={() => setActiveCategory(page.id)}
                       className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left transition ${activeCategory === page.id
                         ? "bg-brand-blue text-white shadow-sm"
                         : "bg-[#faf7f2] text-foreground hover:bg-[#f4ede4]"

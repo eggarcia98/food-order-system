@@ -204,8 +204,8 @@ export default function MenuPage() {
                                     Extra Fee:
                                 </p>
                                 <p className="text-xs sm:text-sm md:text-sm lg:text-base text-secondary">
-                                    $1.5 for each km from "Los Guayacos
-                                    Location" to your place
+                                    $1.5 for each km from &quot;Los Guayacos
+                                    Location&quot; to your place
                                 </p>
                             </div>
 

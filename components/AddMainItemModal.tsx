@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { OrderModalShell } from "@/components/OrderModalShell";
 import {
     MenuItem,
@@ -57,7 +57,7 @@ export default function AddMainItemModal({
 
     const confirmOrderItem = useCallback(() => {
         if (!selectedVariant) return;
-        setConfirmedMainItems((prev: any) => [
+        setConfirmedMainItems((prev) => [
             ...prev,
             {
                 ...selectedVariant,

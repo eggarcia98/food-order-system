@@ -1,20 +1,9 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireAuth } from "@/lib/api/auth";
+import { HttpError, jsonError, parseJsonBody, parsePositiveInt } from "@/lib/api/http";
 
 export const runtime = "edge";
-
-/**
- * Verify user is authenticated
- */
-async function verifyAuth(request: Request): Promise<string | null> {
-  try {
-    const cookieHeader = request.headers.get("cookie") || "";
-    const authTokenMatch = cookieHeader.match(/auth_token=([^;]+)/);
-    return authTokenMatch ? authTokenMatch[1] : null;
-  } catch {
-    return null;
-  }
-}
 
 /**
  * PATCH /api/menu_items/variants/[variantId]
@@ -26,37 +15,20 @@ export async function PATCH(
   ctx: RouteContext<"/api/menu_items/variants/[variantId]">,
 ) {
   try {
-    // Verify authentication
-    const authToken = await verifyAuth(request);
-    if (!authToken) {
-      return NextResponse.json(
-        { error: "Unauthorized - Authentication required" },
-        { status: 401 },
-      );
-    }
+    requireAuth(request);
 
     const { variantId } = await ctx.params;
-    const id = parseInt(variantId as string, 10);
+    const id = parsePositiveInt(variantId, "variant ID");
 
-    if (!Number.isInteger(id) || id <= 0) {
-      return NextResponse.json(
-        { error: "Invalid variant ID" },
-        { status: 400 },
-      );
-    }
-
-    const body = await request.json();
+    const body = await parseJsonBody<Record<string, unknown>>(request);
     const { variant_name, price, is_active } = body;
 
     // Build update data dynamically
-    const updateData: any = {};
+    const updateData: Record<string, unknown> = {};
 
     if (variant_name !== undefined) {
       if (typeof variant_name !== "string" || variant_name.trim().length === 0) {
-        return NextResponse.json(
-          { error: "Invalid variant name" },
-          { status: 400 },
-        );
+        throw new HttpError("Invalid variant name", 400);
       }
       updateData.variant_name = variant_name.trim();
     }
@@ -64,29 +36,20 @@ export async function PATCH(
     if (price !== undefined) {
       const priceNum = parseFloat(String(price));
       if (Number.isNaN(priceNum) || priceNum <= 0) {
-        return NextResponse.json(
-          { error: "Invalid price provided" },
-          { status: 400 },
-        );
+        throw new HttpError("Invalid price provided", 400);
       }
       updateData.price = priceNum;
     }
 
     if (is_active !== undefined) {
       if (typeof is_active !== "boolean") {
-        return NextResponse.json(
-          { error: "is_active must be a boolean" },
-          { status: 400 },
-        );
+        throw new HttpError("is_active must be a boolean", 400);
       }
       updateData.is_active = is_active;
     }
 
     if (Object.keys(updateData).length === 0) {
-      return NextResponse.json(
-        { error: "No fields to update" },
-        { status: 400 },
-      );
+      throw new HttpError("No fields to update", 400);
     }
 
     // Update the variant
@@ -107,10 +70,6 @@ export async function PATCH(
       );
     }
 
-    console.error("Error updating variant:", error);
-    return NextResponse.json(
-      { error: "Failed to update variant" },
-      { status: 500 },
-    );
+    return jsonError(error, "Failed to update variant");
   }
 }

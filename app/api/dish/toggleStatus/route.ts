@@ -1,18 +1,18 @@
-// app/api/orders/[orderId]/dispatch/route.ts
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma"; // or your db connection
+import { prisma } from "@/lib/prisma";
+import { HttpError, jsonError, parseJsonBody, parsePositiveInt } from "@/lib/api/http";
 export const runtime = "edge";
 
-export async function PUT(_req: Request, { params }) {
-    const { id, is_active } = await _req.json()
-    console.log("Received request to toggle dish status:", { id, is_active });
-
+export async function PUT(request: Request) {
     try {
+        const { id, is_active } = await parseJsonBody<Record<string, unknown>>(request);
+        if (typeof is_active !== "boolean") {
+            throw new HttpError("is_active must be a boolean", 400);
+        }
+
         const updatedMainDishStatus = await prisma.menuItems.update({
-            where: { id: Number(id) },
-            data: {
-                is_active: is_active,
-            },
+            where: { id: parsePositiveInt(id, "dish ID") },
+            data: { is_active },
         });
 
         return NextResponse.json({
@@ -20,10 +20,6 @@ export async function PUT(_req: Request, { params }) {
             mainDish: updatedMainDishStatus,
         });
     } catch (error) {
-        console.error("Error updating main dish status:", error);
-        return NextResponse.json(
-            { error: "Failed to update dish status" },
-            { status: 500 }
-        );
+        return jsonError(error, "Failed to update dish status");
     }
 }

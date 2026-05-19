@@ -3,7 +3,7 @@
 import React, { useCallback } from "react";
 import { OrderModalShell } from "@/components/OrderModalShell";
 import { useQuantityMap } from "@/lib/useQuantityMap";
-import { ExtraItem, AddExtraItemModalProps } from "@/lib/domain";
+import { AddExtraItemModalProps } from "@/lib/domain";
 
 export default function AddExtraItemModal({
     open,
@@ -29,7 +29,7 @@ export default function AddExtraItemModal({
 
         if (selectedExtras.length === 0) return;
 
-        setConfirmedExtraItems((prev: any) => [...prev, ...selectedExtras]);
+        setConfirmedExtraItems((prev) => [...prev, ...selectedExtras]);
         reset();
         setOpen(false);
     }, [quantities, extraItems, setConfirmedExtraItems, reset, setOpen]);

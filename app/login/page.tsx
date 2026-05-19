@@ -155,7 +155,7 @@ export default function LoginPage() {
 
                         <SocialLoginButtons />
                         <p className="text-sm text-center text-gray-600">
-                            Don't have an account?{" "}
+                            Don&apos;t have an account?{" "}
                             <a
                                 href="/signup"
                                 className="text-brand-red font-semibold hover:underline"

@@ -2,9 +2,13 @@
 
 import { useState } from "react";
 import EditMainDish from "./EditMainDish";
+import type { MenuItem } from "@/lib/domain";
 
+interface MainDishComponentProps {
+    dish: MenuItem;
+}
 
-export default function MainDishComponent({ dish, setMainDishFormData }) {
+export default function MainDishComponent({ dish }: MainDishComponentProps) {
     const [editMode, setEditMode] = useState(false);
 
     const handleToggleMainDishStatus = async (): Promise<void> => {
@@ -54,13 +58,7 @@ export default function MainDishComponent({ dish, setMainDishFormData }) {
                     </div>
                     {dish.description && <p className="max-w-3xl text-sm leading-6 text-light">{dish.description}</p>}
                     <button
-                        onClick={() => {
-                            setMainDishFormData({
-                                name: dish.name,
-                                description: dish.description || "",
-                            });
-                            setEditMode(true);
-                        }}
+                        onClick={() => setEditMode(true)}
                         className="text-sm font-medium text-brand-blue hover:text-accent-blue"
                     >
                         Edit Dish
