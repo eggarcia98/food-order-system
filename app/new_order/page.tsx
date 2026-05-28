@@ -3,7 +3,6 @@
 import AddMainItemModal from "@/components/AddMainItemModal";
 import AddExtraItemModal from "@/components/AddExtraItemModal";
 import { DishToOrderItem } from "@/components/DishToOrderItem";
-import { useAuthSession } from "@/lib/useAuthSession";
 import {
     MainOrderItem,
     ExtraOrderItem,
@@ -15,7 +14,6 @@ import {
 import {
     MenuItem,
     ExtraItem,
-    Customer,
     Nationality,
 } from "@/lib/domain";
 import Link from "next/link";
@@ -41,8 +39,6 @@ interface Side {
 }
 
 export default function NewOrderPage() {
-    const { isAuthenticated } = useAuthSession();
-
     const [phoneNumber, setPhoneNumber] = useState("");
 
     const [lastname, setLastname] = useState("");
@@ -69,8 +65,6 @@ export default function NewOrderPage() {
         text: string;
     } | null>(null);
 
-    const [previousCustomers, setPreviousCustomers] = useState<Customer[]>([]);
-
     const fetchNationalities = async () => {
         try {
             const response = await fetch("/api/nationalities");
@@ -93,17 +87,6 @@ export default function NewOrderPage() {
         }
     };
 
-    const fetchPreviousCustomers = async () => {
-        try {
-            const response = await fetch("/api/customers");
-            if (!response.ok) throw new Error("Failed to fetch");
-            const data = await response.json();
-            setPreviousCustomers(data);
-        } catch (error) {
-            console.error("Error fetching previous customers:", error);
-        }
-    };
-
     const fetchMenuItems = async () => {
         try {
             const response = await fetch("/api/menu_items");
@@ -111,14 +94,13 @@ export default function NewOrderPage() {
             const data = await response.json();
             setMenuItems(data);
         } catch (error) {
-            console.error("Error fetching previous customers:", error);
+            console.error("Error fetching menu items:", error);
         }
     };
 
     useEffect(() => {
         fetchNationalities();
         fetchExtraItems();
-        fetchPreviousCustomers();
         fetchMenuItems();
     }, []);
 
@@ -182,101 +164,13 @@ export default function NewOrderPage() {
         }
     };
 
-    const [showSuggestions, setShowSuggestions] = useState(false);
-    const [filteredSuggestions, setFilteredSuggestions] = useState<Customer[]>([]);
-    const suggestionsRef = useRef<HTMLDivElement>(null);
-
-    const [showNameSuggestions, setShowNameSuggestions] = useState(false);
-    const [filteredNameSuggestions, setFilteredNameSuggestions] = useState<Customer[]>([]);
-    const nameSearchRef = useRef<HTMLDivElement>(null);
-
     const [nationalitySearch, setNationalitySearch] = useState("");
     const [showNationalitySuggestions, setShowNationalitySuggestions] = useState(false);
     const [filteredNationalities, setFilteredNationalities] = useState<Nationality[]>([]);
     const nationalityRef = useRef<HTMLDivElement>(null);
 
-    const handlePhoneNumberChange = (value: string) => {
-        setPhoneNumber(value);
-
-        // Autocomplete only available when authenticated
-        if (!isAuthenticated) {
-            setShowSuggestions(false);
-            return;
-        }
-
-        if (value.length > 0) {
-            const filtered = previousCustomers.filter((customer) =>
-                customer.phone_number.includes(value)
-            );
-
-            setFilteredSuggestions(filtered);
-            setShowSuggestions(filtered.length > 0);
-        } else {
-            setShowSuggestions(false);
-        }
-    };
-
-    const selectSuggestion = (customer: Customer) => {
-        setPhoneNumber(customer.phone_number);
-        setNationality({ id: customer.nationality_id });
-        setFirstname(customer.first_name || "");
-        setLastname(customer.last_name || "");
-        setShowSuggestions(false);
-
-        const selectedNationality = nationalityList.find(n => n.id === customer.nationality_id);
-        if (selectedNationality) {
-            setNationalitySearch(selectedNationality.name);
-        }
-    };
-
-    const handleNameSearch = (value: string, field: 'first' | 'last') => {
-        if (field === 'first') {
-            setFirstname(value);
-        } else {
-            setLastname(value);
-        }
-
-        if (!isAuthenticated) {
-            setShowNameSuggestions(false);
-            return;
-        }
-
-        if (value.length > 1) {
-            const filtered = previousCustomers.filter((customer) => {
-                const searchValue = value.toLowerCase();
-                return (
-                    customer.first_name.toLowerCase().includes(searchValue) ||
-                    customer.last_name.toLowerCase().includes(searchValue)
-                );
-            });
-
-            setFilteredNameSuggestions(filtered);
-            setShowNameSuggestions(filtered.length > 0);
-        } else {
-            setShowNameSuggestions(false);
-        }
-    };
-
-    const selectNameSuggestion = (customer: Customer) => {
-        setPhoneNumber(customer.phone_number);
-        setNationality({ id: customer.nationality_id });
-        setFirstname(customer.first_name || "");
-        setLastname(customer.last_name || "");
-        setShowNameSuggestions(false);
-
-        const selectedNationality = nationalityList.find(n => n.id === customer.nationality_id);
-        if (selectedNationality) {
-            setNationalitySearch(selectedNationality.name);
-        }
-    };
-
     const handleNationalitySearch = (value: string) => {
         setNationalitySearch(value);
-
-        if (!isAuthenticated) {
-            setShowNationalitySuggestions(false);
-            return;
-        }
 
         if (value.length > 0) {
             const filtered = nationalityList.filter((nat) =>
@@ -300,42 +194,10 @@ export default function NewOrderPage() {
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
-                suggestionsRef.current &&
-                !suggestionsRef.current.contains(event.target as Node)
-            ) {
-                setShowSuggestions(false);
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (
                 nationalityRef.current &&
                 !nationalityRef.current.contains(event.target as Node)
             ) {
                 setShowNationalitySuggestions(false);
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (
-                nameSearchRef.current &&
-                !nameSearchRef.current.contains(event.target as Node)
-            ) {
-                setShowNameSuggestions(false);
             }
         };
 
@@ -378,77 +240,15 @@ export default function NewOrderPage() {
                                         *
                                     </span>
                                 </label>
-                                <div className="relative" ref={suggestionsRef}>
-                                    <input
-                                        type="tel"
-                                        required
-                                        value={phoneNumber}
-                                        onChange={(e) =>
-                                            handlePhoneNumberChange(
-                                                e.target.value
-                                            )
-                                        }
-                                        onFocus={() => {
-                                            if (
-                                                phoneNumber.length > 0 &&
-                                                filteredSuggestions.length > 0
-                                            ) {
-                                                setShowSuggestions(true);
-                                            }
-                                        }}
-                                        className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
-                                        placeholder="+1 234 567 8900"
-                                        autoComplete="off"
-                                    />
-
-                                    {showSuggestions &&
-                                        filteredSuggestions.length > 0 && (
-                                            <div className="absolute z-10 w-full mt-1 bg-white/95 backdrop-blur-sm border border-soft-pink/20 rounded-lg shadow-lg max-h-60 overflow-auto">
-                                                {filteredSuggestions.map(
-                                                    (customer, index) => (
-                                                        <button
-                                                            key={index}
-                                                            type="button"
-                                                            onClick={() =>
-                                                                selectSuggestion(
-                                                                    customer
-                                                                )
-                                                            }
-                                                            className="w-full px-4 py-3 text-left transition flex justify-between items-center border-b border-soft-pink/10 last:border-b-0 hover:bg-soft-pink/10"
-                                                        >
-                                                            <div>
-                                                                <p className="font-light text-foreground text-sm">
-                                                                    {
-                                                                        customer.phone_number
-                                                                    }
-                                                                </p>
-                                                                <p className="text-xs text-text-light font-light">
-                                                                    {customer.first_name +
-                                                                        " " +
-                                                                        customer.last_name}
-                                                                </p>
-                                                            </div>
-                                                            <svg
-                                                                className="w-5 h-5 text-brand-red/50"
-                                                                fill="none"
-                                                                stroke="currentColor"
-                                                                viewBox="0 0 24 24"
-                                                            >
-                                                                <path
-                                                                    strokeLinecap="round"
-                                                                    strokeLinejoin="round"
-                                                                    strokeWidth={
-                                                                        2
-                                                                    }
-                                                                    d="M9 5l7 7-7 7"
-                                                                />
-                                                            </svg>
-                                                        </button>
-                                                    )
-                                                )}
-                                            </div>
-                                        )}
-                                </div>
+                                <input
+                                    type="tel"
+                                    required
+                                    value={phoneNumber}
+                                    onChange={(e) => setPhoneNumber(e.target.value)}
+                                    className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
+                                    placeholder="+1 234 567 8900"
+                                    autoComplete="tel"
+                                />
                             </div>
 
                             <div>
@@ -503,73 +303,15 @@ export default function NewOrderPage() {
                                         *
                                     </span>
                                 </label>
-                                <div className="relative" ref={nameSearchRef}>
-                                    <input
-                                        type="text"
-                                        required
-                                        value={firstname}
-                                        onChange={(e) =>
-                                            handleNameSearch(e.target.value, 'first')
-                                        }
-                                        onFocus={() => {
-                                            if (
-                                                firstname.length > 1 &&
-                                                filteredNameSuggestions.length > 0
-                                            ) {
-                                                setShowNameSuggestions(true);
-                                            }
-                                        }}
-                                        className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
-                                        placeholder="John"
-                                        autoComplete="off"
-                                    />
-
-                                    {showNameSuggestions &&
-                                        filteredNameSuggestions.length > 0 && (
-                                            <div className="absolute z-10 w-full mt-1 bg-white/95 backdrop-blur-sm border border-soft-pink/20 rounded-lg shadow-lg max-h-60 overflow-auto">
-                                                {filteredNameSuggestions.slice(0, 5).map(
-                                                    (customer, index) => (
-                                                        <button
-                                                            key={index}
-                                                            type="button"
-                                                            onClick={() =>
-                                                                selectNameSuggestion(
-                                                                    customer
-                                                                )
-                                                            }
-                                                            className="w-full px-4 py-3 text-left transition flex justify-between items-center border-b border-soft-pink/10 last:border-b-0 hover:bg-soft-pink/10"
-                                                        >
-                                                            <div>
-                                                                <p className="font-light text-foreground text-sm">
-                                                                    {customer.first_name +
-                                                                        " " +
-                                                                        customer.last_name}
-                                                                </p>
-                                                                <p className="text-xs text-text-light font-light">
-                                                                    {customer.phone_number}
-                                                                </p>
-                                                            </div>
-                                                            <svg
-                                                                className="w-5 h-5 text-brand-red/50"
-                                                                fill="none"
-                                                                stroke="currentColor"
-                                                                viewBox="0 0 24 24"
-                                                            >
-                                                                <path
-                                                                    strokeLinecap="round"
-                                                                    strokeLinejoin="round"
-                                                                    strokeWidth={
-                                                                        2
-                                                                    }
-                                                                    d="M9 5l7 7-7 7"
-                                                                />
-                                                            </svg>
-                                                        </button>
-                                                    )
-                                                )}
-                                            </div>
-                                        )}
-                                </div>
+                                <input
+                                    type="text"
+                                    required
+                                    value={firstname}
+                                    onChange={(e) => setFirstname(e.target.value)}
+                                    className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
+                                    placeholder="John"
+                                    autoComplete="given-name"
+                                />
                             </div>
 
                             <div className="relative">
@@ -583,20 +325,10 @@ export default function NewOrderPage() {
                                     type="text"
                                     required
                                     value={lastname}
-                                    onChange={(e) =>
-                                        handleNameSearch(e.target.value, 'last')
-                                    }
-                                    onFocus={() => {
-                                        if (
-                                            lastname.length > 1 &&
-                                            filteredNameSuggestions.length > 0
-                                        ) {
-                                            setShowNameSuggestions(true);
-                                        }
-                                    }}
+                                    onChange={(e) => setLastname(e.target.value)}
                                     className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
                                     placeholder="Doe"
-                                    autoComplete="off"
+                                    autoComplete="family-name"
                                 />
                             </div>
                         </div>

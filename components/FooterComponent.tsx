@@ -3,13 +3,11 @@
 import Link from "next/link";
 import { Facebook, Instagram, MessageCircle, Send } from "lucide-react";
 import { useState } from "react";
-import { useAuthSession } from "@/lib/useAuthSession";
 
 export default function FooterComponent() {
     const [email, setEmail] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState("");
-    const { isAuthenticated } = useAuthSession();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -103,16 +101,6 @@ export default function FooterComponent() {
                                     Order Now
                                 </Link>
                             </li>
-                            {isAuthenticated === true && (
-                                <li>
-                                    <Link
-                                        href="/orders"
-                                        className="text-sm font-light text-text-light hover:text-brand-red transition-colors duration-200"
-                                    >
-                                        Orders
-                                    </Link>
-                                </li>
-                            )}
                         </ul>
                     </nav>
 
@@ -177,19 +165,6 @@ export default function FooterComponent() {
                                 Order Now
                             </Link>
                         </li>
-                        {isAuthenticated === true && (
-                            <>
-                                <li className="text-text-light/30">•</li>
-                                <li>
-                                    <Link
-                                        href="/orders"
-                                        className="text-sm font-light text-text-light hover:text-brand-red transition-colors duration-200"
-                                    >
-                                        Orders
-                                    </Link>
-                                </li>
-                            </>
-                        )}
                     </ul>
                 </nav>
             </div>

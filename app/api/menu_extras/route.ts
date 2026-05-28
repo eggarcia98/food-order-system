@@ -6,6 +6,9 @@ export const runtime = "edge";
 export async function GET() {
     try {
         const side = await prisma.menuExtras.findMany({
+            where: {
+                is_active: true,
+            },
             orderBy: {
                 name: "asc",
             },
