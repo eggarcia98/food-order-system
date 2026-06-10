@@ -21,7 +21,7 @@ Try out the application with the following features:
 - 🔐 **Authentication** - Secure login and signup functionality
 - 📱 **Responsive Design** - Works seamlessly on desktop and mobile devices
 
-## 🛠️ Tech Stack
+## 🛠️ Tech Stacks
 
 - **Framework**: [Next.js 14+](https://nextjs.org/) with App Router
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
