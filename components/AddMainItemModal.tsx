@@ -69,6 +69,11 @@ export default function AddMainItemModal({
         setOpen(false);
     }, [selectedVariant, quantity, setConfirmedMainItems, resetOrderForm, setOpen]);
 
+    const formatImageUrl = (url: string) => {
+        if (!url) return "/media/logo.png";
+        return url.trim();
+    }
+
     return (
         <OrderModalShell
             isOpen={open}
@@ -127,7 +132,7 @@ export default function AddMainItemModal({
                                                 }`}
                                             >
                                                 <Image
-                                                    src={variant.image_url || menuItem.img_url || "/media/logo.png"}
+                                                    src={formatImageUrl(variant.image_url || menuItem.img_url || "/media/logo.png")}
                                                     alt={variant.variant_name}
                                                     width={80}
                                                     height={80}

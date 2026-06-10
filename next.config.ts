@@ -1,6 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+    images: {
+        remotePatterns: [
+            {
+                protocol: "https",
+                hostname: "nextcloud.byerick.dev",
+                pathname: "/s/**/preview",
+            },
+        ],
+    },
     webpack(config) {
         config.module.rules.push({
             test: /\.svg$/,
