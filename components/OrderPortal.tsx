@@ -1,69 +1,42 @@
 "use client";
 
-import AddMainItemModal from "@/components/AddMainItemModal";
+import { useEffect, useRef, useState } from "react";
+
 import AddExtraItemModal from "@/components/AddExtraItemModal";
-import { DishToOrderItem } from "@/components/DishToOrderItem";
+import AddMainItemModal from "@/components/AddMainItemModal";
 import {
-    MainOrderItem,
     ExtraOrderItem,
-    calculateMainItemTotal,
+    MainOrderItem,
     calculateExtraItemTotal,
-    calculateOrdersGrandTotal,
+    calculateMainItemTotal,
     formatCurrency,
 } from "@/lib/order-types";
-import {
-    MenuItem,
-    ExtraItem,
-    Nationality,
-} from "@/lib/domain";
-import Link from "next/link";
-import { useEffect, useState, useRef } from "react";
+import { ExtraItem, MenuItem, Nationality } from "@/lib/domain";
 
-interface OrderItem {
-    dish: Dish;
-    quantity: number;
-    sides: Side[];
-}
-
-interface Dish {
-    id: number;
-    name: string;
-    price: number;
-    img?: string;
-}
-
-interface Side {
-    id: number;
-    name: string;
-    price: number;
-}
-
-export default function NewOrderPage() {
+export default function OrderPortal() {
     const [phoneNumber, setPhoneNumber] = useState("");
-
     const [lastname, setLastname] = useState("");
     const [firstname, setFirstname] = useState("");
     const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-
     const [confirmedMainItems, setConfirmedMainItems] = useState<MainOrderItem[]>([]);
     const [confirmedExtraItems, setConfirmedExtraItems] = useState<ExtraOrderItem[]>([]);
-
     const [nationality, setNationality] = useState({});
     const [nationalityList, setNationalityList] = useState<Nationality[]>([
         { id: 1, name: "Ecuadorian" },
     ]);
-
     const [openAddMainItemModal, setOpenAddMainItemModal] = useState(false);
     const [openAddExtraItemModal, setOpenAddExtraItemModal] = useState(false);
-
     const [extraItems, setExtraItems] = useState<ExtraItem[]>([]);
-
     const [comments, setComments] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState<{
         type: "success" | "error";
         text: string;
     } | null>(null);
+    const [nationalitySearch, setNationalitySearch] = useState("");
+    const [showNationalitySuggestions, setShowNationalitySuggestions] = useState(false);
+    const [filteredNationalities, setFilteredNationalities] = useState<Nationality[]>([]);
+    const nationalityRef = useRef<HTMLDivElement>(null);
 
     const fetchNationalities = async () => {
         try {
@@ -71,8 +44,7 @@ export default function NewOrderPage() {
             if (!response.ok) throw new Error("Failed to fetch");
             const data = await response.json();
             setNationalityList(data);
-        } catch (error) {
-
+        } catch {
         }
     };
 
@@ -82,8 +54,7 @@ export default function NewOrderPage() {
             if (!response.ok) throw new Error("Failed to fetch");
             const data = await response.json();
             setExtraItems(data);
-        } catch (error) {
-
+        } catch {
         }
     };
 
@@ -102,6 +73,19 @@ export default function NewOrderPage() {
         fetchNationalities();
         fetchExtraItems();
         fetchMenuItems();
+    }, []);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (nationalityRef.current && !nationalityRef.current.contains(event.target as Node)) {
+                setShowNationalitySuggestions(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
     }, []);
 
     const removeMainItem = (index: number) => {
@@ -153,8 +137,7 @@ export default function NewOrderPage() {
             setNationality({});
             setConfirmedMainItems([]);
             setConfirmedExtraItems([]);
-        } catch (error) {
-
+        } catch {
             setMessage({
                 type: "error",
                 text: "Failed to register order. Please try again.",
@@ -163,11 +146,6 @@ export default function NewOrderPage() {
             setIsSubmitting(false);
         }
     };
-
-    const [nationalitySearch, setNationalitySearch] = useState("");
-    const [showNationalitySuggestions, setShowNationalitySuggestions] = useState(false);
-    const [filteredNationalities, setFilteredNationalities] = useState<Nationality[]>([]);
-    const nationalityRef = useRef<HTMLDivElement>(null);
 
     const handleNationalitySearch = (value: string) => {
         setNationalitySearch(value);
@@ -191,24 +169,8 @@ export default function NewOrderPage() {
         setShowNationalitySuggestions(false);
     };
 
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (
-                nationalityRef.current &&
-                !nationalityRef.current.contains(event.target as Node)
-            ) {
-                setShowNationalitySuggestions(false);
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
-
     return (
-        <div
+         <div
             className={`flex flex-col m-8 min-h-screen bg-gradient-to-b from-background via-cream/30 to-background`}
         >
             <div className="w-full max-w-5xl mx-auto p-6 flex-grow">
@@ -219,49 +181,44 @@ export default function NewOrderPage() {
                             New Order
                         </h1>
                         <p className="text-sm text-text-light font-light">
-                            Register customer orders quickly and easily
+                            Register your orders quickly and easily
                         </p>
                     </div>
 
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-8">
-
-                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-8 space-y-6">
-                        <h2 className="text-xl font-light text-foreground uppercase tracking-wide">
+                    <div className="space-y-6 rounded-2xl bg-white/80 p-8 shadow-sm backdrop-blur-sm">
+                        <h2 className="text-xl font-light uppercase tracking-wide text-foreground">
                             Customer Information
                         </h2>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <div className="relative">
-                                <label className="block text-sm font-light mb-2 text-text-light">
+                                <label className="mb-2 block text-sm font-light text-text-light">
                                     Phone Number
-                                    <span className="text-brand-red ml-1">
-                                        *
-                                    </span>
+                                    <span className="ml-1 text-brand-red">*</span>
                                 </label>
                                 <input
                                     type="tel"
                                     required
                                     value={phoneNumber}
                                     onChange={(e) => setPhoneNumber(e.target.value)}
-                                    className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
+                                    className="w-full rounded-lg border border-soft-pink/30 bg-cream px-4 py-3 font-light transition focus:border-transparent focus:ring-2 focus:ring-brand-blue"
                                     placeholder="+1 234 567 8900"
                                     autoComplete="tel"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-light mb-2 text-text-light">
+                                <label className="mb-2 block text-sm font-light text-text-light">
                                     Nationality
                                 </label>
                                 <div className="relative" ref={nationalityRef}>
                                     <input
                                         type="text"
                                         value={nationalitySearch}
-                                        onChange={(e) =>
-                                            handleNationalitySearch(e.target.value)
-                                        }
+                                        onChange={(e) => handleNationalitySearch(e.target.value)}
                                         onFocus={() => {
                                             if (nationalitySearch.length === 0) {
                                                 setFilteredNationalities(nationalityList);
@@ -270,21 +227,21 @@ export default function NewOrderPage() {
                                                 setShowNationalitySuggestions(true);
                                             }
                                         }}
-                                        className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
+                                        className="w-full rounded-lg border border-soft-pink/30 bg-cream px-4 py-3 font-light transition focus:border-transparent focus:ring-2 focus:ring-brand-blue"
                                         placeholder="Type to search nationality..."
                                         autoComplete="off"
                                     />
 
                                     {showNationalitySuggestions && filteredNationalities.length > 0 && (
-                                        <div className="absolute z-10 w-full mt-1 bg-white/95 backdrop-blur-sm border border-soft-pink/20 rounded-lg shadow-lg max-h-60 overflow-auto">
+                                        <div className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg border border-soft-pink/20 bg-white/95 shadow-lg backdrop-blur-sm">
                                             {filteredNationalities.slice(0, 3).map((nat) => (
                                                 <button
                                                     key={nat.id}
                                                     type="button"
                                                     onClick={() => selectNationality(nat)}
-                                                    className="w-full px-4 py-3 text-left transition border-b border-soft-pink/10 last:border-b-0 hover:bg-soft-pink/10"
+                                                    className="w-full border-b border-soft-pink/10 px-4 py-3 text-left transition last:border-b-0 hover:bg-soft-pink/10"
                                                 >
-                                                    <p className="font-light text-foreground text-sm">
+                                                    <p className="text-sm font-light text-foreground">
                                                         {nat.name}
                                                     </p>
                                                 </button>
@@ -295,38 +252,34 @@ export default function NewOrderPage() {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <div className="relative">
-                                <label className="block text-sm font-light mb-2 text-text-light">
+                                <label className="mb-2 block text-sm font-light text-text-light">
                                     First Name
-                                    <span className="text-brand-red ml-1">
-                                        *
-                                    </span>
+                                    <span className="ml-1 text-brand-red">*</span>
                                 </label>
                                 <input
                                     type="text"
                                     required
                                     value={firstname}
                                     onChange={(e) => setFirstname(e.target.value)}
-                                    className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
+                                    className="w-full rounded-lg border border-soft-pink/30 bg-cream px-4 py-3 font-light transition focus:border-transparent focus:ring-2 focus:ring-brand-blue"
                                     placeholder="John"
                                     autoComplete="given-name"
                                 />
                             </div>
 
                             <div className="relative">
-                                <label className="block text-sm font-light mb-2 text-text-light">
+                                <label className="mb-2 block text-sm font-light text-text-light">
                                     Last Name
-                                    <span className="text-brand-red ml-1">
-                                        *
-                                    </span>
+                                    <span className="ml-1 text-brand-red">*</span>
                                 </label>
                                 <input
                                     type="text"
                                     required
                                     value={lastname}
                                     onChange={(e) => setLastname(e.target.value)}
-                                    className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light transition"
+                                    className="w-full rounded-lg border border-soft-pink/30 bg-cream px-4 py-3 font-light transition focus:border-transparent focus:ring-2 focus:ring-brand-blue"
                                     placeholder="Doe"
                                     autoComplete="family-name"
                                 />
@@ -336,12 +289,10 @@ export default function NewOrderPage() {
 
                     <div
                         className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${
-                            openAddMainItemModal
-                                ? "opacity-100 visible"
-                                : "opacity-0 invisible"
+                            openAddMainItemModal ? "visible opacity-100" : "invisible opacity-0"
                         }`}
                         onClick={() => setOpenAddMainItemModal(false)}
-                    ></div>
+                    />
 
                     <AddMainItemModal
                         open={openAddMainItemModal}
@@ -352,12 +303,10 @@ export default function NewOrderPage() {
 
                     <div
                         className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${
-                            openAddExtraItemModal
-                                ? "opacity-100 visible"
-                                : "opacity-0 invisible"
+                            openAddExtraItemModal ? "visible opacity-100" : "invisible opacity-0"
                         }`}
                         onClick={() => setOpenAddExtraItemModal(false)}
-                    ></div>
+                    />
 
                     <AddExtraItemModal
                         open={openAddExtraItemModal}
@@ -366,52 +315,42 @@ export default function NewOrderPage() {
                         setConfirmedExtraItems={setConfirmedExtraItems}
                     />
 
-                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-8 space-y-6">
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-xl font-light text-foreground uppercase tracking-wide">
+                    <div className="space-y-6 rounded-2xl bg-white/80 p-8 shadow-sm backdrop-blur-sm">
+                        <div className="mb-6 flex items-center justify-between">
+                            <h2 className="text-xl font-light uppercase tracking-wide text-foreground">
                                 Order Items
                             </h2>
                         </div>
 
                         <div className="space-y-4">
-                            <div className="flex justify-between items-center">
+                            <div className="flex items-center justify-between">
                                 <h3 className="text-lg font-light text-foreground">
                                     Main Items
                                 </h3>
                                 <button
                                     type="button"
                                     onClick={() => setOpenAddMainItemModal(true)}
-                                    className="px-4 py-2 rounded-lg cursor-pointer transition btn-brand-blue text-sm font-light"
+                                    className="cursor-pointer rounded-lg px-4 py-2 text-sm font-light transition btn-brand-blue"
                                 >
                                     + Add Main Item
                                 </button>
                             </div>
 
                             {confirmedMainItems.length === 0 ? (
-                                <div className="flex items-center gap-4 p-4 rounded-lg bg-soft-pink/10 border border-soft-pink/20">
-                                    <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-soft-pink/20">
-                                        <svg
-                                            className="w-4 h-4 text-brand-red"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                                            />
+                                <div className="flex items-center gap-4 rounded-lg border border-soft-pink/20 bg-soft-pink/10 p-4">
+                                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-soft-pink/20">
+                                        <svg className="h-4 w-4 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                                         </svg>
                                     </div>
-                                    <p className="text-text-light font-light text-sm">
+                                    <p className="text-sm font-light text-text-light">
                                         No main items added yet.
                                     </p>
                                 </div>
                             ) : (
                                 <div className="space-y-3">
                                     {confirmedMainItems.map((item, index) => (
-                                        <div key={index} className="flex justify-between items-center border-b pb-3 border-brand/30">
+                                        <div key={index} className="flex items-center justify-between border-b border-brand/30 pb-3">
                                             <div className="flex-1">
                                                 <p className="font-medium text-foreground">
                                                     {item.item_name} - {item.variant_name}
@@ -427,7 +366,7 @@ export default function NewOrderPage() {
                                                 <button
                                                     type="button"
                                                     onClick={() => removeMainItem(index)}
-                                                    className="text-brand-red hover:text-red-700 transition"
+                                                    className="text-brand-red transition hover:text-red-700"
                                                 >
                                                     ✕
                                                 </button>
@@ -440,54 +379,44 @@ export default function NewOrderPage() {
 
                         <div className="relative py-4">
                             <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-gradient-to-r from-transparent via-brand-blue/30 to-transparent"></div>
+                                <div className="w-full border-t border-gradient-to-r from-transparent via-brand-blue/30 to-transparent" />
                             </div>
                             <div className="relative flex justify-center">
-                                <span className="bg-white px-4 text-sm text-text-light font-light">
+                                <span className="bg-white px-4 text-sm font-light text-text-light">
                                     •••
                                 </span>
                             </div>
                         </div>
 
                         <div className="space-y-4">
-                            <div className="flex justify-between items-center">
+                            <div className="flex items-center justify-between">
                                 <h3 className="text-lg font-light text-foreground">
                                     Extra Items
                                 </h3>
                                 <button
                                     type="button"
                                     onClick={() => setOpenAddExtraItemModal(true)}
-                                    className="px-4 py-2 rounded-lg cursor-pointer transition btn-brand-blue text-sm font-light"
+                                    className="cursor-pointer rounded-lg px-4 py-2 text-sm font-light transition btn-brand-blue"
                                 >
                                     + Add Extras
                                 </button>
                             </div>
 
                             {confirmedExtraItems.length === 0 ? (
-                                <div className="flex items-center gap-4 p-4 rounded-lg bg-soft-pink/10 border border-soft-pink/20">
-                                    <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-soft-pink/20">
-                                        <svg
-                                            className="w-4 h-4 text-brand-red"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                                            />
+                                <div className="flex items-center gap-4 rounded-lg border border-soft-pink/20 bg-soft-pink/10 p-4">
+                                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-soft-pink/20">
+                                        <svg className="h-4 w-4 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                                         </svg>
                                     </div>
-                                    <p className="text-text-light font-light text-sm">
+                                    <p className="text-sm font-light text-text-light">
                                         No extra items added yet.
                                     </p>
                                 </div>
                             ) : (
                                 <div className="space-y-3">
                                     {confirmedExtraItems.map((item, index) => (
-                                        <div key={index} className="flex justify-between items-center border-b pb-3 border-brand/30">
+                                        <div key={index} className="flex items-center justify-between border-b border-brand/30 pb-3">
                                             <div className="flex-1">
                                                 <p className="font-medium text-foreground">
                                                     {item.name}
@@ -503,7 +432,7 @@ export default function NewOrderPage() {
                                                 <button
                                                     type="button"
                                                     onClick={() => removeExtraItem(index)}
-                                                    className="text-brand-red hover:text-red-700 transition"
+                                                    className="text-brand-red transition hover:text-red-700"
                                                 >
                                                     ✕
                                                 </button>
@@ -515,15 +444,15 @@ export default function NewOrderPage() {
                         </div>
                     </div>
 
-                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-8 space-y-4">
-                        <label className="block text-sm font-light text-foreground uppercase tracking-wide">
+                    <div className="rounded-2xl bg-white/80 p-8 shadow-sm backdrop-blur-sm">
+                        <label className="block text-sm font-light uppercase tracking-wide text-foreground">
                             Special Notes
                         </label>
                         <textarea
                             value={comments}
                             onChange={(e) => setComments(e.target.value)}
                             rows={4}
-                            className="w-full px-4 py-3 border border-soft-pink/30 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent bg-cream font-light resize-none transition"
+                            className="w-full resize-none rounded-lg border border-soft-pink/30 bg-cream px-4 py-3 font-light transition focus:border-transparent focus:ring-2 focus:ring-brand-blue"
                             placeholder="Additional notes or special instructions..."
                         />
                     </div>
@@ -531,23 +460,19 @@ export default function NewOrderPage() {
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className={`w-full py-4 font-light rounded-lg disabled:cursor-not-allowed transition shadow-lg hover:shadow-xl text-base ${
-                            isSubmitting
-                                ? "bg-gray-400 text-gray-600"
-                                : "btn-brand-blue"
+                        className={`w-full rounded-lg py-4 text-base font-light shadow-lg transition hover:shadow-xl disabled:cursor-not-allowed ${
+                            isSubmitting ? "bg-gray-400 text-gray-600" : "btn-brand-blue"
                         }`}
                     >
-                        {isSubmitting
-                            ? "Submitting Order..."
-                            : "Register Order"}
+                        {isSubmitting ? "Submitting Order..." : "Register Order"}
                     </button>
 
                     {message && (
                         <div
-                            className={`p-4 mb-6 rounded-2xl backdrop-blur-sm font-light text-sm ${
+                            className={`mb-6 rounded-2xl p-4 text-sm font-light backdrop-blur-sm ${
                                 message.type === "success"
-                                    ? "bg-soft-blue/20 text-brand-blue border border-brand-blue/30"
-                                    : "bg-rose/20 text-brand-red border border-rose/30"
+                                    ? "border border-brand-blue/30 bg-soft-blue/20 text-brand-blue"
+                                    : "border border-rose/30 bg-rose/20 text-brand-red"
                             }`}
                         >
                             {message.text}

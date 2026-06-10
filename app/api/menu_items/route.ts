@@ -1,5 +1,3 @@
-export const runtime = "edge";
-
 import { prisma } from "@/lib/prisma";
 import { jsonError } from "@/lib/api/http";
 import { NextResponse } from "next/server";

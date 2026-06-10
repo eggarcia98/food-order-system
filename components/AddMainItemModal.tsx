@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import React, { useCallback } from "react";
 import { OrderModalShell } from "@/components/OrderModalShell";
 import {
@@ -125,11 +126,11 @@ export default function AddMainItemModal({
                                                         : "border-brand"
                                                 }`}
                                             >
-                                                <img
-                                                    src={variant.image_url || menuItem.img_url}
-                                                    alt={
-                                                        variant.variant_name
-                                                    }
+                                                <Image
+                                                    src={variant.image_url || menuItem.img_url || "/media/logo.png"}
+                                                    alt={variant.variant_name}
+                                                    width={80}
+                                                    height={80}
                                                     className="w-20 h-20 object-cover rounded-lg mb-2"
                                                 />
                                                 <p className="font-medium text-foreground text-sm text-center">

@@ -5,8 +5,6 @@ import {
     createOrderWithConfirmation,
     validateCreateOrderPayload,
 } from "@/lib/services/order-service";
-export const runtime = "edge";
-
 export async function POST(request: Request) {
     try {
         const body = await parseJsonBody(request);
