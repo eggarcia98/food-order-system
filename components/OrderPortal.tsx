@@ -37,6 +37,7 @@ export default function OrderPortal() {
     const [showNationalitySuggestions, setShowNationalitySuggestions] = useState(false);
     const [filteredNationalities, setFilteredNationalities] = useState<Nationality[]>([]);
     const nationalityRef = useRef<HTMLDivElement>(null);
+    const quickNationalityTerms = ["ecuador", "colombia", "peru", "australian"];
 
     const fetchNationalities = async () => {
         try {
@@ -169,11 +170,36 @@ export default function OrderPortal() {
         setShowNationalitySuggestions(false);
     };
 
+    const selectQuickNationality = (value: string) => {
+        setNationalitySearch(value);
+
+        const matchedNationality = nationalityList.find((nat) =>
+            nat.name.toLowerCase().includes(value.toLowerCase())
+        );
+
+        if (matchedNationality) {
+            setNationality({ id: matchedNationality.id });
+            setFilteredNationalities([matchedNationality]);
+            setShowNationalitySuggestions(false);
+            return;
+        }
+
+        setNationality({});
+        setFilteredNationalities(nationalityList.filter((nat) =>
+            nat.name.toLowerCase().includes(value.toLowerCase())
+        ));
+        setShowNationalitySuggestions(false);
+    };
+
+    const quickNationalityOptions = quickNationalityTerms
+        .map((term) => nationalityList.find((nat) => nat.name.toLowerCase().includes(term)))
+        .filter((nationality): nationality is Nationality => Boolean(nationality));
+
     return (
-         <div
-            className={`flex flex-col m-8 min-h-screen bg-gradient-to-b from-background via-cream/30 to-background`}
+        <div
+            className={`flex flex-col m-8 min-h-screen bg-linear-to-b from-background via-cream/30 to-background`}
         >
-            <div className="w-full max-w-5xl mx-auto p-6 flex-grow">
+            <div className="w-full max-w-5xl mx-auto p-6 grow">
                 <div className="flex justify-between">
 
                     <div className="mb-8">
@@ -211,9 +237,23 @@ export default function OrderPortal() {
                             </div>
 
                             <div>
-                                <label className="mb-2 block text-sm font-light text-text-light">
-                                    Nationality
-                                </label>
+                                <div className="mb-2 flex flex-wrap items-center gap-2">
+                                    <label className="text-sm font-light text-text-light">
+                                        Nationality
+                                    </label>
+                                    <div className="flex flex-wrap gap-2">
+                                        {quickNationalityOptions.map((option) => (
+                                            <button
+                                                key={option.id}
+                                                type="button"
+                                                onClick={() => selectNationality(option)}
+                                                className="rounded-full border border-soft-pink/30 bg-cream px-3 py-1 text-xs font-light text-text-light transition hover:border-brand-blue hover:text-brand-blue"
+                                            >
+                                                {option.name}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
                                 <div className="relative" ref={nationalityRef}>
                                     <input
                                         type="text"
@@ -445,7 +485,7 @@ export default function OrderPortal() {
                     </div>
 
                     <div className="rounded-2xl bg-white/80 p-8 shadow-sm backdrop-blur-sm">
-                        <label className="block text-sm font-light uppercase tracking-wide text-foreground">
+                        <label className="block text-sm font-light uppercase tracking-wide text-foreground mb-3">
                             Special Notes
                         </label>
                         <textarea
@@ -467,14 +507,42 @@ export default function OrderPortal() {
                         {isSubmitting ? "Submitting Order..." : "Register Order"}
                     </button>
 
-                    {message && (
+                    {message?.type === "success" && (
                         <div
-                            className={`mb-6 rounded-2xl p-4 text-sm font-light backdrop-blur-sm ${
-                                message.type === "success"
-                                    ? "border border-brand-blue/30 bg-soft-blue/20 text-brand-blue"
-                                    : "border border-rose/30 bg-rose/20 text-brand-red"
-                            }`}
+                            className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 px-4 backdrop-blur-sm"
+                            role="alertdialog"
+                            aria-live="assertive"
+                            aria-modal="true"
+                            onClick={() => setMessage(null)}
                         >
+                            <div
+                                className="w-full max-w-md rounded-3xl border border-soft-pink/30 bg-white/95 p-6 text-center shadow-2xl shadow-brand-blue/10"
+                                onClick={(event) => event.stopPropagation()}
+                            >
+                                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-soft-blue/20">
+                                    <svg className="h-7 w-7 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <h3 className="text-2xl font-light text-foreground">
+                                    Order submitted
+                                </h3>
+                                <p className="mt-2 text-sm font-light text-text-light">
+                                    {message.text}
+                                </p>
+                                <button
+                                    type="button"
+                                    onClick={() => setMessage(null)}
+                                    className="mt-5 rounded-lg px-5 py-2 text-sm font-light transition btn-brand-blue"
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {message?.type === "error" && (
+                        <div className="mb-6 rounded-2xl border border-rose/30 bg-rose/20 p-4 text-sm font-light text-brand-red backdrop-blur-sm">
                             {message.text}
                         </div>
                     )}
