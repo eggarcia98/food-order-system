@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { jsonError } from "@/lib/api/http";
 import { NextResponse } from "next/server";
 
+export const runtime = "edge";
+
 /**
  * GET /api/menu_items
  * Fetch active menu items and variants for the public client app.

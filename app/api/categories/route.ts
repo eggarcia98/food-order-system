@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { jsonError } from "@/lib/api/http";
 
+export const runtime = "edge";
+
 export async function GET() {
     try {
         const categories = await prisma.categories.findMany({

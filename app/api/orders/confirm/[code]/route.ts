@@ -10,6 +10,8 @@ import {
 } from "@/lib/validation/confirmation-validation";
 import { getErrorStatus } from "@/lib/api/http";
 
+export const runtime = "edge";
+
 /**
  * GET /api/orders/confirm/[code]
  * Fetch order confirmation data with fulfillment options
